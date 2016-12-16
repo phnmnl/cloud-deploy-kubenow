@@ -1,0 +1,28 @@
+{
+	"applicationName": "Phenomenal VRE",
+	"contactEmail": "email@phenomenal.cloud",
+	"about": "Phenomenal Virtual Research Environment/Cloud",
+	"version": "0.1",
+	"cloudProviders": [
+		{ "cloudProvider": "AWS", "path": "cloud_portal/aws", "inputs": [ "vpc_id"] },
+		
+		{ "cloudProvider": "OSTACK", "path": "cloud_portal/ostack", "inputs": [ "floating_ip_pool",
+	                                                                            "external_network_uuid",
+	                                                                            "master_flavor",
+	                                                                            "node_flavor",
+	                                                                            "edge_flavor"
+	                                                                           ],
+		},
+		
+		{ "cloudProvider": "GCP", "path": "cloud_portal/gcp"}
+	],
+	"inputs": [ "cluster_prefix",
+	            "node_count",
+	            "edge_count",
+	            "cf_mail",
+	            "cf_token",
+	            "cf_zone"
+	          ],
+	"outputs": [],
+	"volumes": []
+}

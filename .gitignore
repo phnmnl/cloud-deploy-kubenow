@@ -1,0 +1,11 @@
+.secret
+*.retry
+*/*.retry
+conf.yml
+.kubeadm_token
+vre.key
+vre.key.pub
+**/terraform.tfstate
+**/terraform.tfstate.backup
+**/.terraform
+**/inventory

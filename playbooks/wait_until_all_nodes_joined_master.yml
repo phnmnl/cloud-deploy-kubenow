@@ -1,0 +1,10 @@
+- hosts: master
+  gather_facts: False
+  tasks:
+    - name: make sure all nodes joined the cluster
+      shell: >
+        kubectl get nodes | grep Ready | wc -l
+      register: kubectl
+      until: "{{kubectl.stdout|trim}} == {{all_nodes_count}}"
+      retries: 60
+      delay: 10

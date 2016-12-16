@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Generate ssh-key
+echo -e  'n' | ssh-keygen -q -t rsa -N "" -f $PORTAL_APP_REPO_FOLDER'./vre.key' 1> /dev/null
+
