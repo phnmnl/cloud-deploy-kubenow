@@ -4,17 +4,35 @@
 	"about": "Phenomenal Virtual Research Environment/Cloud",
 	"version": "0.1",
 	"cloudProviders": [
-		{ "cloudProvider": "AWS", "path": "cloud_portal/aws", "inputs": [ "vpc_id"] },
+		{ "cloudProvider": "AWS", "path": "cloud_portal/aws", "inputs": [ "aws_access_key_id",
+                                                                          "aws_secret_access_key",
+                                                                          "aws_region",
+                                                                          "availability_zone",
+                                                                          "master_instance_type",
+                                                                          "node_instance_type",
+                                                                          "edge_instance_typ"
+                                                                         ]
+        },
+
+		
+		
 		
 		{ "cloudProvider": "OSTACK", "path": "cloud_portal/ostack", "inputs": [ "floating_ip_pool",
-	                                                                            "external_network_uuid",
-	                                                                            "master_flavor",
+                                                                                "external_network_uuid",
+                                                                                "master_flavor",
 	                                                                            "node_flavor",
 	                                                                            "edge_flavor"
-	                                                                           ],
+	                                                                           ]
 		},
 		
-		{ "cloudProvider": "GCP", "path": "cloud_portal/gcp"}
+		{ "cloudProvider": "GCP", "path": "cloud_portal/gcp""inputs": [ "gce_credentials_file",
+                                                                        "gce_project",
+                                                                        "gce_zone"
+                                                                        "master_flavor",
+	                                                                    "node_flavor",
+	                                                                    "edge_flavor"
+	                                                                   ]
+	    }
 	],
 	"inputs": [ "cluster_prefix",
 	            "node_count",
