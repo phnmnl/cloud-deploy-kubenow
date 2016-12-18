@@ -1,5 +1,14 @@
 #!/bin/bash
 
 # Generate ssh-key
-echo -e  'n' | ssh-keygen -q -t rsa -N "" -f $PORTAL_APP_REPO_FOLDER'./vre.key' 1> /dev/null
+if [ ! -f vre.key ]; then
+    echo -e  'n' | ssh-keygen -q -t rsa -N "" -f vre.key
+fi
 
+# generate kubeadm_token
+if [ ! -f kubeadm_token ]; then
+    $PORTAL_APP_REPO_FOLDER/KubeNow/generate_kubetoken.sh > kubeadm_token
+fi
+
+# because if file already exists then it will set exit code 1
+exit 0
