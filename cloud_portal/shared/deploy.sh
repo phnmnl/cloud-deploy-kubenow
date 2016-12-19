@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-
 set -e
-
-# when testing you have to source: env_vars_expected_from_cloud_portal_xxx.sh
 
 # set pwd (to make sure all variable files end up in the deployment reference dir)
 cd $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
