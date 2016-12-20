@@ -40,7 +40,3 @@ This repository contains submodules so use the `--recursive` parameter when clon
     │
     └ test_env_vars_expected_from_cloud_portal_embassy.sh      # Includes vars expected to be provided from web-ui
                                                                # and only used for local testing purposes 
-    
-    
-
-
