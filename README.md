@@ -4,7 +4,11 @@ The scripts are designed to work with the EMBL-EBI-TSI - Phenomenal Web-UI.
 
 This repository contains submodules so use the `--recursive` parameter when cloning e.g.
 
- `git clone --recursive ....`
+ `git clone --recursive https://github.com/phnmnl/cloud-deploy-kubenow.git`
+ 
+ **Note:** You will probably get an error message because you don't have the rights to read the private repository containing
+ secret api keys - but that's OK.
+ `fatal: clone of 'git@github.com:EMBL-EBI-TSI/phenomenal-cloudflare.git' into submodule path 'phenomenal-cloudflare' failed`
 
 ### Directories and files
 
@@ -38,5 +42,10 @@ This repository contains submodules so use the `--recursive` parameter when clon
     ├ manifest.json             # This is the TSI parameter file used to describe the setup
     │
     │
-    └ test_env_vars_expected_from_cloud_portal_embassy.sh      # Includes vars expected to be provided from web-ui
-                                                               # and only used for local testing purposes 
+    ├ test_env_vars_for_embassy.sh     # Includes vars expected to be provided from web-ui and only used for local
+    │                                  # testing purposes
+    │
+    ├ test_env_vars_for_aws.sh         # Amazon version of testing vars       
+    │
+    │
+    └ test_env_vars_for_gcp.sh         # Google cloud version of testing vars                                     
