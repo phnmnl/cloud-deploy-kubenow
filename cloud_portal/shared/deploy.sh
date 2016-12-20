@@ -49,10 +49,6 @@ ansible-playbook -i $ansible_inventory_file \
                  -e "cf_subdomain=$TF_VAR_cf_subdomain" \
                  $PORTAL_APP_REPO_FOLDER'/KubeNow/playbooks/install-core.yml'
 
-# password for jupyter/luigi
-
-# deploy jupyter/luigi
-
 # deploy galaxy
 domain=$TF_VAR_cf_subdomain'.'$TF_VAR_cf_zone
 ansible-playbook -i $ansible_inventory_file \
