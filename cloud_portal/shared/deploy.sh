@@ -25,10 +25,10 @@ export TF_VAR_master_disk_size="50"
 export TF_VAR_node_disk_size="50"
 export TF_VAR_edge_disk_size="50"
 
-# general
-export TF_VAR_cf_mail="anders.larsson@icm.uu.se"
-export TF_VAR_cf_zone="uservice.se"
+# read cloudflare credentials from the cloned submodule private repo
+$PORTAL_APP_REPO_FOLDER'/'phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh
 export TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
+domain=$TF_VAR_cf_subdomain'.'$TF_VAR_cf_zone
 
 ## Deploy cluster with terraform
 terraform get $KUBENOW_TERRAFORM_FOLDER
@@ -50,7 +50,6 @@ ansible-playbook -i $ansible_inventory_file \
                  $PORTAL_APP_REPO_FOLDER'/KubeNow/playbooks/install-core.yml'
 
 # deploy galaxy
-domain=$TF_VAR_cf_subdomain'.'$TF_VAR_cf_zone
 ansible-playbook -i $ansible_inventory_file \
                  -e "domain=$domain" \
                  --key-file $PRIVATE_KEY \

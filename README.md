@@ -6,9 +6,9 @@ This repository contains submodules so use the `--recursive` parameter when clon
 
  `git clone --recursive https://github.com/phnmnl/cloud-deploy-kubenow.git`
  
- **Note:** You will probably get an error message because you don't have the rights to read the private repository containing
- secret api keys - but that's OK.
- `fatal: clone of 'git@github.com:EMBL-EBI-TSI/phenomenal-cloudflare.git' into submodule path 'phenomenal-cloudflare' failed`
+ **Note:** You might get an error message: `fatal: clone of 'git@github.com:EMBL-EBI-TSI/phenomenal-cloudflare.git'
+  into submodule path 'phenomenal-cloudflare' failed`. This is because you don't have the access rights to read the
+  private repository containing secret api keys.
 
 ### Directories and files
 
@@ -49,3 +49,21 @@ This repository contains submodules so use the `--recursive` parameter when clon
     │
     │
     └ test_env_vars_for_gcp.sh         # Google cloud version of testing vars                                     
+
+
+  
+### If you want to test the deployment:
+    
+    # First edit the test_env_vars... file
+    
+    # Then 
+    source test_env_vars...sh
+    
+    # Deploy (openstack)
+    cloud_portal/ostack/deploy.sh
+    
+    # Status
+    cloud_portal/ostack/status.sh
+    
+    # Destroy
+    cloud_portal/ostack/destroy.sh

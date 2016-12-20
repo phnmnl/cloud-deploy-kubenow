@@ -20,11 +20,6 @@ export TF_VAR_cluster_prefix="vregoogle"
 export TF_VAR_node_count="2"
 export TF_VAR_edge_count="1"
 
-export TF_VAR_cf_mail="anders.larsson@icm.uu.se"
-export TF_VAR_cf_token="xxxxxxxxxxx"
-export TF_VAR_cf_zone="uservice.se"
-export TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
-
 #
 # General for TSI
 #

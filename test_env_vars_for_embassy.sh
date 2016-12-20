@@ -33,12 +33,6 @@ export TF_VAR_cluster_prefix="vrembassy"
 export TF_VAR_node_count="2"
 export TF_VAR_edge_count="2"
 
-export TF_VAR_cf_mail="xxxxxxxx"
-export TF_VAR_cf_token="xxxxxxxxx"
-export TF_VAR_cf_zone="xxxxxxxxx"
-export TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
-
-
 #
 # General for TSI
 #
