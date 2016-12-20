@@ -34,4 +34,3 @@ export PORTAL_DEPLOYMENT_REFERENCE="id-phnmnl-embassy"
 
 # make sure deploymend id dir exists
 mkdir $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
-
