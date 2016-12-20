@@ -1,0 +1,27 @@
+---
+- hosts: master
+  gather_facts: False
+  tasks:
+    - name: wait for all pods to be ready/running
+      command: >
+        kubectl get pods
+        -o jsonpath='{.items[*].status.containerStatuses[*].ready}'
+        --all-namespaces
+      register: get_is_ready
+      until: get_is_ready.stdout | match( '^(true\s)*true$' )
+      # Wait for 10 minutes
+      retries: 120
+      delay: 5
+
+    - name: add galaxy repo
+      become: yes
+      command: >
+        helm repo add galaxy-helm-repo 
+        https://pcm32.github.io/galaxy-helm-charts
+      
+    - name: install galaxy
+      become: yes
+      command: >
+        helm install 
+        --set use_ingress="yes",domain="{{ domain }}",external_ingress_controller="yes"
+        galaxy-helm-repo/galaxy-postgres-chart
