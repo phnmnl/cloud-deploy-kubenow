@@ -12,7 +12,7 @@
                                                                                   "node_instance_type",
                                                                                   "edge_instance_typ"
                                                                                 ]
-        },
+                },
 
 		
 		
@@ -32,7 +32,7 @@
 	                                                                        "node_flavor",
 	                                                                        "edge_flavor"
 	                                                                      ]
-	    }
+	       }
 	],
 	"inputs": [ "cluster_prefix",
 	            "node_count",
