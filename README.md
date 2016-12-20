@@ -38,5 +38,10 @@ This repository contains submodules so use the `--recursive` parameter when clon
     ├ manifest.json             # This is the TSI parameter file used to describe the setup
     │
     │
-    └ test_env_vars_expected_from_cloud_portal_embassy.sh      # Includes vars expected to be provided from web-ui
-                                                               # and only used for local testing purposes 
+    ├ test_env_vars_for_embassy.sh     # Includes vars expected to be provided from web-ui and only used for local
+    │                                  # testing purposes
+    │
+    ├ test_env_vars_for_aws.sh         # Amazon version of testing vars       
+    │
+    │
+    └ test_env_vars_for_gcp.sh         # Google cloud version of testing vars                                     
