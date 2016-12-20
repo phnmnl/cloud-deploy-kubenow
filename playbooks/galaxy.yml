@@ -25,9 +25,3 @@
         helm install 
         --set use_ingress="yes",domain="{{ domain }}",external_ingress_controller="yes"
         galaxy-helm-repo/galaxy-postgres-chart
-        
-     #galaxy-simple
-      
-  
-
-
