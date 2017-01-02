@@ -6,6 +6,9 @@ This repository contains submodules so use the `--recursive` parameter when clon
 
  `git clone --recursive https://github.com/phnmnl/cloud-deploy-kubenow.git`
  
+ `# If you later want to pull latest version and also pull latest submodule updates:`
+ `git pull --recurse-submodules`
+ 
  **Note:** You might get an error message: `fatal: clone of 'git@github.com:EMBL-EBI-TSI/phenomenal-cloudflare.git'
   into submodule path 'phenomenal-cloudflare' failed`. This is because you don't have the access rights to read the
   private repository containing secret api keys.
@@ -53,8 +56,12 @@ This repository contains submodules so use the `--recursive` parameter when clon
 
   
 ### If you want to test the deployment:
+
+First, If you don't have a "kubenow-cloudportal-01" image available in your cloud teenancy then you need to build one.
+Please enter the KubeNow subdirectory `cd KubeNow` and follow the instructions [http://kubenow.readthedocs.io/en/stable/getting_started/bootstrap.html#bootstrap-on-openstack](http://kubenow.readthedocs.io/en/stable/getting_started/bootstrap.html#bootstrap-on-openstack) (name your image kubenow-cloudportal-01).
+
     
-    # First edit the test_env_vars... file
+    # Edit the test_env_vars... file
     
     # Then 
     source test_env_vars...sh

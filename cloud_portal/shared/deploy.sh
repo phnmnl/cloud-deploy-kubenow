@@ -15,7 +15,7 @@ export TF_VAR_ssh_key=$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE'/vre
 #
 
 # gce and ostack
-export TF_VAR_KuberNow_image="kubenow-release-01"
+export TF_VAR_KuberNow_image="kubenow-cloudportal-01"
 
 # aws
 export TF_VAR_kubenow_image_id="ami-1db87872"
