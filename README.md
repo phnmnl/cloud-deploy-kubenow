@@ -58,10 +58,16 @@ This repository contains submodules so use the `--recursive` parameter when clon
 ### If you want to test the deployment:
 
 First, If you don't have a "kubenow-cloudportal-01" image available in your cloud teenancy then you need to build one.
-Please enter the KubeNow subdirectory `cd KubeNow` and follow the instructions [http://kubenow.readthedocs.io/en/stable/getting_started/bootstrap.html#bootstrap-on-openstack](http://kubenow.readthedocs.io/en/stable/getting_started/bootstrap.html#bootstrap-on-openstack) (name your image kubenow-cloudportal-01).
+Please enter the KubeNow subdirectory:
 
+    cd KubeNow
+
+and follow the instructions: [http://kubenow.readthedocs.io/en/stable/getting_started/bootstrap.html#bootstrap-on-openstack](http://kubenow.readthedocs.io/en/stable/getting_started/bootstrap.html#bootstrap-on-openstack) (name your image kubenow-cloudportal-01).
+
+    # When you have a kubenow-cloudportal-01 image, step back to cloud-deploy directory
+    cd ..
     
-    # Edit the test_env_vars... file
+    # Now edit the test_env_vars... file
     
     # Then 
     source test_env_vars...sh
