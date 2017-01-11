@@ -76,7 +76,7 @@ and follow the instructions: [http://kubenow.readthedocs.io/en/stable/getting_st
     cloud_portal/ostack/deploy.sh
     
     # Status
-    cloud_portal/ostack/status.sh
+    cloud_portal/ostack/state.sh
     
     # Destroy
     cloud_portal/ostack/destroy.sh
