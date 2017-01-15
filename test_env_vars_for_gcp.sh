@@ -5,6 +5,11 @@
 #
 # Speciffic for GCE
 #
+#
+# Apart from following variables env-var GOOGLE_CREDENTIALS is supposed to be set
+#
+# Either GOOGLE_CREDENTIALS or TF_VAR_gce_credentials_file should be set
+export GOOGLE_CREDENTIALS=""
 export TF_VAR_gce_credentials_file="/home/xxxxxxxxxxxxxxxxxxxxxxxxxx.json"
 export TF_VAR_gce_project="resolute-winter"
 export TF_VAR_gce_zone="europe-west1-b"
@@ -23,9 +28,14 @@ export TF_VAR_edge_count="1"
 #
 # General for TSI
 #
+
+#
+# If you are doing a local testing replace the path with the absolute
+# path to your local cloned cloud-deploy directory
+#
 export PORTAL_DEPLOYMENTS_ROOT="/home/xxxxxxxxxxxxxxxxxxx/cloud-deploy/deployments"
 export PORTAL_APP_REPO_FOLDER="/home/xxxxxxxxxxxxxxx/cloud-deploy"
 export PORTAL_DEPLOYMENT_REFERENCE="id-phnmnl-gcp"
 
 # local testing - make sure deploymend id dir exists
-mkdir $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
+mkdir -p $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE

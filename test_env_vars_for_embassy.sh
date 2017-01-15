@@ -36,9 +36,12 @@ export TF_VAR_edge_count="2"
 #
 # General for TSI
 #
-export PORTAL_DEPLOYMENTS_ROOT="/home/xxxxxxxxxxxx/cloud-deploy/deployments"
+# If you are doing a local testing replace the path with the absolute
+# path to your local cloned cloud-deploy directory
+#
+export PORTAL_DEPLOYMENTS_ROOT="/home/xxxxxxxxxxxx/cloud-deploy/deployments" 
 export PORTAL_APP_REPO_FOLDER="/home/xxxxxxxxxx/cloud-deploy"
 export PORTAL_DEPLOYMENT_REFERENCE="id-phnmnl-embassy"
 
 # local testing - make sure deploymend id dir exists
-mkdir $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
+mkdir -p $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
