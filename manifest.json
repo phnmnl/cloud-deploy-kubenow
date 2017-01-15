@@ -27,7 +27,7 @@
 		
 		{ "cloudProvider": "GCP", "path": "cloud_portal/gcp", "inputs": [ "gce_credentials_file",
                                                                                 "gce_project",
-                                                                                "gce_zone"
+                                                                                "gce_zone",
                                                                                 "master_flavor",
 	                                                                        "node_flavor",
 	                                                                        "edge_flavor"
