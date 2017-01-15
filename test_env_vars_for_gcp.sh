@@ -37,4 +37,5 @@ export PORTAL_APP_REPO_FOLDER="/home/xxxxxxxxxxxxxxx/cloud-deploy"
 export PORTAL_DEPLOYMENT_REFERENCE="id-phnmnl-gcp"
 
 # local testing - make sure deploymend id dir exists
-mkdir -p $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
+deployment_dir=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
+mkdir -p $deployment_dir
