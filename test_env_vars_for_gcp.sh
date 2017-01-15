@@ -8,9 +8,8 @@
 #
 # Apart from following variables env-var GOOGLE_CREDENTIALS is supposed to be set
 #
-# Either GOOGLE_CREDENTIALS or TF_VAR_gce_credentials_file should be set
-export GOOGLE_CREDENTIALS=""
-export TF_VAR_gce_credentials_file="/home/xxxxxxxxxxxxxxxxxxxxxxxxxx.json"
+
+export GOOGLE_CREDENTIALS=$(cat "/path/to/credentials_file.json");
 export TF_VAR_gce_project="resolute-winter"
 export TF_VAR_gce_zone="europe-west1-b"
 

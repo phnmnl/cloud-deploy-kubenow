@@ -16,6 +16,10 @@ export TF_VAR_ssh_key=$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE'/vre
 
 # gce and ostack
 export TF_VAR_KuberNow_image="kubenow-cloudportal-01"
+# workaround: -the credentials are provided as an environment variable, but KubeNow terraform
+# scripts need a file. Creates an credentialsfile from the environment variable
+echo $GOOGLE_CREDENTIALS > $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
+export TF_VAR_gce_credentials_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
 
 # aws
 export TF_VAR_kubenow_image_id="ami-1db87872"
@@ -36,7 +40,7 @@ terraform apply --state=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'
 
 # Provision nodes with ansible
 export ANSIBLE_HOST_KEY_CHECKING=False
-nodes_count=$(($TF_VAR_node_count+$TF_VAR_edge_count+1))
+nodes_count=$(($TF_VAR_node_count+$TF_VAR_edge_count+1)) # +1 because master is also one node
 ansible_inventory_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/inventory'
 
 # deploy core stack
