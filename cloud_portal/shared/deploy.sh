@@ -43,6 +43,8 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 nodes_count=$(($TF_VAR_node_count+$TF_VAR_edge_count+1)) # +1 because master is also one node
 ansible_inventory_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/inventory'
 
+echo $domain
+
 # deploy core stack
 ansible-playbook -i $ansible_inventory_file \
                  --key-file $PRIVATE_KEY \
@@ -52,6 +54,20 @@ ansible-playbook -i $ansible_inventory_file \
                  -e "cf_zone=$TF_VAR_cf_zone" \
                  -e "cf_subdomain=$TF_VAR_cf_subdomain" \
                  $PORTAL_APP_REPO_FOLDER'/KubeNow/playbooks/install-core.yml'
+
+# wait for all pods in core stack to be ready
+ansible-playbook -i $ansible_inventory_file \
+                 --key-file $PRIVATE_KEY \
+                 $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_all_pods_ready.yml'
+
+# deploy jupyter
+$PORTAL_APP_REPO_FOLDER'/bin/set-jupyter-password'
+JUPYTER_PASSWORD=$( cat ".secret-jupyter" )
+ansible-playbook -i $ansible_inventory_file \
+                 -e "domain=$domain" \
+                 -e "sha1_pass_jupyter=$JUPYTER_PASSWORD" \
+                 --key-file $PRIVATE_KEY \
+                 $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter/main.yml'
 
 # deploy galaxy
 ansible-playbook -i $ansible_inventory_file \

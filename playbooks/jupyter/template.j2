@@ -1,0 +1,60 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: jupyter
+  labels:
+    app: phenomenal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phenomenal
+      task: jupyter
+  template:
+    metadata:
+      labels:
+        app: phenomenal
+        task: jupyter
+    spec:
+      containers:
+      - name: jupyter
+        image: jupyter/all-spark-notebook
+        args:
+          - "start-notebook.sh"
+          - "--NotebookApp.password='{{sha1_pass_jupyter}}'"
+        ports:
+        - containerPort: 8888
+        resources:
+          requests:
+            memory: 2G
+            cpu: 1
+            
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter
+spec:
+  ports:
+  - name: http
+    targetPort: 8888
+    port: 8888
+  selector:
+    app: phenomenal
+    task: jupyter
+    
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: phenomenal
+spec:
+  rules:
+  - host: notebook.{{domain}}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: jupyter
+          servicePort: http
