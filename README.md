@@ -82,7 +82,7 @@ Access services:
     
 - http://galaxy.[your prefix].phenomenal.cloud
     
-- http://notebook.[your prefix].phenomenal.cloud
+- http://notebook.[your prefix].phenomenal.cloud (password=password)
     
 Destroy cluster:
     
