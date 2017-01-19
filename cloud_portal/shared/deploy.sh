@@ -30,11 +30,11 @@ export TF_VAR_node_disk_size="50"
 export TF_VAR_edge_disk_size="50"
 
 # read cloudflare credentials from the cloned submodule private repo
-$PORTAL_APP_REPO_FOLDER'/'phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh
+source $PORTAL_APP_REPO_FOLDER'/'phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh
 export TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
 domain=$TF_VAR_cf_subdomain'.'$TF_VAR_cf_zone
 
-## Deploy cluster with terraform
+# Deploy cluster with terraform
 terraform get $KUBENOW_TERRAFORM_FOLDER
 terraform apply --state=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/terraform.tfstate' $KUBENOW_TERRAFORM_FOLDER
 
@@ -52,6 +52,20 @@ ansible-playbook -i $ansible_inventory_file \
                  -e "cf_zone=$TF_VAR_cf_zone" \
                  -e "cf_subdomain=$TF_VAR_cf_subdomain" \
                  $PORTAL_APP_REPO_FOLDER'/KubeNow/playbooks/install-core.yml'
+
+# wait for all pods in core stack to be ready
+ansible-playbook -i $ansible_inventory_file \
+                 --key-file $PRIVATE_KEY \
+                 $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_all_pods_ready.yml'
+
+# deploy jupyter
+$PORTAL_APP_REPO_FOLDER'/bin/set-jupyter-password'
+JUPYTER_PASSWORD=$( cat ".secret-jupyter" )
+ansible-playbook -i $ansible_inventory_file \
+                 -e "domain=$domain" \
+                 -e "sha1_pass_jupyter=$JUPYTER_PASSWORD" \
+                 --key-file $PRIVATE_KEY \
+                 $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter/main.yml'
 
 # deploy galaxy
 ansible-playbook -i $ansible_inventory_file \

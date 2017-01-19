@@ -78,5 +78,13 @@ and follow the instructions: [http://kubenow.readthedocs.io/en/stable/getting_st
     # Status
     cloud_portal/ostack/state.sh
     
+Access services:
+    
+- http://galaxy.[your prefix].phenomenal.cloud
+    
+- http://notebook.[your prefix].phenomenal.cloud (password=password)
+    
+Destroy cluster:
+    
     # Destroy
     cloud_portal/ostack/destroy.sh
