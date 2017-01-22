@@ -15,7 +15,7 @@ export TF_VAR_ssh_key=$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE'/vre
 #
 
 # gce and ostack
-export TF_VAR_KuberNow_image="kubenow-cloudportal-01"
+export TF_VAR_KuberNow_image="kubenow-v020a1"
 # workaround: -the credentials are provided as an environment variable, but KubeNow terraform
 # scripts need a file. Creates an credentialsfile from the environment variable
 echo $GOOGLE_CREDENTIALS > $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
