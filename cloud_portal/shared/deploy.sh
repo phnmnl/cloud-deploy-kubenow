@@ -2,6 +2,7 @@
 set -e
 
 # set pwd (to make sure all variable files end up in the deployment reference dir)
+mkdir -p $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
 cd $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
 
 # presetup (generate key kubeadm token etc.)
