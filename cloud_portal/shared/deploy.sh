@@ -2,6 +2,7 @@
 set -e
 
 # set pwd (to make sure all variable files end up in the deployment reference dir)
+mkdir -p $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
 cd $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
 
 # presetup (generate key kubeadm token etc.)
@@ -15,7 +16,7 @@ export TF_VAR_ssh_key=$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE'/vre
 #
 
 # gce and ostack
-export TF_VAR_KuberNow_image="kubenow-cloudportal-01"
+export TF_VAR_KuberNow_image="kubenow-v020a1"
 # workaround: -the credentials are provided as an environment variable, but KubeNow terraform
 # scripts need a file. Creates an credentialsfile from the environment variable
 echo $GOOGLE_CREDENTIALS > $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
@@ -30,11 +31,11 @@ export TF_VAR_node_disk_size="50"
 export TF_VAR_edge_disk_size="50"
 
 # read cloudflare credentials from the cloned submodule private repo
-$PORTAL_APP_REPO_FOLDER'/'phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh
+source $PORTAL_APP_REPO_FOLDER'/'phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh
 export TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
 domain=$TF_VAR_cf_subdomain'.'$TF_VAR_cf_zone
 
-## Deploy cluster with terraform
+# Deploy cluster with terraform
 terraform get $KUBENOW_TERRAFORM_FOLDER
 terraform apply --state=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/terraform.tfstate' $KUBENOW_TERRAFORM_FOLDER
 

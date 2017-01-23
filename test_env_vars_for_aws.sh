@@ -32,6 +32,8 @@ export PORTAL_DEPLOYMENTS_ROOT="/home/..bla.../cloud-deploy/deployments"
 export PORTAL_APP_REPO_FOLDER="/home/..bla.../cloud-deploy"
 export PORTAL_DEPLOYMENT_REFERENCE="id-phnmnl-aws"
 
-# local testing - make sure deploymend id dir exists
-deployment_dir=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
-mkdir -p $deployment_dir
+# local testing - make sure deployment-id directory exists
+dir=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
+if [ ! -d $dir ]; then
+  mkdir -p $dir
+fi
