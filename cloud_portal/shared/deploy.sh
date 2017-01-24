@@ -62,13 +62,13 @@ ansible-playbook -i $ansible_inventory_file \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_all_pods_ready.yml'
 
 # deploy jupyter
-$PORTAL_APP_REPO_FOLDER'/bin/set-jupyter-password'
-JUPYTER_PASSWORD=$( cat ".secret-jupyter" )
-ansible-playbook -i $ansible_inventory_file \
-                 -e "domain=$domain" \
-                 -e "sha1_pass_jupyter=$JUPYTER_PASSWORD" \
-                 --key-file $PRIVATE_KEY \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter/main.yml'
+#$PORTAL_APP_REPO_FOLDER'/bin/set-jupyter-password'
+#JUPYTER_PASSWORD=$( cat ".secret-jupyter" )
+#ansible-playbook -i $ansible_inventory_file \
+#                 -e "domain=$domain" \
+#                 -e "sha1_pass_jupyter=$JUPYTER_PASSWORD" \
+#                 --key-file $PRIVATE_KEY \
+#                 $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter/main.yml'
 
 # deploy galaxy
 ansible-playbook -i $ansible_inventory_file \
