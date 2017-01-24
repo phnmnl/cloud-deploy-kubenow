@@ -57,8 +57,11 @@ This repository contains submodules so use the `--recursive` parameter when clon
   
 ### If you want to test the deployment:
 
-First, If you don't have a "kubenow-cloudportal-01" image available in your cloud teenancy then you need to build one.
-Please enter the KubeNow subdirectory:
+First, If you don't have a "kubenow-cloudportal-01" image available in your cloud teenancy then you need to upload or build one.
+
+Latest images are availabe for upload into your teenancy from: [https://github.com/kubenow/KubeNow/releases](https://github.com/kubenow/KubeNow/releases)
+
+Or if you want to build one, please enter the KubeNow subdirectory:
 
     cd KubeNow
 
