@@ -4,10 +4,10 @@
 cd $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
 
 # remove cloudflare record
+# read cloudflare credentials from the cloned submodule private repo
+source $PORTAL_APP_REPO_FOLDER'/'phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh
+TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
 ansible_inventory_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/inventory'
-
-echo $ansible_inventory_file
-echo $PORTAL_APP_REPO_FOLDER'/KubeNow/playbooks/clean-cloudflare.yml'
 
 ansible-playbook -i $ansible_inventory_file \
                  -e "cf_mail=$TF_VAR_cf_mail" \
