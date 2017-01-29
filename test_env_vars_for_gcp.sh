@@ -25,7 +25,7 @@ export TF_VAR_node_count="2"
 export TF_VAR_edge_count="1"
 
 # Galaxy
-export TF_VAR_galaxy_admin_email="anders.larsson@icm.uu.se"
+export TF_VAR_galaxy_admin_email="yoourname@bla.bla.com"
 export TF_VAR_galaxy_admin_password="password"
 
 # Jupyter
