@@ -4,10 +4,12 @@ The scripts are designed to work with the EMBL-EBI-TSI - Phenomenal Web-UI.
 
 This repository contains submodules so use the `--recursive` parameter when cloning e.g.
 
- `git clone --recursive https://github.com/phnmnl/cloud-deploy-kubenow.git`
+    git clone --recursive https://github.com/phnmnl/cloud-deploy-kubenow.git
  
- `# If you later want to pull latest version and also pull latest submodule updates:`
- `git pull --recurse-submodules`
+If you later want to pull latest version and also pull latest submodule updates:
+
+    git pull --recurse-submodules
+    git submodule update --recursive --remote
  
  **Note:** You might get an error message: `fatal: clone of 'git@github.com:EMBL-EBI-TSI/phenomenal-cloudflare.git'
   into submodule path 'phenomenal-cloudflare' failed`. This is because you don't have the access rights to read the
