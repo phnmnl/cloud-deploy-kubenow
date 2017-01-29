@@ -28,10 +28,20 @@ export TF_VAR_external_network_uuid="d9384930-baa5-422b-8657-1d42fb54f89c"
 export TF_VAR_master_flavor="s1.large"
 export TF_VAR_node_flavor="s1.large"
 export TF_VAR_edge_flavor="s1.large"
+#export TF_VAR_master_flavor_id=""
+#export TF_VAR_node_flavor_id=""
+#export TF_VAR_edge_flavor_id=""
 
 export TF_VAR_cluster_prefix="vrembassy"
 export TF_VAR_node_count="2"
-export TF_VAR_edge_count="2"
+export TF_VAR_edge_count="1"
+
+# Galaxy
+export TF_VAR_galaxy_admin_email="anders.larsson@icm.uu.se"
+export TF_VAR_galaxy_admin_password="password"
+
+# Jupyter
+export TF_VAR_jupyter_password="password"
 
 #
 # General for TSI

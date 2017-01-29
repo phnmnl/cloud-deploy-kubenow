@@ -21,6 +21,13 @@ export TF_VAR_cluster_prefix="vreaws"
 export TF_VAR_node_count="2"
 export TF_VAR_edge_count="1"
 
+# Galaxy
+export TF_VAR_galaxy_admin_email="anders.larsson@icm.uu.se"
+export TF_VAR_galaxy_admin_password="password"
+
+# Jupyter
+export TF_VAR_jupyter_password="password"
+
 #
 # General for TSI
 #
