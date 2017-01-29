@@ -86,9 +86,9 @@ and follow the instructions: [http://kubenow.readthedocs.io/en/stable/getting_st
     
 Access services:
     
-- http://galaxy.\<your prefix\>.phenomenal.cloud
+- http://galaxy. "your prefix" .phenomenal.cloud
     
-- http://notebook.\<your prefix\>.phenomenal.cloud (password=password)
+- http://notebook. "your prefix" .phenomenal.cloud (password=password)
     
 Destroy cluster:
     
