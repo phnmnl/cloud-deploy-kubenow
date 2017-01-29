@@ -12,5 +12,5 @@
       become: yes
       command: >
         helm install 
-        --set use_ingress="yes",domain="{{ domain }}",external_ingress_controller="yes"
+        --set use_ingress="yes",domain="{{ domain }}",external_ingress_controller="yes",galaxy_admin_email="{{ galaxy_admin_email }}",galaxy_admin_password="{{ galaxy_admin_password }}",galaxy_api_key="{{ galaxy_api_key }}"
         galaxy-helm-repo/galaxy-postgres-chart

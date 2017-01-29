@@ -1,3 +1,14 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: jupyter-volume-claim
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1G
+
 ---
 kind: Deployment
 apiVersion: extensions/v1beta1
@@ -19,16 +30,25 @@ spec:
     spec:
       containers:
       - name: jupyter
-        image: jupyter/all-spark-notebook
+        image: mcapuccini/jupyter
         args:
-          - "start-notebook.sh"
-          - "--NotebookApp.password='{{sha1_pass_jupyter}}'"
+            - "jupyter"
+            - "notebook"
+            - "--NotebookApp.password='{{sha1_pass_jupyter}}'"
         ports:
-        - containerPort: 8888
+          - containerPort: 8888
         resources:
           requests:
             memory: 2G
-            cpu: 1
+            cpu: 2
+        volumeMounts:
+          - mountPath: "/home/jovyan/work"
+            name: shared-volume
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: jupyter-volume-claim
+      restartPolicy: Always
             
 ---
 apiVersion: v1
@@ -58,3 +78,4 @@ spec:
         backend:
           serviceName: jupyter
           servicePort: http
+

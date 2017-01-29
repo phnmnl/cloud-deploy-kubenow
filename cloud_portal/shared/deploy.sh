@@ -44,8 +44,6 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 nodes_count=$(($TF_VAR_node_count+$TF_VAR_edge_count+1)) # +1 because master is also one node
 ansible_inventory_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/inventory'
 
-echo $domain
-
 # deploy core stack
 ansible-playbook -i $ansible_inventory_file \
                  --key-file $PRIVATE_KEY \
@@ -62,16 +60,20 @@ ansible-playbook -i $ansible_inventory_file \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_all_pods_ready.yml'
 
 # deploy jupyter
-#$PORTAL_APP_REPO_FOLDER'/bin/set-jupyter-password'
-#JUPYTER_PASSWORD=$( cat ".secret-jupyter" )
-#ansible-playbook -i $ansible_inventory_file \
-#                 -e "domain=$domain" \
-#                 -e "sha1_pass_jupyter=$JUPYTER_PASSWORD" \
-#                 --key-file $PRIVATE_KEY \
-#                 $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter/main.yml'
-
-# deploy galaxy
+JUPYTER_PASSWORD_HASH=$( $PORTAL_APP_REPO_FOLDER'/bin/generate-jupyter-password-hash.sh' $TF_VAR_jupyter_password )
 ansible-playbook -i $ansible_inventory_file \
                  -e "domain=$domain" \
+                 -e "sha1_pass_jupyter=$JUPYTER_PASSWORD_HASH" \
+                 --key-file $PRIVATE_KEY \
+                 $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter/main.yml'
+
+# deploy galaxy
+$PORTAL_APP_REPO_FOLDER'/bin/generate-galaxy-api-key'
+galaxy_api_key=$(cat $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/galaxy_api_key')
+ansible-playbook -i $ansible_inventory_file \
+                 -e "domain=$domain" \
+                 -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
+                 -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
+                 -e "galaxy_api_key=$galaxy_api_key" \
                  --key-file $PRIVATE_KEY \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/galaxy.yml'
