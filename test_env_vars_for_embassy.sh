@@ -21,6 +21,7 @@
 #
 export TF_VAR_floating_ip_pool="net_external"
 export TF_VAR_external_network_uuid="d9384930-baa5-422b-8657-1d42fb54f89c"
+# export TF_VAR_dns_nameservers=""
 
 #
 # General (flavor names are speciffic for each openstack installation)
