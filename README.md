@@ -60,7 +60,7 @@ If you later want to pull latest version and also pull latest submodule updates:
   
 ### If you want to test the deployment:
 
-First, If you don't have a "kubenow-cloudportal-01" image available in your cloud teenancy then you need to upload or build one.
+First, If you don't have a "kubenow-v020a1" image available in your cloud teenancy then you need to upload or build one.
 
 Latest images are availabe for upload into your teenancy from: [https://github.com/kubenow/KubeNow/releases](https://github.com/kubenow/KubeNow/releases)
 
