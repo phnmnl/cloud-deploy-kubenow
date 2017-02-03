@@ -66,6 +66,12 @@ ansible-playbook -i $ansible_inventory_file \
                  -e "sha1_pass_jupyter=$JUPYTER_PASSWORD_HASH" \
                  --key-file $PRIVATE_KEY \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter/main.yml'
+                 
+# deploy luigi
+echo ansible-playbook -i $ansible_inventory_file \
+                 -e "domain=$domain" \
+                 --key-file $PRIVATE_KEY \
+                 $PORTAL_APP_REPO_FOLDER'/playbooks/luigi/main.yml'
 
 # deploy galaxy
 $PORTAL_APP_REPO_FOLDER'/bin/generate-galaxy-api-key'
