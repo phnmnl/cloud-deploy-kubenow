@@ -29,7 +29,7 @@ If you later want to pull latest version and also pull latest submodule updates:
     │                           # provider speciffic scripts
     │
     │
-    ├── KubeNow                 # This is the standart KubeNow git repo included as a git sub-module and this is
+    ├── KubeNow                 # This is the standard KubeNow git repo included as a git sub-module and this is
     │                           # where the terraform and default KubeNow ansible scripts reside (called from the
     │                           # deploy.sh, destroy.sh and state.sh scripts)
     │                            
@@ -70,7 +70,7 @@ Or if you want to build one, please enter the KubeNow subdirectory:
 
 and follow the instructions: [http://kubenow.readthedocs.io/en/stable/getting_started/bootstrap.html#bootstrap-on-openstack](http://kubenow.readthedocs.io/en/stable/getting_started/bootstrap.html#bootstrap-on-openstack) (name your image kubenow-cloudportal-01).
 
-    # When you have a kubenow-cloudportal-01 image, step back to cloud-deploy directory
+    # When you have a kubenow-v020a1 in your repo, step back to cloud-deploy directory
     cd ..
     
     # Now edit the test_env_vars... file
