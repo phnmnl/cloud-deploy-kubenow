@@ -23,7 +23,15 @@ echo $GOOGLE_CREDENTIALS > $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFEREN
 export TF_VAR_gce_credentials_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
 
 # aws
-export TF_VAR_kubenow_image_id="ami-1db87872"
+export TF_VAR_kubenow_image_id="ami-6b427518"
+
+# gce
+# make sure image is available in google project
+if [ $KUBENOW_TERRAFORM_FOLDER = $PORTAL_APP_REPO_FOLDER'/KubeNow/gce' ]
+then
+   ansible-playbook -e "credentials_file_path=$TF_VAR_gce_credentials_file" $PORTAL_APP_REPO_FOLDER'/KubeNow/playbooks/import-gce-image.yml'
+fi
+
 
 # gce and aws
 export TF_VAR_master_disk_size="50"
