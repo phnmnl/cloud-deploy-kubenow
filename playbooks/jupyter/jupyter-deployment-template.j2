@@ -39,8 +39,8 @@ spec:
           - containerPort: 8888
         resources:
           requests:
-            memory: 2G
-            cpu: 2
+            memory: 1G
+            cpu: 200m
         volumeMounts:
           - mountPath: "/home/jovyan/work"
             name: shared-volume

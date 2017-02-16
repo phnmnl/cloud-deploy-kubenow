@@ -23,7 +23,7 @@ echo $GOOGLE_CREDENTIALS > $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFEREN
 export TF_VAR_gce_credentials_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
 
 # aws
-export TF_VAR_kubenow_image_id="ami-6b427518"
+export TF_VAR_kubenow_image_id="ami-1db87872"
 
 # gce and aws
 export TF_VAR_master_disk_size="50"
