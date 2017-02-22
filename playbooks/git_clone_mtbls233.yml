@@ -1,0 +1,7 @@
+- hosts: master
+  gather_facts: False
+  tasks:
+    - name: git clone mtbls233 proof of concept repo into jupyter container
+      shell: >
+        kubectl get pods -o jsonpath='{.items[?(@.spec.containers[].name=="jupyter")].metadata.name}' 
+        | xargs -i kubectl exec {} -- git clone https://github.com/phnmnl/MTBLS233-Jupyter /home/jovyan/work/MTBLS233
