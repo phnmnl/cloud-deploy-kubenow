@@ -91,25 +91,24 @@ ansible-playbook -i $ansible_inventory_file \
                  -e "galaxy_api_key=$galaxy_api_key" \
                  --key-file $PRIVATE_KEY \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/galaxy.yml'
-                                 
-# wait for luigi http response != Bad Gateway
-luigi_url="http://luigi.$domain"
-ansible-playbook -i $ansible_inventory_file \
-                 -e "name=luigi" \
-                 -e "url=$luigi_url" \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_http_not_down.yml'
-                 
-# when luigi is up do git clone data into the container
-ansible-playbook -i $ansible_inventory_file \
-                 --key-file $PRIVATE_KEY \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/git_clone_mtbls233.yml'
-
-                                 
+                                                                
 # wait for jupyter notebook http response != Bad Gateway
 jupyter_url="http://notebook.$domain"
 ansible-playbook -i $ansible_inventory_file \
                  -e "name=jupyter-notebook" \
                  -e "url=$jupyter_url" \
+                 $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_http_not_down.yml'
+                 
+# when jupyter is up do git clone data into the container
+ansible-playbook -i $ansible_inventory_file \
+                 --key-file $PRIVATE_KEY \
+                 $PORTAL_APP_REPO_FOLDER'/playbooks/git_clone_mtbls233.yml'
+                 
+# wait for luigi http response != Bad Gateway
+luigi_url="http://luigi.$domain"
+ansible-playbook -i $ansible_inventory_file \
+                 -e "name=luigi" \
+                 -e "url=$luigi_url" \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_http_not_down.yml'
                  
 # wait for galaxy http response 200 OK
