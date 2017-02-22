@@ -76,7 +76,7 @@ ansible-playbook -i $ansible_inventory_file \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter/main.yml'
                  
 # deploy luigi
-echo ansible-playbook -i $ansible_inventory_file \
+ansible-playbook -i $ansible_inventory_file \
                  -e "domain=$domain" \
                  --key-file $PRIVATE_KEY \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/luigi/main.yml'
