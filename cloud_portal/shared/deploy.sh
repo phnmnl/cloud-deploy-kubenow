@@ -35,7 +35,7 @@ fi
 
 # gce and aws
 export TF_VAR_master_disk_size="50"
-export TF_VAR_node_disk_size="50"
+export TF_VAR_node_disk_size="100"
 export TF_VAR_edge_disk_size="50"
 
 # read cloudflare credentials from the cloned submodule private repo
