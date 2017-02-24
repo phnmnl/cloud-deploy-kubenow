@@ -44,6 +44,9 @@ export TF_VAR_galaxy_admin_password="password"
 # Jupyter
 export TF_VAR_jupyter_password="password"
 
+# Ansible
+export ANSIBLE_HOST_KEY_CHECKING=False
+
 #
 # General for TSI
 #
