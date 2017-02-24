@@ -1,6 +1,7 @@
 # cloud-deploy-kubenow
 This repository contains one-click-deploy-scripts to setup the PhenoMeNal cloud VRE.
-The scripts are designed to work with the EMBL-EBI-TSI - Phenomenal Web-UI.
+The scripts are also part of the backend of the [Phenonemmal Portal](http://portal.phenomenal-h2020.eu/cloud-research-environment)
+
 
 This repository contains submodules so use the `--recursive` parameter when cloning e.g.
 
@@ -8,7 +9,8 @@ This repository contains submodules so use the `--recursive` parameter when clon
  
  **Note:** You might get an error message: `fatal: clone of 'git@github.com:EMBL-EBI-TSI/phenomenal-cloudflare.git'
   into submodule path 'phenomenal-cloudflare' failed`. This is because you don't have the access rights to read the
-  private repository containing secret api keys.
+  private repository containing secret api keys (this is an error you should ignore if you are deploying your own instance
+  of the research environment)
  
 If you later want to pull latest version and also pull latest submodule updates:
 
@@ -60,23 +62,14 @@ If you later want to pull latest version and also pull latest submodule updates:
   
 ### If you want to test the deployment:
 
-First, If you don't have a "kubenow-v020a1" image available in your cloud teenancy then you need to upload or build one.
+First, If you don't have a "kubenow-v020a1" image available in your cloud teenancy then you need to upload one.
 
 Latest images are availabe for upload into your teenancy from: [https://github.com/kubenow/KubeNow/releases](https://github.com/kubenow/KubeNow/releases)
-
-Or if you want to build one, please enter the KubeNow subdirectory:
-
-    cd KubeNow
-
-and follow the instructions: [http://kubenow.readthedocs.io/en/stable/getting_started/bootstrap.html#bootstrap-on-openstack](http://kubenow.readthedocs.io/en/stable/getting_started/bootstrap.html#bootstrap-on-openstack) (name your image kubenow-cloudportal-01).
-
-    # When you have a kubenow-v020a1 in your repo, step back to cloud-deploy directory
-    cd ..
     
-    # Now edit the test_env_vars... file
+    # Now edit the file test_env_vars_for_xxx.sh  matching your cloudprovider (e.g. Openstack, Amazon, Google, Vagrant(local-deployment))
     
-    # Then 
-    source test_env_vars...sh
+    # Then inject variables into your environment
+    source test_env_vars_for_xxxx.sh
     
     # Deploy (openstack)
     cloud_portal/ostack/deploy.sh
