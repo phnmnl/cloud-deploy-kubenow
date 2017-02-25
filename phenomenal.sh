@@ -19,16 +19,10 @@ function display_help
     echo "options:"
     echo " -c, --config-file       user provided config file"
     echo
-    echo "examples: ./phenomenal-cre.sh deploy ostack" 
-    echo "          ./phenomenal-cre.sh destroy ostack"
-    echo "          ./phenomenal-cre.sh state gce" 
-    echo "          ./phenomenal-cre.sh deploy gce --config-file ~/my-configs/my-cloud-conf" 
-    echo
-}
-
-function display_providers
-{	
-	echo "supported <provider> are: ${PROVIDERS[@]}"
+    echo "examples: ./$scriptname deploy ostack" 
+    echo "          ./$scriptname destroy ostack"
+    echo "          ./$scriptname state gce" 
+    echo "          ./$scriptname deploy gce --config-file ~/my-configs/my-cloud-conf" 
 }
 
 function display_commands
@@ -36,10 +30,17 @@ function display_commands
 	echo "supported <command> are: ${COMMANDS[@]}"
 }
 
+function display_providers
+{	
+	echo "supported <provider> are: ${PROVIDERS[@]}"
+}
+
 function containsElement()
 {
     local e
-    for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
+    for e in "${@:2}"; do
+        [[ "$e" == "$1" ]] && return 0
+    done
     return 1
 }
 
