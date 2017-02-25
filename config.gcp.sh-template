@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# Cloud
+export TF_VAR_cluster_prefix="my-cluster-prefix"
+
+export TF_VAR_gce_credentials_file="/home/xxxx/projekt/My-credentials-file-My First Project-a9c82d126069.json"
+export TF_VAR_gce_project="my-project-name-158911"
+export TF_VAR_gce_zone="europe-west1-b"
+
+export TF_VAR_master_flavor="n1-standard-2"
+export TF_VAR_node_flavor="n1-standard-4"
+export TF_VAR_edge_flavor="n1-standard-2"
+
+export TF_VAR_node_count="1"
+export TF_VAR_edge_count="1"
+
+# Galaxy
+export TF_VAR_galaxy_admin_email="yoourname@bla.bla.com"
+export TF_VAR_galaxy_admin_password="password" # need to be at least 6 characters long
+
+# Jupyter
+export TF_VAR_jupyter_password=""
+

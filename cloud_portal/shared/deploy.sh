@@ -17,19 +17,25 @@ export TF_VAR_ssh_key=$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE'/vre
 
 # gce and ostack
 export TF_VAR_KuberNow_image="kubenow-v020a1"
+
+# gce
 # workaround: -the credentials are provided as an environment variable, but KubeNow terraform
 # scripts need a file. Creates an credentialsfile from the environment variable
-echo $GOOGLE_CREDENTIALS > $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
-export TF_VAR_gce_credentials_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
+if [ -n "$GOOGLE_CREDENTIALS" ]; then
+  echo $GOOGLE_CREDENTIALS > $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
+  export TF_VAR_gce_credentials_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
+fi
 
 # aws
 export TF_VAR_kubenow_image_id="ami-6b427518"
 
 # gce
 # make sure image is available in google project
-if [ $KUBENOW_TERRAFORM_FOLDER = $PORTAL_APP_REPO_FOLDER'/KubeNow/gce' ]
-then
-   ansible-playbook -e "credentials_file_path=$TF_VAR_gce_credentials_file" $PORTAL_APP_REPO_FOLDER'/KubeNow/playbooks/import-gce-image.yml'
+if [ $KUBENOW_TERRAFORM_FOLDER = $PORTAL_APP_REPO_FOLDER'/KubeNow/gce' ]; then
+   ansible-playbook -i "localhost," \
+                    -c local \
+                    -e "credentials_file_path=\"$TF_VAR_gce_credentials_file\"" \
+                    $PORTAL_APP_REPO_FOLDER'/KubeNow/playbooks/import-gce-image.yml'
 fi
 
 
