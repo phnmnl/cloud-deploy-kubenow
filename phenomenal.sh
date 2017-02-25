@@ -1,5 +1,3 @@
-# Variabler i bash (vilken notation?)
-
 #!/usr/bin/env bash
 
 # Exit immediately if a command exits with a non-zero status
@@ -35,11 +33,11 @@ function display_providers
 	echo "supported <provider> are: ${PROVIDERS[@]}"
 }
 
-function containsElement()
+function contains_element
 {
     local e
     for e in "${@:2}"; do
-        [[ "$e" == "$1" ]] && return 0
+        [ "$e" = "$1" ] && return 0
     done
     return 1
 }
@@ -56,7 +54,7 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     exit 1
 fi
 
-if ! containsElement "$1" "${COMMANDS[@]}"; then
+if ! contains_element "$1" "${COMMANDS[@]}"; then
     echo "'$1' is not a valid <command>"
     display_commands
     exit 1
@@ -70,7 +68,7 @@ if [ -z "$2" ]; then
     exit 1
 fi
 
-if ! containsElement "$2" "${PROVIDERS[@]}"; then
+if ! contains_element "$2" "${PROVIDERS[@]}"; then
     echo "'$2' is not a valid <provider> argument"
     display_providers
     exit 1
