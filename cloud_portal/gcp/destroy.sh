@@ -15,4 +15,4 @@ $PORTAL_APP_REPO_FOLDER'/cloud_portal/shared/destroy.sh'
 
 # workaround: -the credentials are provided as an environment variable, but KubeNow terraform
 # scripts need a file
-rm $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
+rm -f $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
