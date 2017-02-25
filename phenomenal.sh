@@ -9,7 +9,7 @@ scriptname=`basename "$0"`
 
 function display_help
 {	
-    echo "usage: $scriptname <command> <provider> [options]"
+    display_usage
     echo
     display_commands
     display_providers
@@ -21,6 +21,11 @@ function display_help
     echo "          ./$scriptname destroy ostack"
     echo "          ./$scriptname state gce" 
     echo "          ./$scriptname deploy gce --config-file ~/my-configs/my-cloud-conf" 
+}
+
+function display_usage
+{	
+	echo "usage: $scriptname <command> <provider> [options]"
 }
 
 function display_commands
@@ -57,6 +62,7 @@ fi
 if ! contains_element "$1" "${COMMANDS[@]}"; then
     echo "'$1' is not a valid <command>"
     display_commands
+    display_usage
     exit 1
 fi
 command="$1"
@@ -71,6 +77,7 @@ fi
 if ! contains_element "$2" "${PROVIDERS[@]}"; then
     echo "'$2' is not a valid <provider> argument"
     display_providers
+    display_usage
     exit 1
 fi
 provider="$2"
