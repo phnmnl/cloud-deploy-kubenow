@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # Exit immediately if a command exits with a non-zero status
 set -e
 
@@ -9,7 +8,7 @@ scriptname=`basename "$0"`
 
 function display_help
 {	
-    display_usage
+    echo "usage: $scriptname <command> <provider> [options]"
     echo
     display_commands
     display_providers
@@ -23,9 +22,9 @@ function display_help
     echo "          ./$scriptname deploy gce --config-file ~/my-configs/my-cloud-conf" 
 }
 
-function display_usage
+function display_helpcommand
 {	
-	echo "usage: $scriptname <command> <provider> [options]"
+	echo "see '$scriptname --help'"
 }
 
 function display_commands
@@ -62,7 +61,7 @@ fi
 if ! contains_element "$1" "${COMMANDS[@]}"; then
     echo "'$1' is not a valid <command>"
     display_commands
-    display_usage
+    display_helpcommand
     exit 1
 fi
 command="$1"
@@ -77,7 +76,7 @@ fi
 if ! contains_element "$2" "${PROVIDERS[@]}"; then
     echo "'$2' is not a valid <provider> argument"
     display_providers
-    display_usage
+    display_helpcommand
     exit 1
 fi
 provider="$2"
@@ -90,7 +89,7 @@ elif [ "$3" = "-c" ] || [ "$3" = "--config-file" ]; then
     echo "using config-file: $config_file"
 else
     echo "'$3' is not a valid argument"
-    echo "see: '$scriptname --help'"
+    display_helpcommand
     exit 1
 fi
 
