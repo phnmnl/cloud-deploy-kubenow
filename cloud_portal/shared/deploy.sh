@@ -45,7 +45,9 @@ export TF_VAR_node_disk_size="100"
 export TF_VAR_edge_disk_size="50"
 
 # read cloudflare credentials from the cloned submodule private repo
-source $PORTAL_APP_REPO_FOLDER'/'phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh
+if [ -n "$TF_VAR_cf_token" ]; then
+   source $PORTAL_APP_REPO_FOLDER'/'phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh
+fi
 export TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
 domain=$TF_VAR_cf_subdomain'.'$TF_VAR_cf_zone
 
