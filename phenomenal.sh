@@ -115,3 +115,13 @@ command_and_path="./cloud_portal/$provider/$cmd.sh"
 printf 'Executing "%s"...\n' "$command_and_path"
 command "$command_and_path"
 
+## finally display url:s
+#domain="$TF_VAR_cf_subdomain.$TF_VAR_cf_zone"
+#jupyter_url="http://notebook.$domain"
+#luigi_url="http://luigi.$domain"
+#galaxy_url="http://galaxy.$domain"
+#
+#echo 'Services should be reachable at following url:'
+#printf 'Galaxy:  "%s"\n' "$galaxy_url"
+#printf 'Jupyter: "%s"\n' "$jupyter_url"
+#printf 'Luigi:   "%s"\n' "$luigi_url"
