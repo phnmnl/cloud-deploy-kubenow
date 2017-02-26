@@ -5,7 +5,10 @@ cd $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
 
 # remove cloudflare record
 # read cloudflare credentials from the cloned submodule private repo
-source $PORTAL_APP_REPO_FOLDER'/'phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh
+# read cloudflare credentials from the cloned submodule private repo
+if [ -z "$TF_VAR_cf_token" ]; then
+   source $PORTAL_APP_REPO_FOLDER'/'phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh
+fi
 TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
 ansible_inventory_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/inventory'
 
