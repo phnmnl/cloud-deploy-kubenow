@@ -11,7 +11,7 @@ Vagrant.require_version ">= 1.9.1"
 #
 #  Custom vars
 #
-$cluster_prefix = "kubenow"
+$cluster_prefix = "phenomenal-kubenow"
 first_ssh_port = 3001
 master_cpus = 2
 master_memory = 1500
@@ -19,7 +19,7 @@ $edge_count = 1
 edge_memory = 1500
 edge_cpus = 2
 $node_count = 1
-node_memory = 4096
+node_memory = 3096
 node_cpus = 3
 guest_port_80_forward = 8080
 
