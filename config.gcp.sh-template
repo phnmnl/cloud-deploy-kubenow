@@ -14,6 +14,12 @@ export TF_VAR_edge_flavor="n1-standard-2"
 export TF_VAR_node_count="1"
 export TF_VAR_edge_count="1"
 
+# Cloudflare
+export TF_VAR_cf_mail="yoourname@bla.bla.com"
+export TF_VAR_cf_token="3654d3-your-token-qiugq2761e4"
+export TF_VAR_cf_zone="example.com"
+export TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
+
 # Galaxy
 export TF_VAR_galaxy_admin_email="yoourname@bla.bla.com"
 export TF_VAR_galaxy_admin_password="password" # need to be at least 6 characters long
