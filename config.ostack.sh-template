@@ -37,6 +37,6 @@ export TF_VAR_jupyter_password=""
 # export TF_VAR_dns_nameservers=""
 
 # Import credentials file if variables not set aleady
-if [ -z "$OS_USERNAME" ] || [ -z "$OS_PASSWORD" ] || [ -z "$OS_AUTH_URL" ]; then
+if [[ -z "$OS_USERNAME" ]] || [[ -z "$OS_PASSWORD" ]] || [[ -z "$OS_AUTH_URL" ]]; then
     source "$TF_VAR_os_credentials_file"
 fi
