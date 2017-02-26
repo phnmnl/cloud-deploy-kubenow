@@ -3,101 +3,101 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-PROVIDERS=(aws gcp ostack)
-COMMANDS=(deploy destroy state)
-scriptname=`basename "$0"`
+scriptname="${BASH_SOURCE##*/}"
 
-function display_help
-{	
-    display_usage
-    echo
-    display_commands
-    display_providers
-    echo 
-    echo "options:"
-    echo " -c, --config-file       user provided config file"
-    echo
-    echo "examples: ./$scriptname deploy ostack" 
-    echo "          ./$scriptname destroy ostack"
-    echo "          ./$scriptname state gce" 
-    echo "          ./$scriptname deploy gce --config-file ~/my-configs/my-cloud-conf" 
-}
-
-function display_usage
-{	
-	echo "usage: $scriptname <command> <provider> [options]"
-}
-
-function display_commands
-{	
-	echo "supported <command> are: ${COMMANDS[@]}"
-}
-
-function display_providers
-{	
-	echo "supported <provider> are: ${PROVIDERS[@]}"
-}
-
-function contains_element
+function usage
 {
-    local e
-    for e in "${@:2}"; do
-        [ "$e" = "$1" ] && return 0
-    done
-    return 1
+    cat <<TEXT_END
+Usage:
+
+    $scriptname -h
+    $scriptname <command> <provider> [-c file]
+
+Options:
+
+    -h/--help   Display help
+    -c/--config Use specified configuration file.  If no configuration
+                file is specified, use default "config.<provider>.sh"
+
+Commands:
+
+    deploy      Setup the cloud research environment
+    destroy     Destroy the cloud research environment
+    state       Status of the cre
+
+Providers:
+
+    aws
+    gcp
+    ostack
+
+Examples:
+
+    $scriptname deploy ostack
+    $scriptname destroy ostack
+    $scriptname state gcp
+    $scriptname deploy gcp --config-file ~/my-configs/my-cloud-conf
+
+TEXT_END
 }
 
-if [ -z "$1" ]; then
-    echo "no <command> specified"
-    echo
-    display_help
+case "$1" in
+    deploy|destroy|state)
+        cmd="$1"
+        ;;
+    -h|--help)
+        usage
+        exit
+        ;;
+    "")
+        echo "No <command> specified" >&2
+        printf 'See "%s --help"\n' "$scriptname" >&2
+        exit 1
+        ;;
+    *)
+        printf '"%s" is not a valid command\n' "$1" >&2
+        printf 'See "%s --help"\n' "$scriptname" >&2
+        exit 1
+        ;;
+esac
+
+case "$2" in
+    aws|gcp|ostack)
+        provider="$2"
+        ;;
+    "")
+        echo "No <provider> specified" >&2
+        printf 'See "%s --help"\n' "$scriptname" >&2
+        exit 1
+        ;;
+    *)
+        printf '"%s" is not a valid provider\n' "$2" >&2
+        printf 'See "%s --help"\n' "$scriptname" >&2
+        exit 1
+        ;;
+esac
+
+config_file="config.$provider.sh"
+case "$3" in
+    -c|--config*)
+        printf 'Using configuration file "%s"\n' "$4"
+        config_file="$4"
+        ;;
+    "")
+        printf 'Using default configuration file "%s"\n' "$config_file"
+        ;;
+    *)
+        printf '"%s" is not a valid argument\n' "$3" >&2
+        printf 'See "%s --help"\n' "$scriptname" >&2
+        exit 1
+        ;;
+esac
+
+if [[ ! -f "$config_file" ]]; then
+    printf 'Configuration file "%s" does not exist\n' "$config_file" >&2
     exit 1
 fi
 
-if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-    display_help
-    exit 1
-fi
-
-if ! contains_element "$1" "${COMMANDS[@]}"; then
-    echo "'$1' is not a valid <command>"
-    display_commands
-    display_usage
-    exit 1
-fi
-command="$1"
-
-if [ -z "$2" ]; then
-    echo "no <provider> specified"
-    echo
-    display_help
-    exit 1
-fi
-
-if ! contains_element "$2" "${PROVIDERS[@]}"; then
-    echo "'$2' is not a valid <provider> argument"
-    display_providers
-    display_usage
-    exit 1
-fi
-provider="$2"
-
-if [ -z "$3" ]; then
-    config_file="config.$provider.sh"
-    echo "no configuration file specified, using default: $config_file"
-elif [ "$3" = "-c" ] || [ "$3" = "--config-file" ]; then
-    config_file="$4"
-    echo "using config-file: $config_file"
-else
-    echo "'$3' is not a valid argument"
-    echo "see: '$scriptname --help'"
-    exit 1
-fi
-
-if [ ! -f "$config_file" ]; then
-    echo "config file does not exist"
-    exit 1
-fi
 source "$config_file"
 
 # set environment variables used by scripts in cloud-deploy/
@@ -105,13 +105,13 @@ export PORTAL_DEPLOYMENTS_ROOT="$PWD/deployments"
 export PORTAL_APP_REPO_FOLDER="$PWD"
 export PORTAL_DEPLOYMENT_REFERENCE="id-phnmnl-$provider"
 
-deployment_dir=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
-echo "deployment-dir: $deployment_dir"
-if [ ! -d $deployment_dir ]; then
-    mkdir -p $deployment_dir
+deployment_dir="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
+if [[ ! -d "$deployment_dir" ]]; then
+    mkdir -p "$deployment_dir"
 fi
+printf 'Using deployment directory "%s"\n' "$deployment_dir"
 
-command_and_path="./cloud_portal/$provider/$command.sh"
-echo "command: $command_and_path"
-"$command_and_path"
+command_and_path="./cloud_portal/$provider/$cmd.sh"
+printf 'Executing "%s"...\n' "$command_and_path"
+command "$command_and_path"
 
