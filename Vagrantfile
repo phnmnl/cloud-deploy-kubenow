@@ -19,7 +19,7 @@ $edge_count = 1
 edge_memory = 1500
 edge_cpus = 2
 $node_count = 1
-node_memory = 3096
+node_memory = 5096
 node_cpus = 3
 guest_port_80_forward = 8080
 
