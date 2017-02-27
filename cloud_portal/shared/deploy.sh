@@ -22,16 +22,22 @@ export TF_VAR_KuberNow_image="kubenow-v020a1"
 echo $GOOGLE_CREDENTIALS > $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
 export TF_VAR_gce_credentials_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/gce_credentials_file.json'
 
-# aws
-export TF_VAR_kubenow_image_id="ami-6b427518"
+# aws read image id from file depending on region selected
+export TF_VAR_kubenow_image_id=$( grep "TF_VAR_aws_region" "$PORTAL_APP_REPO_FOLDER/aws-images-$TF_VAR_KuberNow_image"  | awk "{print $1}" )
 
 # gce
 # make sure image is available in google project
-if [ $KUBENOW_TERRAFORM_FOLDER = $PORTAL_APP_REPO_FOLDER'/KubeNow/gce' ]
+if [ $KUBENOW_TERRAFORM_FOLDER = "$PORTAL_APP_REPO_FOLDER/KubeNow/gce" ]
 then
    ansible-playbook -e "credentials_file_path=$TF_VAR_gce_credentials_file" $PORTAL_APP_REPO_FOLDER'/KubeNow/playbooks/import-gce-image.yml'
 fi
 
+# ostack
+# make sure image is available in openstack
+if [ $KUBENOW_TERRAFORM_FOLDER = "$PORTAL_APP_REPO_FOLDER/KubeNow/openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]
+then
+   ansible-playbook "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-openstack-image.yml"
+fi
 
 # gce and aws
 export TF_VAR_master_disk_size="50"
