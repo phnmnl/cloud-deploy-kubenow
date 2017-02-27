@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+# Cloud
+export TF_VAR_cluster_prefix="my-cluster-prefix"
+
+export TF_VAR_os_credentials_file="/home/xxx/my-openstack-credentials-rc.sh"
+export TF_VAR_floating_ip_pool="ext-net"
+export TF_VAR_external_network_uuid="your-external-network-uuid"
+
+export TF_VAR_master_flavor="4C-8GB-100GB"
+export TF_VAR_node_flavor="4C-8GB-100GB"
+export TF_VAR_edge_flavor="4C-8GB-100GB"
+
+export TF_VAR_node_count="2"
+export TF_VAR_edge_count="1"
+
+# Cloudflare
+export TF_VAR_cf_mail="yoourname@bla.bla.com"
+export TF_VAR_cf_token="3654d3-your-token-qiugq2761e4"
+export TF_VAR_cf_zone="example.com"
+export TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
+
+# Galaxy
+export TF_VAR_galaxy_admin_email="yoourname@bla.bla.com"
+export TF_VAR_galaxy_admin_password="password"
+
+# Jupyter
+export TF_VAR_jupyter_password=""
+
+# Alternatively to flavour name you can specify flavour ID
+#export TF_VAR_master_flavor_id=""
+#export TF_VAR_node_flavor_id=""
+#export TF_VAR_edge_flavor_id=""
+
+# If your cloud provider is not allowing external nameservers, please specify here or
+# uncomment and leave empty for provider automatic configuration
+# export TF_VAR_dns_nameservers=""
+
+# Import credentials file if variables not set aleady
+if [[ -z "$OS_USERNAME" ]] || [[ -z "$OS_PASSWORD" ]] || [[ -z "$OS_AUTH_URL" ]]; then
+    source "$TF_VAR_os_credentials_file"
+fi

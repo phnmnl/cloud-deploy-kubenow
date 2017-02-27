@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# Cloud
+export TF_VAR_cluster_prefix="my-cluster-prefix"
+
+export TF_VAR_aws_access_key_id="my-access-key-JHGSJGWIUT"
+export TF_VAR_aws_secret_access_key="my-sectet-access-keys-XhkjhdaskjhouioIUIUgjHFfWb9g"
+export TF_VAR_aws_region="eu-west-1"
+export TF_VAR_availability_zone="eu-west-1a" # Zone where subnet should be created
+
+export TF_VAR_master_instance_type="t2.medium"
+export TF_VAR_node_instance_type="t2.xlarge"
+export TF_VAR_edge_instance_type="t2.medium"
+
+export TF_VAR_node_count="1"
+export TF_VAR_edge_count="1"
+
+# Cloudflare
+export TF_VAR_cf_mail="yoourname@bla.bla.com"
+export TF_VAR_cf_token="3654d3-your-token-qiugq2761e4"
+export TF_VAR_cf_zone="example.com"
+export TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
+
+# Galaxy
+export TF_VAR_galaxy_admin_email="yoourname@bla.bla.com"
+export TF_VAR_galaxy_admin_password="password"
+
+# Jupyter
+export TF_VAR_jupyter_password=""
+
+
+

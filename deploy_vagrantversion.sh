@@ -1,17 +1,17 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Exit immediately if a command exits with a non-zero status
 set -e
 
 jupyter_password=""
 galaxy_admin_password="password" # need to be 6 characters long
-galaxy_admin_email="yourname@yourdomain.com" 
+galaxy_admin_email="yourname@yourdomain.com"
+
 ansible_inventory_file="inventory"
 domain=$( grep 'domain=' $ansible_inventory_file | cut -d "=" -f 2 )
 http_port=$( grep 'http_port=' $ansible_inventory_file | cut -d "=" -f 2 )
 
 export ANSIBLE_HOST_KEY_CHECKING=False
-
 
 echo "Install KubeNow core components (networking, gluster etc.)"
 ansible-playbook -i $ansible_inventory_file --skip-tags "cloudflare" KubeNow/playbooks/install-core.yml
