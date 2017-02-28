@@ -3,17 +3,6 @@
   vars:
     sha1_pass_jupyter: "default"
   tasks:
-   
-    - name: template shared-volume-jupyter configuration
-      become: yes
-      template:
-        src: shared-volume.yml
-        dest: "/etc/kubenow/yaml/shared-volume-jupyter.yaml"
-    
-    - name: create shared-volume-jupyter (Kubernetes side)
-      command: >
-        kubectl apply -f
-        /etc/kubenow/yaml/shared-volume-jupyter.yaml
     
     - name: template jupyter deployment file
       template:
