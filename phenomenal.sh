@@ -103,7 +103,7 @@ source "$config_file"
 # set environment variables used by scripts in cloud-deploy/
 export PORTAL_DEPLOYMENTS_ROOT="$PWD/deployments"
 export PORTAL_APP_REPO_FOLDER="$PWD"
-export PORTAL_DEPLOYMENT_REFERENCE="id-phnmnl-$provider"
+export PORTAL_DEPLOYMENT_REFERENCE="id-phnmnl-${config_file%.sh}"
 
 deployment_dir="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 if [[ ! -d "$deployment_dir" ]]; then
