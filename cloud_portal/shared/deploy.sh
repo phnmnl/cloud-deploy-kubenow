@@ -26,14 +26,8 @@ if [ -n "$GOOGLE_CREDENTIALS" ]; then
   export TF_VAR_gce_credentials_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/gce_credentials_file.json"
 fi
 
-echo "GoogleCredEnv"
-echo "$GOOGLE_CREDENTIALS"
-
-echo "Cred file contents"
-cat "$TF_VAR_gce_credentials_file"
-
 # aws read image id from file depending on region selected
-echo $( grep "$TF_VAR_aws_region" "$PORTAL_APP_REPO_FOLDER/aws-images-$TF_VAR_KuberNow_image"  | awk '{print $1}' )
+export TF_VAR_kubenow_image_id=$( grep "$TF_VAR_aws_region" "$PORTAL_APP_REPO_FOLDER/aws-images-$TF_VAR_KuberNow_image"  | awk '{print $1}' )
 
 # gce
 # make sure image is available in google project
