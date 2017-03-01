@@ -20,6 +20,12 @@ ansible-playbook -i $ansible_inventory_file --skip-tags "cloudflare" KubeNow/pla
 ansible-playbook -i $ansible_inventory_file \
                  playbooks/wait_for_all_pods_ready.yml
 
+
+if [ "$1" = "--skip-phenomenal" ]; then
+   echo "Exit before Install Phenomenal analysis tools"
+   exit 0
+fi
+
 echo "Install Phenomenal analysis tools"
 
 # deploy jupyter

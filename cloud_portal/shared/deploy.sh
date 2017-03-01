@@ -79,11 +79,17 @@ ansible-playbook -i $ansible_inventory_file \
                  --key-file $PRIVATE_KEY \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_all_pods_ready.yml'
 
+# deploy phenomenal-pvc
+ansible-playbook -i $ansible_inventory_file \
+                 --key-file $PRIVATE_KEY \
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/phenomenal_pvc/main.yml"
+
 # deploy jupyter
 JUPYTER_PASSWORD_HASH=$( $PORTAL_APP_REPO_FOLDER'/bin/generate-jupyter-password-hash.sh' $TF_VAR_jupyter_password )
 ansible-playbook -i $ansible_inventory_file \
                  -e "domain=$domain" \
                  -e "sha1_pass_jupyter=$JUPYTER_PASSWORD_HASH" \
+                 -e "jupyter_pvc=phenomenal-claim" \
                  --key-file $PRIVATE_KEY \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter/main.yml'
                  
@@ -101,6 +107,7 @@ ansible-playbook -i $ansible_inventory_file \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \
+                 -e "galaxy_pvc=phenomenal-claim" \
                  --key-file $PRIVATE_KEY \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/galaxy.yml'
                                                               
