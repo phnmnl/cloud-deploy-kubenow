@@ -85,10 +85,9 @@ ansible-playbook -i $ansible_inventory_file \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/phenomenal_pvc/main.yml"
 
 # deploy jupyter
-JUPYTER_PASSWORD_HASH=$( $PORTAL_APP_REPO_FOLDER'/bin/generate-jupyter-password-hash.sh' $TF_VAR_jupyter_password )
 ansible-playbook -i $ansible_inventory_file \
                  -e "domain=$domain" \
-                 -e "sha1_pass_jupyter=$JUPYTER_PASSWORD_HASH" \
+                 -e "jupyter_password=$TF_VAR_jupyter_password" \
                  -e "jupyter_pvc=phenomenal-claim" \
                  --key-file $PRIVATE_KEY \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter.yml'
