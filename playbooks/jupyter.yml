@@ -12,5 +12,5 @@
       become: yes
       command: >
         helm install 
-        --set passwd_jupyter="{{ sha1_pass_jupyter }}",use_ingress="yes",domain="{{ domain }}",external_ingress_controller="yes",jupyter_pvc="{{ jupyter_pvc }}"
+        --set passwd_jupyter="{{ jupyter_password }}",use_ingress="yes",domain="{{ domain }}",external_ingress_controller="yes",pvc_exists="yes",jupyter_pvc="phenomenal-claim"
         phenomenal-helm/jupyter

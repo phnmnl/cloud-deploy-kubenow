@@ -18,6 +18,10 @@ export TF_VAR_ssh_key=$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE'/vre
 # gce and ostack
 export TF_VAR_KuberNow_image="kubenow-v020a1"
 
+# aws read image id from file depending on region selected
+export TF_VAR_kubenow_image_id=$( grep "$TF_VAR_aws_region" "$PORTAL_APP_REPO_FOLDER/aws-images-$TF_VAR_KuberNow_image"  | awk '{print $1}' )
+
+
 # gce
 # workaround: -the credentials are provided as an environment variable, but KubeNow terraform
 # scripts need a file. Creates an credentialsfile from the environment variable
@@ -26,11 +30,7 @@ if [ -n "$GOOGLE_CREDENTIALS" ]; then
   export TF_VAR_gce_credentials_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/gce_credentials_file.json"
 fi
 
-# aws read image id from file depending on region selected
-export TF_VAR_kubenow_image_id=$( grep "$TF_VAR_aws_region" "$PORTAL_APP_REPO_FOLDER/aws-images-$TF_VAR_KuberNow_image"  | awk '{print $1}' )
-
-# gce
-# make sure image is available in google project
+# gce - make sure image is available in google project
 if [ $KUBENOW_TERRAFORM_FOLDER = $PORTAL_APP_REPO_FOLDER'/KubeNow/gce' ]
 then
    ansible-playbook -e "credentials_file_path=\"$TF_VAR_gce_credentials_file\"" "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-gce-image.yml"
@@ -64,7 +64,7 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 nodes_count=$(($TF_VAR_node_count+$TF_VAR_edge_count+1)) # +1 because master is also one node
 ansible_inventory_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/inventory'
 
-# deploy core stack
+# deploy KubeNow core stack
 ansible-playbook -i $ansible_inventory_file \
                  --key-file $PRIVATE_KEY \
                  -e "nodes_count=$nodes_count" \
@@ -85,13 +85,12 @@ ansible-playbook -i $ansible_inventory_file \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/phenomenal_pvc/main.yml"
 
 # deploy jupyter
-JUPYTER_PASSWORD_HASH=$( $PORTAL_APP_REPO_FOLDER'/bin/generate-jupyter-password-hash.sh' $TF_VAR_jupyter_password )
 ansible-playbook -i $ansible_inventory_file \
                  -e "domain=$domain" \
-                 -e "sha1_pass_jupyter=$JUPYTER_PASSWORD_HASH" \
+                 -e "jupyter_password=$TF_VAR_jupyter_password" \
                  -e "jupyter_pvc=phenomenal-claim" \
                  --key-file $PRIVATE_KEY \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter/main.yml'
+                 $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter.yml'
                  
 # deploy luigi
 ansible-playbook -i $ansible_inventory_file \
