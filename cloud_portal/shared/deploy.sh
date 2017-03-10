@@ -89,6 +89,8 @@ ansible-playbook -i $ansible_inventory_file \
                  -e "domain=$domain" \
                  -e "jupyter_password=$TF_VAR_jupyter_password" \
                  -e "jupyter_pvc=phenomenal-claim" \
+                 -e "jupyter_resource_req_cpu=200m" \
+                 -e "jupyter_resource_req_memory=1G" \
                  --key-file $PRIVATE_KEY \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter.yml'
                  
