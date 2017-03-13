@@ -2,10 +2,12 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: phenomenal-claim
+  name: galaxy-pvc
 spec:
   accessModes:
     - ReadWriteMany
   resources:
     requests:
       storage: 15Gi
+
+# TODO change claim name to phenomenal-claim

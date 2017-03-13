@@ -88,7 +88,7 @@ ansible-playbook -i $ansible_inventory_file \
 ansible-playbook -i $ansible_inventory_file \
                  -e "domain=$domain" \
                  -e "jupyter_password=$TF_VAR_jupyter_password" \
-                 -e "jupyter_pvc=phenomenal-claim" \
+                 -e "jupyter_pvc=galaxy-pvc" \
                  -e "jupyter_resource_req_cpu=200m" \
                  -e "jupyter_resource_req_memory=1G" \
                  --key-file $PRIVATE_KEY \
@@ -108,7 +108,8 @@ ansible-playbook -i $ansible_inventory_file \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \
-                 -e "galaxy_pvc=phenomenal-claim" \
+                 -e "galaxy_pvc=galaxy-pvc" \
+                 -e "postgres_pvc=false" \
                  --key-file $PRIVATE_KEY \
                  $PORTAL_APP_REPO_FOLDER'/playbooks/galaxy.yml'
                                                               
