@@ -12,5 +12,5 @@
       become: yes
       command: >
         helm install 
-        --set passwd_jupyter="{{ jupyter_password }}",use_ingress="yes",domain="{{ domain }}",external_ingress_controller="yes",pvc_exists="yes",jupyter_pvc="phenomenal-claim",jupyter_resource_req_cpu="{{ jupyter_resource_req_cpu }}",jupyter_resource_req_memory="{{ jupyter_resource_req_memory }}"
+        --set passwd_jupyter="{{ jupyter_password }}",use_ingress="yes",domain="{{ domain }}",external_ingress_controller="yes",pvc_exists="yes",jupyter_pvc="{{ jupyter_pvc }}",jupyter_resource_req_cpu="{{ jupyter_resource_req_cpu }}",jupyter_resource_req_memory="{{ jupyter_resource_req_memory }}"
         phenomenal-helm/jupyter
