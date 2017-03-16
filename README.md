@@ -1,5 +1,5 @@
 # cloud-deploy-kubenow
-This repository contains one-click-deploy-scripts to setup the PhenoMeNal cloud VRE.
+This repository contains one-click-deploy-scripts to setup the PhenoMeNal cloud CRE.
 The scripts are also part of the backend of the [Phenonemmal Portal](http://portal.phenomenal-h2020.eu/cloud-research-environment)
 
 
