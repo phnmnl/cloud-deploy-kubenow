@@ -11,6 +11,7 @@
     - name: install jupyter
       become: yes
       command: >
-        helm install 
-        --set passwd_jupyter="{{ jupyter_password }}",use_ingress="yes",domain="{{ domain }}",external_ingress_controller="yes",pvc_exists="yes",jupyter_pvc="{{ jupyter_pvc }}",jupyter_resource_req_cpu="{{ jupyter_resource_req_cpu }}",jupyter_resource_req_memory="{{ jupyter_resource_req_memory }}"
+        helm install
+        --version "{{ jupyter_chart_version }}"
+        --set jupyter_image_tag="{{ jupyter_image_tag }}",passwd_jupyter="{{ jupyter_password }}",use_ingress="yes",domain="{{ domain }}",external_ingress_controller="yes",pvc_exists="yes",jupyter_pvc="{{ jupyter_pvc }}",jupyter_resource_req_cpu="{{ jupyter_resource_req_cpu }}",jupyter_resource_req_memory="{{ jupyter_resource_req_memory }}"
         phenomenal-helm/jupyter
