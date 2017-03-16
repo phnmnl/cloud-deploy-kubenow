@@ -87,6 +87,8 @@ ansible-playbook -i $ansible_inventory_file \
 # deploy jupyter
 ansible-playbook -i $ansible_inventory_file \
                  -e "domain=$domain" \
+                 -e "jupyter_chart_version=0.1.1" \
+                 -e "jupyter_image_tag=:v387f29b6ca83_cv0.4.7" \
                  -e "jupyter_password=$TF_VAR_jupyter_password" \
                  -e "jupyter_pvc=galaxy-pvc" \
                  -e "jupyter_resource_req_cpu=200m" \
@@ -105,6 +107,8 @@ $PORTAL_APP_REPO_FOLDER'/bin/generate-galaxy-api-key'
 galaxy_api_key=$(cat $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/galaxy_api_key')
 ansible-playbook -i $ansible_inventory_file \
                  -e "domain=$domain" \
+                 -e "galaxy_chart_version=0.1.6-phenomenal-alanine" \
+                 -e "galaxy_image_tag=:v16.07-pheno_cv0.1.59" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \
