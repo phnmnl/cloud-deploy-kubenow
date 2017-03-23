@@ -62,28 +62,41 @@ If you later want to pull latest version and also pull latest submodule updates:
   
 ### If you want to test the deployment:
 
-First, If you don't have a "kubenow-v020a1" image available in your cloud teenancy then you need to upload one.
+First, If you don't have a "kubenow-v020a1" image available in your cloud tenancy then you need to upload one. In the [KubeNow guidelines](https://kubenow.readthedocs.io/en/latest/developers/build-img.html) you can also find further details on how to build and upload a KubeNow image in your cloud tenancy.
 
-Latest images are availabe for upload into your teenancy from: [https://github.com/kubenow/KubeNow/releases](https://github.com/kubenow/KubeNow/releases)
+Nonetheless, latest images are availabe for upload into your teenancy from: [https://github.com/kubenow/KubeNow/releases](https://github.com/kubenow/KubeNow/releases)
+
+The next step is to make sure that you have the necessary credentials details in order to deploy your infrastructure. This varies from platform to platform; the three most used in our case are: OpenStack, Google Cloud Engine (GCE) and Amazon Web Services (AWS). For them here is what you have to pay attention to:
+
+1. **OpenStack**: It is mandatory to download and source the RC file.
+2. *GCE***: You have created and downloaded a service account file for your GCE project: _Api manager > Credentials > Create credentials > Service account key_ .
+3. **AWS**: You have an IAM user along with its access key and security credentials.
+
+Finally, here are the last steps before running the one-click-deploy-scripts:
     
-    # Now edit the file test_env_vars_for_xxx.sh  matching your cloudprovider (e.g. Openstack, Amazon, Google, Vagrant(local-deployment))
+    # Edit the file test_env_vars_for_xxx.sh  matching your cloudprovider (e.g. Openstack, Amazon, Google, Vagrant(local-deployment))
+    vim test_env_vars_for_xxxx.sh
     
-    # Then inject variables into your environment
+    # Inject variables into your environment
     source test_env_vars_for_xxxx.sh
+
+    # Edit the config template config.xxx.sh-template matching your cloudprovider (e.g. Openstack, Amazon, Google, Vagrant(local-deployment))
+    mv config.xxx.sh-template config.xxx.sh
+    vim config.xxx.sh-template
     
     # Deploy (openstack)
-    cloud_portal/ostack/deploy.sh
+    cloud_portal/ostack/xxxx.sh
     
     # Status
-    cloud_portal/ostack/state.sh
+    cloud_portal/xxxx/state.sh
     
 Access services:
     
 - http://galaxy. "your prefix" .phenomenal.cloud
     
-- http://notebook. "your prefix" .phenomenal.cloud (password=password)
+- http://notebook. "your prefix" .phenomenal.cloud
     
 Destroy cluster:
     
     # Destroy
-    cloud_portal/ostack/destroy.sh
+    cloud_portal/xxxx/destroy.sh
