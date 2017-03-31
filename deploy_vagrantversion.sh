@@ -28,11 +28,19 @@ fi
 
 echo "Install Phenomenal analysis tools"
 
-# deploy jupyter
-JUPYTER_PASSWORD_HASH=$( 'bin/generate-jupyter-password-hash.sh' $jupyter_password )
+# deploy phenomenal-pvc
 ansible-playbook -i $ansible_inventory_file \
-                 -e "sha1_pass_jupyter=$JUPYTER_PASSWORD_HASH" \
-                 playbooks/jupyter/main.yml
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/phenomenal_pvc/main.yml"
+
+# deploy jupyter
+ansible-playbook -i $ansible_inventory_file \
+                 -e "jupyter_chart_version=0.1.1" \
+                 -e "jupyter_image_tag=:v387f29b6ca83_cv0.4.7" \
+                 -e "jupyter_password=$jupyter_password" \
+                 -e "jupyter_pvc=galaxy-pvc" \
+                 -e "jupyter_resource_req_cpu=200m" \
+                 -e "jupyter_resource_req_memory=1G" \
+                 $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter.yml'
                  
 # deploy luigi
 ansible-playbook -i $ansible_inventory_file \
@@ -42,9 +50,13 @@ ansible-playbook -i $ansible_inventory_file \
 # a kubetoken is a good api-key
 galaxy_api_key=$( 'KubeNow/generate_kubetoken.sh' )
 ansible-playbook -i $ansible_inventory_file \
+                 e "galaxy_chart_version=0.1.6-phenomenal-alanine" \
+                 -e "galaxy_image_tag=:v16.07-pheno_cv0.1.59" \
                  -e "galaxy_admin_password=$galaxy_admin_password" \
                  -e "galaxy_admin_email=$galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \
+                 -e "galaxy_pvc=galaxy-pvc" \
+                 -e "postgres_pvc=false" \
                  playbooks/galaxy.yml
                  
 # wait until jupyter is up and do git clone data into the container
