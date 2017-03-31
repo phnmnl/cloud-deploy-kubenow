@@ -30,7 +30,7 @@ echo "Install Phenomenal analysis tools"
 
 # deploy phenomenal-pvc
 ansible-playbook -i $ansible_inventory_file \
-                 "$PORTAL_APP_REPO_FOLDER/playbooks/phenomenal_pvc/main.yml"
+                 playbooks/phenomenal_pvc/main.yml
 
 # deploy jupyter
 ansible-playbook -i $ansible_inventory_file \
@@ -40,7 +40,7 @@ ansible-playbook -i $ansible_inventory_file \
                  -e "jupyter_pvc=galaxy-pvc" \
                  -e "jupyter_resource_req_cpu=200m" \
                  -e "jupyter_resource_req_memory=1G" \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter.yml'
+                 playbooks/jupyter.yml
                  
 # deploy luigi
 ansible-playbook -i $ansible_inventory_file \
@@ -50,7 +50,7 @@ ansible-playbook -i $ansible_inventory_file \
 # a kubetoken is a good api-key
 galaxy_api_key=$( 'KubeNow/generate_kubetoken.sh' )
 ansible-playbook -i $ansible_inventory_file \
-                 e "galaxy_chart_version=0.1.6-phenomenal-alanine" \
+                 -e "galaxy_chart_version=0.1.6-phenomenal-alanine" \
                  -e "galaxy_image_tag=:v16.07-pheno_cv0.1.59" \
                  -e "galaxy_admin_password=$galaxy_admin_password" \
                  -e "galaxy_admin_email=$galaxy_admin_email" \
