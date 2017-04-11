@@ -14,7 +14,8 @@ http_port=$( grep 'http_port=' $ansible_inventory_file | cut -d "=" -f 2 )
 export ANSIBLE_HOST_KEY_CHECKING=False
 
 echo "Install KubeNow core components (networking, gluster etc.)"
-ansible-playbook -i $ansible_inventory_file --skip-tags "cloudflare" KubeNow/playbooks/install-core.yml
+ansible-playbook -i $ansible_inventory_file --skip-tags "cloudflare,glusterfs" KubeNow/playbooks/install-core.yml
+ansible-playbook -i $ansible_inventory_file KubeNow/playbooks/install-nfs-volume.yml
 
 # wait for all pods in core stack to be ready
 ansible-playbook -i $ansible_inventory_file \
