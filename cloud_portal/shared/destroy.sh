@@ -18,8 +18,8 @@ ansible-playbook -i $ansible_inventory_file \
                  -e "cf_zone=$TF_VAR_cf_zone" \
                  -e "cf_subdomain=$TF_VAR_cf_subdomain" $PORTAL_APP_REPO_FOLDER'/KubeNow/playbooks/clean-cloudflare.yml'
 
-export TF_VAR_KuberNow_image="kube-release-01"
-export TF_VAR_kubenow_image_id="ami-fake-id"
+export TF_VAR_kubenow_image="kube-release-01"
+# export TF_VAR_kubenow_image_id="ami-fake-id"
 export TF_VAR_kubeadm_token="fake.token"
 export TF_VAR_master_disk_size="50"
 export TF_VAR_node_disk_size="50"

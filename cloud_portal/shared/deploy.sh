@@ -16,10 +16,10 @@ export TF_VAR_ssh_key=$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE'/vre
 #
 
 # gce and ostack
-export TF_VAR_KuberNow_image="kubenow-v020a1"
+export TF_VAR_kubenow_image="kubenow-v020a1"
 
 # aws read image id from file depending on region selected
-export TF_VAR_kubenow_image_id=$( grep "$TF_VAR_aws_region" "$PORTAL_APP_REPO_FOLDER/aws-images-$TF_VAR_KuberNow_image"  | awk '{print $1}' )
+# export TF_VAR_kubenow_image_id=$( grep "$TF_VAR_aws_region" "$PORTAL_APP_REPO_FOLDER/aws-images-$TF_VAR_KuberNow_image"  | awk '{print $1}' )
 
 
 # gce
