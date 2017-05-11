@@ -3,13 +3,11 @@
   gather_facts: False
   tasks:
     - name: add galaxy repo
-      become: yes
       command: >
         helm repo add galaxy-helm-repo 
         https://pcm32.github.io/galaxy-helm-charts
       
     - name: install galaxy
-      become: yes
       command: >
         helm install
         --version "{{ galaxy_chart_version }}"
