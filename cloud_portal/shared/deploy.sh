@@ -53,7 +53,7 @@ export TF_VAR_glusternode_disk_size="20"
 
 # Deploy cluster with terraform
 terraform get $KUBENOW_TERRAFORM_FOLDER
-terraform apply --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate $KUBENOW_TERRAFORM_FOLDER"
+terraform apply --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
 
 # Provision nodes with ansible
 export ANSIBLE_HOST_KEY_CHECKING=False
@@ -69,10 +69,17 @@ ansible-playbook -i $ansible_inventory_file \
                  --key-file $PRIVATE_KEY \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_all_pods_ready.yml"
 
+# deploy heketi
+ansible-playbook -i $ansible_inventory_file \
+                 --key-file $PRIVATE_KEY \
+                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster.yml"
+
 # deploy phenomenal-pvc
 ansible-playbook -i $ansible_inventory_file \
                  --key-file $PRIVATE_KEY \
-                 "$PORTAL_APP_REPO_FOLDER/playbooks/phenomenal_pvc/main.yml"
+                 -e "name=galaxy-pvc" \
+                 -e "storage=100Gi" \
+                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster-pvc.yml"
 
 # deploy jupyter
 ansible-playbook -i $ansible_inventory_file \
