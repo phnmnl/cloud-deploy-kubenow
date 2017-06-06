@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Generate ssh-key
 if [ ! -f vre.key ]; then
@@ -7,8 +8,6 @@ fi
 
 # generate kubeadm_token
 if [ ! -f kubeadm_token ]; then
-    $PORTAL_APP_REPO_FOLDER/KubeNow/generate_kubetoken.sh > kubeadm_token
+    kubetoken=$("$PORTAL_APP_REPO_FOLDER/KubeNow/bin/kubetoken")
+    printf '%s\n' "$kubetoken" > kubetoken
 fi
-
-# because if file already exists then it will set exit code 1
-exit 0

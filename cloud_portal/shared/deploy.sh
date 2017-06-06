@@ -8,7 +8,7 @@ cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 # presetup (generate key kubeadm token etc.)
 # generate token
 "$PORTAL_APP_REPO_FOLDER/bin/pre-setup"
-export TF_VAR_kubeadm_token=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/kubeadm_token")
+export TF_VAR_kubeadm_token=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/kubetoken")
 export PRIVATE_KEY="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key"
 export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key.pub"
 
@@ -91,7 +91,7 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "jupyter_resource_req_cpu=200m" \
                  -e "jupyter_resource_req_memory=1G" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/jupyter.yml"
-                 
+
 # deploy luigi
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
@@ -111,22 +111,22 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "galaxy_pvc=galaxy-pvc" \
                  -e "postgres_pvc=false" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/galaxy.yml"
-                                                              
+
 # wait until jupyter is up and do git clone data into the container
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/git_clone_mtbls233.yml"
-                                                       
+
 # wait for jupyter notebook http response != Bad Gateway
 ansible-playbook -i "$ansible_inventory_file" \
                  -e "name=notebook" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_http_not_down.yml"
-                 
+
 # wait for luigi http response != Bad Gateway
 ansible-playbook -i "$ansible_inventory_file" \
                  -e "name=luigi" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_http_not_down.yml"
-                 
+
 # wait for galaxy http response 200 OK
 ansible-playbook -i "$ansible_inventory_file" \
                  -e "name=galaxy" \
