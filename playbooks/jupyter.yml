@@ -6,10 +6,10 @@
       command: >
         helm repo add phenomenal-helm
         https://phnmnl.github.io/helm-charts
-      
+
     - name: install jupyter
       command: >
-        helm install
+        helm upgrade --install
         --version "{{ jupyter_chart_version }}"
         --set jupyter_image_tag="{{ jupyter_image_tag }}",passwd_jupyter="{{ jupyter_password }}",use_ingress="yes",domain="{{ domain }}",external_ingress_controller="yes",pvc_exists="yes",jupyter_pvc="{{ jupyter_pvc }}",jupyter_resource_req_cpu="{{ jupyter_resource_req_cpu }}",jupyter_resource_req_memory="{{ jupyter_resource_req_memory }}"
-        phenomenal-helm/jupyter
+        "jupyter-{{ jupyter_chart_version }}" phenomenal-helm/jupyter
