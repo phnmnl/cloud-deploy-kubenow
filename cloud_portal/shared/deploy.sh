@@ -6,7 +6,6 @@ mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 
 # presetup (generate key kubeadm token etc.)
-# generate token
 "$PORTAL_APP_REPO_FOLDER/bin/pre-setup"
 export TF_VAR_kubeadm_token=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/kubetoken")
 export PRIVATE_KEY="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key"
@@ -18,11 +17,13 @@ if [ -f "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomen
 fi
 
 #
-# hardcoded params
+# hardcoded params (TODO move to params file)
 #
 
 # gce and ostack
-export TF_VAR_kubenow_image="anders-kubenow-v030-pre-alpha-2"
+
+IMG_VERSION="v030-8-gf709877-current"
+export TF_VAR_kubenow_image="kubenow-$IMG_VERSION"
 
 # gce
 # workaround: -the credentials are provided as an environment variable, but KubeNow terraform
@@ -35,7 +36,9 @@ fi
 # gce - make sure image is available in google project
 if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/gce" ]
 then
-   ansible-playbook -e "credentials_file_path=\"$TF_VAR_gce_credentials_file\"" "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-gce-image.yml"
+   ansible-playbook -e "credentials_file_path=\"$TF_VAR_gce_credentials_file\"" \
+                    -e "img_version=$IMG_VERSION" \
+                    "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-gce-image.yml"
 fi
 
 # ostack
