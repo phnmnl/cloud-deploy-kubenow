@@ -100,28 +100,51 @@ fi
 
 source "$config_file"
 
-# set environment variables used by scripts in cloud-deploy/
-export PORTAL_DEPLOYMENTS_ROOT="$PWD/deployments"
-export PORTAL_APP_REPO_FOLDER="$PWD"
-export PORTAL_DEPLOYMENT_REFERENCE="id-phnmnl-${config_file%.sh}"
-
-deployment_dir="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
-if [[ ! -d "$deployment_dir" ]]; then
-    mkdir -p "$deployment_dir"
+if [ -n "$TF_VAR_gce_credentials_file" ]; then
+  GOOGLE_CREDENTIALS=$(cat "$TF_VAR_gce_credentials_file")
 fi
-printf 'Using deployment directory "%s"\n' "$deployment_dir"
 
-command_and_path="./cloud_portal/$provider/$cmd.sh"
-printf 'Executing "%s"...\n' "$command_and_path"
-command "$command_and_path"
+if [ -n "$OS_CREDENTIALS_FILE" ]; then
+  # Import credentials file if variables not set aleady
+  if [[ -z "$OS_USERNAME" ]] || [[ -z "$OS_PASSWORD" ]] || [[ -z "$OS_AUTH_URL" ]]; then
+      source "$OS_CREDENTIALS_FILE"
+  fi
+fi
+
+# set environment variables used by scripts in cloud-deploy/
+DEPLOYMENTS_DIR="deployments"
+DEPLOYMENT_REFERENCE="id-phnmnl-${config_file%.sh}"
+DEPLOYMENT_DIR_HOST="$PWD/$DEPLOYMENTS_DIR/$DEPLOYMENT_REFERENCE"
+
+printf 'Using deployment directory "%s"\n' "$DEPLOYMENT_DIR_HOST"
+
+# execute scripts via docker container with all dependencies
+docker run --rm -it \
+  -v "$PWD":/cloud-deploy \
+  -e "PORTAL_APP_REPO_FOLDER=/cloud-deploy" \
+  -e "PORTAL_DEPLOYMENTS_ROOT=/cloud-deploy/$DEPLOYMENTS_DIR" \
+  -e "PORTAL_DEPLOYMENT_REFERENCE=$DEPLOYMENT_REFERENCE" \
+  -e "GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS" \
+  --env-file <(env | grep OS_) \
+  --env-file <(env | grep TF_VAR_) \
+  andersla/phnmnl-provision \
+  /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
+
+# display inventoty
+echo "Inventory:"
+cat "$DEPLOYMENT_DIR_HOST/inventory"
+echo "---"
+echo ""
+
+# get domain from inventory
+domain="$(awk -F'=' '/domain/ { print $2 }' $DEPLOYMENT_DIR_HOST/inventory)"
 
 ## finally display url:s
-#domain="$TF_VAR_cf_subdomain.$TF_VAR_cf_zone"
-#jupyter_url="http://notebook.$domain"
-#luigi_url="http://luigi.$domain"
-#galaxy_url="http://galaxy.$domain"
-#
-#echo 'Services should be reachable at following url:'
-#printf 'Galaxy:  "%s"\n' "$galaxy_url"
-#printf 'Jupyter: "%s"\n' "$jupyter_url"
-#printf 'Luigi:   "%s"\n' "$luigi_url"
+jupyter_url="http://notebook.$domain"
+luigi_url="http://luigi.$domain"
+galaxy_url="http://galaxy.$domain"
+
+echo 'Services should be reachable at following url:'
+printf 'Galaxy:  "%s"\n' "$galaxy_url"
+printf 'Jupyter: "%s"\n' "$jupyter_url"
+printf 'Luigi:   "%s"\n' "$luigi_url"
