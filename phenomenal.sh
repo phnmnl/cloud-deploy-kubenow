@@ -127,8 +127,9 @@ docker run --rm -it \
   -e "GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_VAR_) \
-  andersla/phnmnl-provision \
-  /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
+  --entrypoint "/bin/bash" \
+  kubenow/provisioners:current \
+  -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
 # display inventoty
 echo "Inventory:"
