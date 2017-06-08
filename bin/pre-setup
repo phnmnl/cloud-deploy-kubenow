@@ -7,7 +7,7 @@ if [ ! -f vre.key ]; then
 fi
 
 # generate kubeadm_token
-if [ ! -f kubeadm_token ]; then
+if [ ! -f kubetoken ]; then
     kubetoken=$("$PORTAL_APP_REPO_FOLDER/KubeNow/bin/kubetoken")
     printf '%s\n' "$kubetoken" > kubetoken
 fi
