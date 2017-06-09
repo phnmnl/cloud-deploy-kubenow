@@ -41,6 +41,12 @@ Examples:
 TEXT_END
 }
 
+# dockoer --version | grep "Docker version" > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "Docker is not installed - exiting" >&2
+    exit 1
+fi
+
 case "$1" in
     deploy|destroy|state)
         cmd="$1"
@@ -98,6 +104,8 @@ if [[ ! -f "$config_file" ]]; then
     exit 1
 fi
 
+
+
 source "$config_file"
 
 if [ -n "$TF_VAR_gce_credentials_file" ]; then
@@ -127,24 +135,29 @@ docker run --rm -it \
   -e "GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_VAR_) \
-  andersla/phnmnl-provision \
-  /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
+  --entrypoint "/bin/bash" \
+  kubenow/provisioners:current \
+  -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
-# display inventoty
-echo "Inventory:"
-cat "$DEPLOYMENT_DIR_HOST/inventory"
-echo "---"
-echo ""
+if [[ $cmd != "destroy" ]]; then
 
-# get domain from inventory
-domain="$(awk -F'=' '/domain/ { print $2 }' $DEPLOYMENT_DIR_HOST/inventory)"
+  # display inventoty
+  echo "Inventory:"
+  cat "$DEPLOYMENT_DIR_HOST/inventory"
+  echo "---"
+  echo ""
 
-## finally display url:s
-jupyter_url="http://notebook.$domain"
-luigi_url="http://luigi.$domain"
-galaxy_url="http://galaxy.$domain"
+  # get domain from inventory
+  domain="$(awk -F'=' '/domain/ { print $2 }' $DEPLOYMENT_DIR_HOST/inventory)"
 
-echo 'Services should be reachable at following url:'
-printf 'Galaxy:  "%s"\n' "$galaxy_url"
-printf 'Jupyter: "%s"\n' "$jupyter_url"
-printf 'Luigi:   "%s"\n' "$luigi_url"
+  ## finally display url:s
+  jupyter_url="http://notebook.$domain"
+  luigi_url="http://luigi.$domain"
+  galaxy_url="http://galaxy.$domain"
+
+  echo 'Services should be reachable at following url:'
+  printf 'Galaxy:  "%s"\n' "$galaxy_url"
+  printf 'Jupyter: "%s"\n' "$jupyter_url"
+  printf 'Luigi:   "%s"\n' "$luigi_url"
+
+fi
