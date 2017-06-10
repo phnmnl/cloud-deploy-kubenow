@@ -81,7 +81,7 @@ ansible-playbook -i "$ansible_inventory_file" \
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "name=galaxy-pvc" \
-                 -e "storage=100Gi" \
+                 -e "storage=95Gi" \
                  "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster-pvc.yml"
 
 # deploy jupyter
