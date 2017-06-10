@@ -88,7 +88,7 @@ ansible-playbook -i "$ansible_inventory_file" \
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "jupyter_chart_version=0.1.1" \
-                 -e "jupyter_image_tag=:v387f29b6ca83_cv0.4.7" \
+                 -e "jupyter_image_tag=:latest" \
                  -e "jupyter_password=$TF_VAR_jupyter_password" \
                  -e "jupyter_pvc=galaxy-pvc" \
                  -e "jupyter_resource_req_cpu=200m" \
@@ -106,7 +106,7 @@ ansible-playbook -i "$ansible_inventory_file" \
 galaxy_api_key=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/galaxy_api_key")
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
-                 -e "galaxy_chart_version=0.1.6-phenomenal-alanine" \
+                 -e "galaxy_chart_version=latest" \
                  -e "galaxy_image_tag=:latest" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
