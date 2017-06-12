@@ -1,0 +1,22 @@
+---
+- hosts: master
+  gather_facts: False
+  tasks:
+
+  - name: create dashboard yaml directory
+    become: yes
+    file:
+      path: /etc/dashboard/yaml/
+      state: directory
+      mode: 0755
+
+  - name: copy dashboard deployment file
+    become: yes
+    template:
+      src: kubernetes-dashboard.yaml
+      dest: "/etc/dashboard/yaml/kubernetes-dashboard.yaml"
+
+  - name: apply dashboard
+    command: >
+      kubectl apply -f
+      /etc/dashboard/yaml/kubernetes-dashboard.yaml

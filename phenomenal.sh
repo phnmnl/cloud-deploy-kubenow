@@ -23,7 +23,8 @@ Commands:
 
     deploy      Setup the cloud research environment
     destroy     Destroy the cloud research environment
-    state       Status of the cre
+    state       Status of the cloud research environment
+    list        List network and flavor-names for the cloud provider
 
 Providers:
 
@@ -48,7 +49,7 @@ if [ $? -ne 0 ]; then
 fi
 
 case "$1" in
-    deploy|destroy|state)
+    deploy|destroy|state|list)
         cmd="$1"
         ;;
     -h|--help)
@@ -127,6 +128,7 @@ DEPLOYMENT_DIR_HOST="$PWD/$DEPLOYMENTS_DIR/$DEPLOYMENT_REFERENCE"
 printf 'Using deployment directory "%s"\n' "$DEPLOYMENT_DIR_HOST"
 
 # execute scripts via docker container with all dependencies
+# kubenow/provisioners:current \
 docker run --rm -it \
   -v "$PWD":/cloud-deploy \
   -e "PORTAL_APP_REPO_FOLDER=/cloud-deploy" \
@@ -136,10 +138,10 @@ docker run --rm -it \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_VAR_) \
   --entrypoint "/bin/bash" \
-  kubenow/provisioners:current \
+  andersla/provisioners:latest \
   -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
-if [[ $cmd != "destroy" ]]; then
+if [[ $cmd == "deploy" || $cmd == "state" ]]; then
 
   # display inventoty
   echo "Inventory:"

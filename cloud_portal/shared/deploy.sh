@@ -100,6 +100,11 @@ ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/luigi/main.yml"
 
+# deploy kubernetes-dashboard
+ansible-playbook -i "$ansible_inventory_file" \
+                 --key-file "$PRIVATE_KEY" \
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/kubernetes-dashboard/main.yml"
+
 # deploy galaxy
 # first generate key
 "$PORTAL_APP_REPO_FOLDER/bin/generate-galaxy-api-key"
