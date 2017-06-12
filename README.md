@@ -50,43 +50,221 @@ If you later want to pull latest version and also pull latest submodule updates:
 
 
 
-### If you want to test the deployment:
+### If you want to run the deployment:
 
-First, If you don't have a "kubenow-v020a1" image available in your cloud tenancy then you need to upload one. In the [KubeNow guidelines](https://kubenow.readthedocs.io/en/latest/developers/build-img.html) you can also find further details on how to build and upload a KubeNow image in your cloud tenancy.
 
-Nonetheless, latest images are availabe for upload into your teenancy from: [https://github.com/kubenow/KubeNow/releases](https://github.com/kubenow/KubeNow/releases)
+This page will guide you to set up a PhenoNeNal CRE on Amazon, Google Cloud or in a public or private OpenStack environment through the command-line. Normally, you would use the convenient [PhenoMeNal portal](http://portal.phenomenal-h2020.eu) to launch a CRE on the supported cloud providers, which under the hood is using the procedure below. But in special cases (private OpenStack, or for developers) you want to use the infrastructure provisioning procedure without the web GUI.
 
-The next step is to make sure that you have the necessary credentials details in order to deploy your infrastructure. This varies from platform to platform; the three most used in our case are: OpenStack, Google Cloud Engine (GCE) and Amazon Web Services (AWS). For them here is what you have to pay attention to:
+Prerequisites
+-----------
 
-1. **OpenStack**: It is mandatory to download and source the RC file.
-2. *GCE***: You have created and downloaded a service account file for your GCE project: _Api manager > Credentials > Create credentials > Service account key_ .
-3. **AWS**: You have an IAM user along with its access key and security credentials.
+There are some tools that you need installed on your local machine, in order to provision Phenomenal-KubeNow:
+- [Git](https:git-scm.com/) to clone/download the install scripts from github repo
+- [Docker](https://www.docker.com/) to run the Docker container containing all other dependencies
 
-Finally, here are the last steps before running the one-click-deploy-scripts:
+Get Phenomenal-KubeNow
+-----------
 
-    # Edit the file test_env_vars_for_xxx.sh  matching your cloudprovider (e.g. Openstack, Amazon, Google, Vagrant(local-deployment))
-    vim test_env_vars_for_xxxx.sh
+Phenomenal-KubeNow are distributed via [GitHub](http://github.com):
 
-    # Inject variables into your environment
-    source test_env_vars_for_xxxx.sh
+    # the repository contains submodules therefore `--recursive` parameter when cloning e.g.
+    git clone --recursive https://github.com/phnmnl/cloud-deploy-kubenow.git
 
-    # Edit the config template config.xxx.sh-template matching your cloudprovider (e.g. Openstack, Amazon, Google, Vagrant(local-deployment))
-    mv config.xxx.sh-template config.xxx.sh
-    vim config.xxx.sh-template
+    cd cloud-deploy-kubenow
 
-    # Deploy (openstack)
-    cloud_portal/ostack/xxxx.sh
 
-    # Status
-    cloud_portal/xxxx/state.sh
+All of the commands in this documentation are meant to be run in the cloud-deploy-kubenow directory.
 
-Access services:
+Deploy on Amazon Web Services
+-----------
+**Amazon specific prerequisites**
 
-- http://galaxy. "your prefix" .phenomenal.cloud
+- You have an IAM user along with its *access key* and *security credentials* (http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html)
 
-- http://notebook. "your prefix" .phenomenal.cloud
+**Configuration**
 
-Destroy cluster:
+Start by creating your configuration file: ``config.aws.sh`` There is a template that you can use for your convenience:
 
-    # Destroy
-    cloud_portal/xxxx/destroy.sh
+    mv config.aws.sh-template config.aws.sh
+
+In this configuration file you will need to set:
+
+*Cluster*
+- **`TF_VAR_cluster_prefix`**: every resource in your tenancy will be named with this prefix
+
+- **`TF_VAR_aws_access_key_id`**: your access key id
+- **`TF_VAR_aws_secret_access_key`**: your secret access key id
+- **`TF_VAR_aws_region`**: the region where your cluster will be bootstrapped (e.g. ``eu-west-1``)
+- **`TF_VAR_availability_zone`**: an availability zone for your cluster (e.g. ``eu-west-1a``)
+
+*Master configuration*
+- **`TF_VAR_master_instance_type`**: an instance flavor for the master
+- **`TF_VAR_master_as_edge`**:
+
+*Node configuration*
+- **`TF_VAR_node_count`**: number of Kubernetes nodes to be created (no floating IP is needed for these nodes)
+- **`TF_VAR_node_instance_type`**: an instance flavor name for the Kubernetes nodes
+
+*Gluster configuration*
+- **`TF_VAR_edge_count`**: number of egde nodes to be created
+- **`TF_VAR_edge_instance_type`**: an instance flavor for the edge nodes
+
+*Edge configuration (optional)*
+- **`TF_VAR_edge_count`**: number of egde nodes to be created
+- **`TF_VAR_edge_instance_type`**: an instance flavor for the edge nodes
+
+*Cloudflare (optional)* - See: KubeNow [Cloudflare documentation.](http://kubenow.readthedocs.io/en/latest/getting_started/install-core.html#cloudflare-account-configuration)
+- **`TF_VAR_cf_mail`**: the mail that you used to register your Cloudflare account
+- **`TF_VAR_cf_token`**: an authentication token that you can generate from the Cloudflare web interface
+- **`TF_VAR_cf_zone`**: a zone that you created in your Cloudflare account. This typically matches your domain name (e.g. somedomain.com)
+- **`TF_VAR_cf_subdomain`**: (optional): you can set a subdomain name for this cluster, if you don't want to use the whole domain for this purpose
+
+*Galaxy*
+- **`TF_VAR_galaxy_admin_email`**: the local galaxy admin (you?)
+- **`TF_VAR_galaxy_admin_password`**: min 6 characters admin password
+
+*Jupyter*
+- **`TF_VAR_jupyter_password`**: password for your notebook
+
+
+
+**Once you are done with your settings you are ready to deploy the cluster:**
+
+    ./phenomenal.sh deploy aws
+
+  when deployment is finished then you should be able to reach the services at:
+
+    Galaxy  = http://galaxy.<your-prefix>.<yourdomain>
+    Jupyter = http://notebook.<your-prefix>.<yourdomain>
+    Luigi   = http://luigi.<your-prefix>.<yourdomain>
+
+  and to destroy use:
+
+    ./phenomenal.sh destroy aws
+
+
+Deploy on Google Cloud Platform
+-----------
+**Google cloud specific prerequisites**
+
+ - You have enabled the Google Compute Engine API: API Manager > Library > Compute Engine API > Enable
+
+ - You have created and downloaded a service account file for your GCE project: Api manager > Credentials > Create credentials > Service account key
+
+ - You installed python package apache-libcloud and jmespath (e.g. `sudo pip install apache-libcloud jmespath`)
+
+**Configuration**
+
+Start by creating your configuration file: ``config.gcp.sh`` There is a template that you can use for your convenience:
+
+    mv config.gcp.sh-template config.gcp.sh
+
+In this configuration file you will need to set:
+
+*Cluster*
+
+- **`TF_VAR_cluster_prefix`**: every resource in your tenancy will be named with this prefix
+
+- **`TF_VAR_gce_credentials_file`**: path to your service account file
+- **`TF_VAR_gce_region`**: the zone for your project (e.g. ``europe-west1-b``)
+- **`TF_VAR_gce_project`**: your project id
+
+- **`TF_VAR_master_flavor`**: an instance flavor for the master
+- **`TF_VAR_node_flavor`**: an instance flavor name for the Kubernetes nodes
+- **`TF_VAR_edge_flavor`**: an instance flavor for the edge nodes
+
+- **`TF_VAR_node_count`**: number of Kubernetes nodes to be created (no floating IP is needed for these nodes)
+- **`TF_VAR_edge_count`**: number of egde nodes to be created
+
+*Cloudflare* - See: KubeNow [Cloudflare documentation.](http://kubenow.readthedocs.io/en/latest/getting_started/install-core.html#cloudflare-account-configuration)
+- **`TF_VAR_cf_mail`**: the mail that you used to register your Cloudflare account
+- **`TF_VAR_cf_token`**: an authentication token that you can generate from the Cloudflare web interface
+- **`TF_VAR_cf_zone`**: a zone that you created in your Cloudflare account. This typically matches your domain name (e.g. somedomain.com)
+- **`TF_VAR_cf_subdomain`**: (optional): you can set a subdomain name for this cluster, if you don't want to use the whole domain for this purpose
+
+*Galaxy*
+- **`TF_VAR_galaxy_admin_email`**: the local galaxy admin (you?)
+- **`TF_VAR_galaxy_admin_password`**: min 6 characters admin password
+
+*Jupyter*
+- **`TF_VAR_jupyter_password`**: password for your notebook
+
+
+
+
+**Once you are done with your settings you are ready to deploy the cluster:**
+
+    ./phenomenal.sh deploy gcp
+
+  when deployment is finished then you should be able to reach the services at:
+
+    Galaxy  = http://galaxy.<your-prefix>.<yourdomain>
+    Jupyter = http://notebook.<your-prefix>.<yourdomain>
+    Luigi   = http://luigi.<your-prefix>.<yourdomain>
+
+  and to destroy use:
+
+    ./phenomenal.sh destroy gcp
+
+
+Deploy on Openstack
+-----------
+**Openstack specific prerequisites**
+
+- You have downloaded the OpenStack RC file (credentials) for your tenancy: https://docs.openstack.org/user-guide/common/cli-set-environment-variables-using-openstack-rc.html#download-and-source-the-openstack-rc-file
+
+- You installed the python-glanceclient client on your local machine (e.g. `sudo pip install python-glanceclient`)
+
+**Configuration**
+
+Start by creating your configuration file: ``config.ostack.sh`` There is a template that you can use for your convenience:
+
+    mv config.ostach.sh-template config.ostack.sh
+
+In this configuration file you will need to set:
+
+*Cluster*
+
+- **`TF_VAR_cluster_prefix`**: every resource in your tenancy will be named with this prefix
+
+- **`TF_VAR_os_credentials_file`**: your openstack credentials file: https://docs.openstack.org/user-guide/common/cli-set-environment-variables-using-openstack-rc.html#download-and-source-the-openstack-rc-file
+
+- **`TF_VAR_floating_ip_pool`**: a floating IP pool name
+- **`TF_VAR_external_network_uuid`**: the uuid of the external network in the OpenStack tenancy
+- **`TF_VAR_dns_nameservers`**: (optional, only needed if you want to use other dns-servers than default 8.8.8.8 and 8.8.4.4)
+
+- **`TF_VAR_master_flavor`**: an instance flavor for the master
+- **`TF_VAR_node_flavor`**: an instance flavor name for the Kubernetes nodes
+- **`TF_VAR_edge_flavor`**: an instance flavor for the edge nodes
+
+- **`TF_VAR_node_count`**: number of Kubernetes nodes to be created (no floating IP is needed for these nodes)
+- **`TF_VAR_edge_count`**: number of egde nodes to be created
+
+*Cloudflare* - See: KubeNow [Cloudflare documentation.](http://kubenow.readthedocs.io/en/latest/getting_started/install-core.html#cloudflare-account-configuration)
+- **`TF_VAR_cf_mail`**: the mail that you used to register your Cloudflare account
+- **`TF_VAR_cf_token`**: an authentication token that you can generate from the Cloudflare web interface
+- **`TF_VAR_cf_zone`**: a zone that you created in your Cloudflare account. This typically matches your domain name (e.g. somedomain.com)
+- **`TF_VAR_cf_subdomain`**: (optional): you can set a subdomain name for this cluster, if you don't want to use the whole domain for this purpose
+
+*Galaxy*
+- **`TF_VAR_galaxy_admin_email`**: the local galaxy admin (you?)
+- **`TF_VAR_galaxy_admin_password`**: min 6 characters admin password
+
+*Jupyter*
+- **`TF_VAR_jupyter_password`**: password for your notebook
+
+
+
+**Once you are done with your settings you are ready to deploy the cluster:**
+
+    ./phenomenal.sh deploy ostack
+
+  when deployment is finished then you should be able to reach the services at:
+
+    Galaxy  = http://galaxy.<your-prefix>.<yourdomain>
+    Jupyter = http://notebook.<your-prefix>.<yourdomain>
+    Luigi   = http://luigi.<your-prefix>.<yourdomain>
+
+  and to destroy use:
+
+    ./phenomenal.sh destroy ostack
