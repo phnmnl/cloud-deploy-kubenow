@@ -156,10 +156,12 @@ if [[ $cmd == "deploy" || $cmd == "state" ]]; then
   jupyter_url="http://notebook.$domain"
   luigi_url="http://luigi.$domain"
   galaxy_url="http://galaxy.$domain"
+  dashboard_url="http://dashboard.$domain"
 
   echo 'Services should be reachable at following url:'
-  printf 'Galaxy:  "%s"\n' "$galaxy_url"
-  printf 'Jupyter: "%s"\n' "$jupyter_url"
-  printf 'Luigi:   "%s"\n' "$luigi_url"
+  printf 'Galaxy:         "%s"\n' "$galaxy_url"
+  printf 'Jupyter:        "%s"\n' "$jupyter_url"
+  printf 'Luigi:          "%s"\n' "$luigi_url"
+  printf 'Kube-dashboard: "%s"\n' "$dashboard_url"
 
 fi
