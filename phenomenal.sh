@@ -135,6 +135,7 @@ docker run --rm -it \
   -e "PORTAL_DEPLOYMENTS_ROOT=/cloud-deploy/$DEPLOYMENTS_DIR" \
   -e "PORTAL_DEPLOYMENT_REFERENCE=$DEPLOYMENT_REFERENCE" \
   -e "GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS" \
+  -e "LOCAL_DEPLOYMENT=TRUE" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_VAR_) \
   --entrypoint "/bin/bash" \
