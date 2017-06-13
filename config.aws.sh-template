@@ -28,7 +28,7 @@ export TF_VAR_glusternode_extra_disk_size="200" # Size in GB
 # export TF_VAR_edge_instance_type="t2.medium"
 
 # Cloudflare configuration (optional)
-# use_cloudflare="true"
+# export TF_VAR_use_cloudflare="true"
 # export TF_VAR_cloudflare_email="your-cloudflare-email"
 # export TF_VAR_cloudflare_token="your-cloudflare-token"
 # export TF_VAR_cloudflare_domain="your-domain-name"
