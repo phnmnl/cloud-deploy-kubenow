@@ -17,9 +17,9 @@ Phenomenal-KubeNow are distributed via [GitHub](http://github.com):
 
     # the repository contains submodules therefore `--recursive` parameter when cloning e.g.
     git clone --recursive https://github.com/phnmnl/cloud-deploy-kubenow.git
-    
+
     cd cloud-deploy-kubenow
-    
+
     # If you later want to pull latest version and also pull latest submodule updates:
 
     git pull --recurse-submodules
@@ -52,7 +52,7 @@ In this configuration file you will need to set:
 
 *Master configuration*
 - **`TF_VAR_master_instance_type`**: an instance flavor for the master
-- **`TF_VAR_master_as_edge`**:
+- **`TF_VAR_master_as_edge`**: true/false, master can function as a gateway to your services
 
 *Node configuration*
 - **`TF_VAR_node_count`**: number of Kubernetes nodes to be created (no floating IP is needed for these nodes)
@@ -125,7 +125,7 @@ In this configuration file you will need to set:
 
 *Master configuration*
 - **`TF_VAR_master_flavor`**: an instance flavor for the master
-- **`TF_VAR_master_as_edge`**:
+- **`TF_VAR_master_as_edge`**: true/false, master can function as a gateway to your services
 
 *Node configuration*
 - **`TF_VAR_node_count`**: number of Kubernetes nodes to be created (no floating IP is needed for these nodes)
@@ -192,7 +192,7 @@ In this configuration file you will need to set:
 
 - **`TF_VAR_cluster_prefix`**: every resource in your tenancy will be named with this prefix
 
-- **`TF_VAR_os_credentials_file`**: your openstack credentials file: https://docs.openstack.org/user-guide/common/cli-set-environment-variables-using-openstack-rc.html#download-and-source-the-openstack-rc-file
+- **`OS_CREDENTIALS_FILE`**: your openstack credentials file: https://docs.openstack.org/user-guide/common/cli-set-environment-variables-using-openstack-rc.html#download-and-source-the-openstack-rc-file
 
 - **`TF_VAR_floating_ip_pool`**: a floating IP pool name
 - **`TF_VAR_external_network_uuid`**: the uuid of the external network in the OpenStack tenancy
@@ -200,7 +200,7 @@ In this configuration file you will need to set:
 
 *Master configuration*
 - **`TF_VAR_master_flavor`**: an instance flavor for the master
-- **`TF_VAR_master_as_edge`**:
+- **`TF_VAR_master_as_edge`**: true/false, master can function as a gateway to your services
 
 *Node configuration*
 - **`TF_VAR_node_count`**: number of Kubernetes nodes to be created (no floating IP is needed for these nodes)
@@ -244,8 +244,8 @@ In this configuration file you will need to set:
   and to destroy use:
 
     ./phenomenal.sh destroy ostack
-    
-    
+
+
 ### Directories and files
 
     ├── cloud_portal            # This is where the cloud portal deploy.sh, destroy.sh and state.sh scripts
