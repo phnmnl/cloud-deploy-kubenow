@@ -65,7 +65,7 @@ before_script:
 
 script:
   # Deploy
-  - travis_retry phenomenal.sh deploy "$HOST_CLOUD"
+  - travis_retry ./phenomenal.sh deploy "$HOST_CLOUD"
   # Test
  # - ../bin/kn ansible-playbook playbooks/infra-test.yml
  # - ../bin/kn kubectl get nodes # try to list nodes
@@ -73,4 +73,4 @@ script:
  # - ../bin/kn openstack --version # try to run an openstack command
 
 after_script:
-  - travis_retry phenomenal.sh destroy "$HOST_CLOUD"
+  - travis_retry ./phenomenal.sh destroy "$HOST_CLOUD"
