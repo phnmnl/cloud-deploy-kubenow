@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 # Cloud
-export TF_VAR_cluster_prefix="my-cluster-prefix"
+export TF_VAR_cluster_prefix="your-cluster-prefix"
 
-export TF_VAR_aws_access_key_id="my-access-key-JHGSJGWIUT"
-export TF_VAR_aws_secret_access_key="my-sectet-access-keys-XhkjhdaskjhouioIUIUgjHFfWb9g"
+export TF_VAR_aws_access_key_id="your-acces-key-id"
+export TF_VAR_aws_secret_access_key="your-secret-access-key"
 export TF_VAR_aws_region="eu-west-1"  # Some region
 export TF_VAR_availability_zone="eu-west-1a" # Some availability zone
 
@@ -21,7 +21,7 @@ export TF_VAR_node_instance_type="t2.medium"
 # Gluster configuration
 export TF_VAR_glusternode_count="1" # 1 - 3 depending on preferred replication factor
 export TF_VAR_glusternode_instance_type="t2.medium"
-export TF_VAR_glusternode_extra_disk_size="200" # Size in GB
+export TF_VAR_glusternode_extra_disk_size="100" # Size in GB
 
 # Edge configuration (optional)
 # export TF_VAR_edge_count="2"
