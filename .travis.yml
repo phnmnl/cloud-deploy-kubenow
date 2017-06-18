@@ -43,10 +43,10 @@ before_script:
 #        cp "terraform.tfvars.${HOST_CLOUD}-template" terraform.tfvars
 #      fi
   # Common
-  - sed -i -e "s/your-cluster-prefix/cloud-deploy-kubenow-ci-${TRAVIS_BUILD_NUMBER}-${HOST_CLOUD}/g" terraform.tfvars
+  - sed -i -e "s/your-cluster-prefix/cloud-deploy-kubenow-ci-${TRAVIS_BUILD_NUMBER}-${HOST_CLOUD}/g" config.${HOST_CLOUD}.sh
   # AWS
-  - sed -i -e "s/your-acces-key-id/${AWS_ACCESS_KEY_ID}/g" terraform.tfvars
-  - sed -i -e "s#your-secret-access-key#${AWS_SECRET_ACCESS_KEY}#g" terraform.tfvars
+  - sed -i -e "s/your-acces-key-id/${AWS_ACCESS_KEY_ID}/g" config.${HOST_CLOUD}.sh
+  - sed -i -e "s#your-secret-access-key#${AWS_SECRET_ACCESS_KEY}#g" config.${HOST_CLOUD}.sh
   # GCE
 #  - printf '%s\n' "$GCE_CREDENTIALS" > "./service-account.json"
 #  - sed -i -e "s/your_project_id/${GCE_PROJECT_ID}/g" terraform.tfvars
