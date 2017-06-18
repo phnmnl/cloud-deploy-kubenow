@@ -81,6 +81,7 @@ spec:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
 ---
+# Please note that Service need to be edited from default values: port 9090, name: http
 kind: Service
 apiVersion: v1
 metadata:
@@ -96,7 +97,6 @@ spec:
   selector:
     k8s-app: kubernetes-dashboard
 ---
-# Please note that Service need to be edited from default with: port 9090, name: http
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
