@@ -131,6 +131,7 @@ printf 'Using deployment directory "%s"\n' "$DEPLOYMENT_DIR_HOST"
 # kubenow/provisioners:current \
 docker run --rm -it \
   -v "$PWD":/cloud-deploy \
+  -e "LOCAL_USER_ID=$UID" \
   -e "PORTAL_APP_REPO_FOLDER=/cloud-deploy" \
   -e "PORTAL_DEPLOYMENTS_ROOT=/cloud-deploy/$DEPLOYMENTS_DIR" \
   -e "PORTAL_DEPLOYMENT_REFERENCE=$DEPLOYMENT_REFERENCE" \
@@ -138,9 +139,8 @@ docker run --rm -it \
   -e "LOCAL_DEPLOYMENT=TRUE" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_VAR_) \
-  --entrypoint "/bin/bash" \
-  andersla/provisioners:latest \
-  -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
+  andersla/provisioners-localuser:latest \
+  /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
 if [[ $cmd == "deploy" || $cmd == "state" ]]; then
 
