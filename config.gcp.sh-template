@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # Cloud
-export TF_VAR_cluster_prefix="my-cluster-prefix"
+export TF_VAR_cluster_prefix="your-cluster-prefix"
 
-export TF_VAR_gce_credentials_file="/home/xxxx/projekt/My-credentials-file-My First Project-a9c82d126069.json"
+export TF_VAR_gce_credentials_file="path-to-your-credentials-json-file"
 export TF_VAR_gce_project="your_project_id" # Google project id
 export TF_VAR_gce_zone="europe-west1-b" # Some GCE zone
 
