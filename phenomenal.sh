@@ -127,8 +127,8 @@ DEPLOYMENT_DIR_HOST="$PWD/$DEPLOYMENTS_DIR/$DEPLOYMENT_REFERENCE"
 
 printf 'Using deployment directory "%s"\n' "$DEPLOYMENT_DIR_HOST"
 
-# make sure KubeNow subrepo is updated
-git submodule update
+# make sure KubeNow subrepo is updated but ignore errors
+git submodule update || true
 
 # execute scripts via docker container with all dependencies
 # kubenow/provisioners:current \
