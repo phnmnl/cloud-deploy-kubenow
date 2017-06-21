@@ -130,11 +130,15 @@ printf 'Using deployment directory "%s"\n' "$DEPLOYMENT_DIR_HOST"
 # make sure KubeNow subrepo is updated but ignore errors
 git submodule update || true
 
+# Get GID of $PWD
+LOCAL_PWD_GROUP_ID=$(ls -nd "$PWD" | awk '{print $4;}')
+
 # execute scripts via docker container with all dependencies
 # kubenow/provisioners:current \
 docker run --rm -it \
   -v "$PWD":/cloud-deploy \
   -e "LOCAL_USER_ID=$UID" \
+  -e "LOCAL_PWD_GROUP_ID=$LOCAL_PWD_GROUP_ID" \
   -e "PORTAL_APP_REPO_FOLDER=/cloud-deploy" \
   -e "PORTAL_DEPLOYMENTS_ROOT=/cloud-deploy/$DEPLOYMENTS_DIR" \
   -e "PORTAL_DEPLOYMENT_REFERENCE=$DEPLOYMENT_REFERENCE" \
