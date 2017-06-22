@@ -17,7 +17,7 @@ export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre
 
 # gce and ostack
 
-IMG_VERSION="v030-8-gf709877-current"
+IMG_VERSION="v031"
 export TF_VAR_kubenow_image="kubenow-$IMG_VERSION"
 
 # gce
@@ -96,8 +96,11 @@ ansible-playbook -i "$ansible_inventory_file" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/luigi/main.yml"
 
 # deploy kubernetes-dashboard
+dashboard_auth=$(htpasswd -nb "$TF_VAR_dashboard_username" "$TF_VAR_dashboard_password")
+dashboard_auth_base64=$(echo $dashboard_auth | base64)
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
+                 -e "auth_base64=$dashboard_auth_base64" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/kubernetes-dashboard/main.yml"
 
 # deploy galaxy

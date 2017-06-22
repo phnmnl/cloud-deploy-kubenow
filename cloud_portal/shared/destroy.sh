@@ -6,7 +6,7 @@ cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 ansible_inventory_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/inventory"
 
 # TODO read this from deploy.sh file
-export TF_VAR_kubenow_image="kubenow-v030-8-gf709877-current"
+export TF_VAR_kubenow_image="kubenow-v31"
 export TF_VAR_kubeadm_token="fake.token"
 export TF_VAR_master_disk_size="20"
 export TF_VAR_node_disk_size="20"
