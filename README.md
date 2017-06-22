@@ -80,6 +80,10 @@ In this configuration file you will need to set:
 *Jupyter*
 - **`TF_VAR_jupyter_password`**: password for your notebook
 
+*Kubernetes-dashboard*
+- **`TF_VAR_dashboard_username`**: username for kubernetes-dashboard
+- **`TF_VAR_dashboard_password`**: password for kubernetes-dashboard
+
 
 **Once you are done with your settings you are ready to deploy the cluster:**
 
@@ -153,6 +157,9 @@ In this configuration file you will need to set:
 *Jupyter*
 - **`TF_VAR_jupyter_password`**: password for your notebook
 
+*Kubernetes-dashboard*
+- **`TF_VAR_dashboard_username`**: username for kubernetes-dashboard
+- **`TF_VAR_dashboard_password`**: password for kubernetes-dashboard
 
 
 
@@ -227,6 +234,10 @@ In this configuration file you will need to set:
 
 *Jupyter*
 - **`TF_VAR_jupyter_password`**: password for your notebook
+
+*Kubernetes-dashboard*
+- **`TF_VAR_dashboard_username`**: username for kubernetes-dashboard
+- **`TF_VAR_dashboard_password`**: password for kubernetes-dashboard
 
 
 
