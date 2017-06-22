@@ -49,3 +49,7 @@ export TF_VAR_galaxy_admin_password="password"
 
 # Jupyter
 export TF_VAR_jupyter_password="password"
+
+# Kubernetes dashboard
+export TF_VAR_dashboard_username="admin"
+export TF_VAR_dashboard_password="password"
