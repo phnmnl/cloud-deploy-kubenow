@@ -146,7 +146,7 @@ docker run --rm -it \
   -e "LOCAL_DEPLOYMENT=TRUE" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_VAR_) \
-  andersla/provisioners-localuser:latest \
+  andersla/provisioners:20170623-1006 \
   /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
 if [[ $cmd == "deploy" || $cmd == "state" ]]; then
