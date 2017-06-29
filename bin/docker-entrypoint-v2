@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Add and run as local user if LOCAL_USER_ID is passed in at runtime
+if [ -z "$LOCAL_USER_ID" ]; then
+  echo "LOCAL_USER_ID must be specified when running this container, exiting."
+  exit 1
+fi
+
+# create user with $LOCAL_USER_ID if it doesn't exists
+if [[ ! $(id -u $LOCAL_USER_ID > /dev/null 2>&1) ]]; then
+  adduser -s /bin/bash -h /home/user -u $LOCAL_USER_ID -D user
+fi
+
+# create group with $LOCAL_PWD_GROUP_ID if it doesnt exist
+if [[ ! $(getent group $LOCAL_PWD_GROUP_ID > /dev/null 2>&1) ]]; then
+  addgroup -g $LOCAL_PWD_GROUP_ID agroup
+fi
+
+# get username with $LOCAL_USER_ID
+LOCAL_USERNAME=$(getent passwd $LOCAL_USER_ID | cut -d: -f1)
+
+# get groupname with $LOCAL_PWD_GROUP_ID
+GROUPNAME=$(getent group "$LOCAL_PWD_GROUP_ID" | cut -d: -f1)
+
+# add group to user
+addgroup "$LOCAL_USERNAME" "$GROUPNAME"
+
+# copy terraform config to user home
+USER_HOME=$(getent passwd "$LOCAL_USERNAME" | cut -d: -f6)
+cp /.terraformrc "$USER_HOME"
+
+#exec su-exec user "$@"
+cp /.terraformrc "/root/"
+exec su-exec root "$@"

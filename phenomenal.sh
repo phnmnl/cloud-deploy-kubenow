@@ -69,7 +69,7 @@ case "$1" in
 esac
 
 case "$2" in
-    aws|gcp|ostack)
+    aws|gcp|ostack|kvm)
         provider="$2"
         ;;
     "")
@@ -146,8 +146,32 @@ docker run --rm -it \
   -e "LOCAL_DEPLOYMENT=TRUE" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_VAR_) \
-  andersla/provisioners:20170623-1006 \
+  andersla/provisioners:20170629-1400 \
   /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
+  
+## execute scripts via docker container with all dependencies
+## kubenow/provisioners:current \
+#docker run --rm -it \
+#  -v "$PWD":/cloud-deploy \
+#  --privileged \
+#  --net=host \
+#  --pid=host \
+#  --user=root \
+#  -v /sys:/sys:Z \
+#  -v /:/host:Z \
+#  -v /var/lib/libvirt/:/var/lib/libvirt/ \
+#  -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
+#  -e "LOCAL_USER_ID=$UID" \
+#  -e "LOCAL_PWD_GROUP_ID=$LOCAL_PWD_GROUP_ID" \
+#  -e "PORTAL_APP_REPO_FOLDER=/cloud-deploy" \
+#  -e "PORTAL_DEPLOYMENTS_ROOT=/cloud-deploy/$DEPLOYMENTS_DIR" \
+#  -e "PORTAL_DEPLOYMENT_REFERENCE=$DEPLOYMENT_REFERENCE" \
+#  -e "GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS" \
+#  -e "LOCAL_DEPLOYMENT=TRUE" \
+#  --env-file <(env | grep OS_) \
+#  --env-file <(env | grep TF_VAR_) \
+#  andersla/provisioners:20170629-1400 \
+#  /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
 if [[ $cmd == "deploy" || $cmd == "state" ]]; then
 
