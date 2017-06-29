@@ -41,6 +41,7 @@ fi
 if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]
 then
    ansible-playbook "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-openstack-image.yml"
+   #"$PORTAL_APP_REPO_FOLDER/bin/import-openstack-image.yml"
 fi
 
 # gce and aws
