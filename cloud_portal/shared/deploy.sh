@@ -44,6 +44,16 @@ then
    #"$PORTAL_APP_REPO_FOLDER/bin/import-openstack-image.yml"
 fi
 
+# kvm
+# make sure image is available in kvm
+if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/kvm" ]
+then
+   export KN_LOCAL_DIR="/.kubenow"
+   export KN_IMAGE_NAME="$TF_VAR_kubenow_image"
+   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-download-kvm.sh"
+   export TF_VAR_kubenow_image="$TF_VAR_kubenow_image.qcow2"
+fi
+
 # gce and aws
 export TF_VAR_master_disk_size="20"
 export TF_VAR_node_disk_size="20"

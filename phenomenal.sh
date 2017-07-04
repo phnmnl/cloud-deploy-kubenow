@@ -105,8 +105,6 @@ if [[ ! -f "$config_file" ]]; then
     exit 1
 fi
 
-
-
 source "$config_file"
 
 if [ -n "$TF_VAR_gce_credentials_file" ]; then
@@ -120,6 +118,9 @@ if [ -n "$OS_CREDENTIALS_FILE" ]; then
   fi
 fi
 
+# Make sure KubeNow config dir exists
+mkdir -p "$HOME/.kubenow"
+
 # set environment variables used by scripts in cloud-deploy/
 DEPLOYMENTS_DIR="deployments"
 DEPLOYMENT_REFERENCE="id-phnmnl-${config_file%.sh}"
@@ -128,7 +129,7 @@ DEPLOYMENT_DIR_HOST="$PWD/$DEPLOYMENTS_DIR/$DEPLOYMENT_REFERENCE"
 printf 'Using deployment directory "%s"\n' "$DEPLOYMENT_DIR_HOST"
 
 # make sure KubeNow subrepo is updated but ignore errors
-git submodule update || true
+git submodule update > /dev/null 2>&1 || true
 
 # Get GID of $PWD
 LOCAL_PWD_GROUP_ID=$(ls -nd "$PWD" | awk '{print $4;}')
@@ -137,6 +138,9 @@ LOCAL_PWD_GROUP_ID=$(ls -nd "$PWD" | awk '{print $4;}')
 # kubenow/provisioners:current \
 docker run --rm -it \
   -v "$PWD":/cloud-deploy \
+  -v "$HOME/.kubenow":/.kubenow \
+  -v "/var/run/libvirt/libvirt-sock":"/var/run/libvirt/libvirt-sock" \
+  --net=host \
   -e "LOCAL_USER_ID=$UID" \
   -e "LOCAL_PWD_GROUP_ID=$LOCAL_PWD_GROUP_ID" \
   -e "PORTAL_APP_REPO_FOLDER=/cloud-deploy" \
@@ -146,32 +150,8 @@ docker run --rm -it \
   -e "LOCAL_DEPLOYMENT=TRUE" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_VAR_) \
-  andersla/provisioners:20170629-1400 \
+  andersla/provisioners:20170703-2110 \
   /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
-  
-## execute scripts via docker container with all dependencies
-## kubenow/provisioners:current \
-#docker run --rm -it \
-#  -v "$PWD":/cloud-deploy \
-#  --privileged \
-#  --net=host \
-#  --pid=host \
-#  --user=root \
-#  -v /sys:/sys:Z \
-#  -v /:/host:Z \
-#  -v /var/lib/libvirt/:/var/lib/libvirt/ \
-#  -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
-#  -e "LOCAL_USER_ID=$UID" \
-#  -e "LOCAL_PWD_GROUP_ID=$LOCAL_PWD_GROUP_ID" \
-#  -e "PORTAL_APP_REPO_FOLDER=/cloud-deploy" \
-#  -e "PORTAL_DEPLOYMENTS_ROOT=/cloud-deploy/$DEPLOYMENTS_DIR" \
-#  -e "PORTAL_DEPLOYMENT_REFERENCE=$DEPLOYMENT_REFERENCE" \
-#  -e "GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS" \
-#  -e "LOCAL_DEPLOYMENT=TRUE" \
-#  --env-file <(env | grep OS_) \
-#  --env-file <(env | grep TF_VAR_) \
-#  andersla/provisioners:20170629-1400 \
-#  /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
 if [[ $cmd == "deploy" || $cmd == "state" ]]; then
 

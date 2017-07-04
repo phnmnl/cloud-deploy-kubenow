@@ -12,7 +12,8 @@ if [[ ! $(id -u $LOCAL_USER_ID > /dev/null 2>&1) ]]; then
 fi
 
 # create group with $LOCAL_PWD_GROUP_ID if it doesnt exist
-if [[ ! $(getent group $LOCAL_PWD_GROUP_ID > /dev/null 2>&1) ]]; then
+GROUPID="$(getent group $LOCAL_PWD_GROUP_ID > /dev/null 2>&1)"
+if [[ $? != 0 ]] ; then
   addgroup -g $LOCAL_PWD_GROUP_ID agroup
 fi
 
@@ -25,10 +26,4 @@ GROUPNAME=$(getent group "$LOCAL_PWD_GROUP_ID" | cut -d: -f1)
 # add group to user
 addgroup "$LOCAL_USERNAME" "$GROUPNAME"
 
-# copy terraform config to user home
-USER_HOME=$(getent passwd "$LOCAL_USERNAME" | cut -d: -f6)
-cp /.terraformrc "$USER_HOME"
-
-#exec su-exec user "$@"
-cp /.terraformrc "/root/"
-exec su-exec root "$@"
+exec su-exec user "$@"
