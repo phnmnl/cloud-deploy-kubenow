@@ -42,7 +42,7 @@ Examples:
 TEXT_END
 }
 
-# dockoer --version | grep "Docker version" > /dev/null 2>&1
+# docker --version | grep "Docker version" > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "Docker is not installed - exiting" >&2
     exit 1
@@ -141,6 +141,7 @@ docker run --rm -it \
   -v "$HOME/.kubenow":/.kubenow \
   -v "/var/run/libvirt/libvirt-sock":"/var/run/libvirt/libvirt-sock" \
   --net=host \
+  --privileged=true \
   -e "LOCAL_USER_ID=$UID" \
   -e "LOCAL_PWD_GROUP_ID=$LOCAL_PWD_GROUP_ID" \
   -e "PORTAL_APP_REPO_FOLDER=/cloud-deploy" \
@@ -148,9 +149,10 @@ docker run --rm -it \
   -e "PORTAL_DEPLOYMENT_REFERENCE=$DEPLOYMENT_REFERENCE" \
   -e "GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS" \
   -e "LOCAL_DEPLOYMENT=TRUE" \
+  -e "SLACK_ERR_REPORT_TOKEN=$SLACK_ERR_REPORT_TOKEN" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_VAR_) \
-  andersla/provisioners:20170703-2110 \
+  andersla/provisioners:20170705-1320 \
   /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
 if [[ $cmd == "deploy" || $cmd == "state" ]]; then

@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
-set -e
+
+# Exit immediately if a command exits with a non-zero status
+# (but allow for the error trap)
+set -eE
+
+function report_err() {
+  # post deployment log to slack channel (only if portal deployment)
+  if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
+    curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
+	     -F channels="portal-deploy-error" \
+	     -F token="$SLACK_ERR_REPORT_TOKEN" \
+	     https://slack.com/api/files.upload
+  fi
+}
+
+# Trap errors
+trap report_err ERR
 
 # set pwd (to make sure all variable files end up in the deployment reference dir)
 mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
@@ -148,3 +164,4 @@ ansible-playbook -i "$ansible_inventory_file" \
 ansible-playbook -i "$ansible_inventory_file" \
                  -e "name=galaxy" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_http_ok.yml"
+
