@@ -185,13 +185,11 @@ Deploy on Openstack
 
 - You have downloaded the OpenStack RC file (credentials) for your tenancy: https://docs.openstack.org/user-guide/common/cli-set-environment-variables-using-openstack-rc.html#download-and-source-the-openstack-rc-file
 
-- You installed the python-glanceclient client on your local machine (e.g. `sudo pip install python-glanceclient`)
-
 **Configuration**
 
 Start by creating your configuration file: ``config.ostack.sh`` There is a template that you can use for your convenience:
 
-    mv config.ostach.sh-template config.ostack.sh
+    mv config.ostack.sh-template config.ostack.sh
 
 In this configuration file you will need to set:
 
