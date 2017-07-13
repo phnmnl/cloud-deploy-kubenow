@@ -87,6 +87,7 @@ ansible_inventory_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/in
 # deploy KubeNow core stack
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
+                 --skip-tags "heketi-glusterfs" \
                  "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-core.yml"
 
 # wait for all pods in core stack to be ready
@@ -94,17 +95,39 @@ ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_all_pods_ready.yml"
 
-# deploy heketi
-ansible-playbook -i "$ansible_inventory_file" \
-                 --key-file "$PRIVATE_KEY" \
-                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster.yml"
 
-# deploy phenomenal-pvc
-ansible-playbook -i "$ansible_inventory_file" \
-                 --key-file "$PRIVATE_KEY" \
-                 -e "name=galaxy-pvc" \
-                 -e "storage=95Gi" \
-                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/create-pvc.yml"
+if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/kvm" ]
+then
+
+  # deploy local host path (if single node kvm)
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "vol_size=100Gi" \
+                   -e "host_path=/mnt/data" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-hostpath.yml"
+
+  # deploy phenomenal-pvc
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "name=galaxy-pvc" \
+                   -e "storage=95Gi" \
+                   -e "storage_class_name=manual" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/create-pvc.yml"
+else
+
+  # deploy heketi
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster.yml"
+
+  # deploy phenomenal-pvc
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "name=galaxy-pvc" \
+                   -e "storage=95Gi" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/create-pvc.yml"
+
+fi
 
 # deploy jupyter
 ansible-playbook -i "$ansible_inventory_file" \
