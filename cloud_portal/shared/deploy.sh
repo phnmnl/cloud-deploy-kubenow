@@ -95,13 +95,6 @@ ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_all_pods_ready.yml"
 
-export TF_VAR_phenomenal_pvc_size="95Gi"
-
-export TF_VAR_nfs_vol_size="100Gi"
-export TF_VAR_nfs_server="192.x.x.x"
-export TF_VAR_nfs_path="/storage/path"
-
-
 if [ -n "$TF_VAR_hostpath_vol_size" ]
 then
 
@@ -115,12 +108,13 @@ then
   STORAGE_CLASS="storageClassName=manual"
 
 elif [ -n "$TF_VAR_nfs_vol_size" ]
+then
 
   # deploy local host path (if single node kvm)
   ansible-playbook -i "$ansible_inventory_file" \
                    --key-file "$PRIVATE_KEY" \
-                   -e "nfs_server=$TF_VAR_nfs_server"
-                   -e "vol_size=$TF_VAR_nfs_vol_size" \
+                   -e "nfs_server=$TF_VAR_nfs_server" \
+                   -e "nfs_vol_size=$TF_VAR_nfs_vol_size" \
                    -e "nfs_path=$TF_VAR_nfs_path" \
                    "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-nfs.yml"
 

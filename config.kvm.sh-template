@@ -16,7 +16,7 @@ export TF_VAR_phenomenal_pvc_size="95Gi"
 
 export TF_VAR_nfs_vol_size="100Gi"
 export TF_VAR_nfs_server="192.x.x.x"
-export TF_VAR_nfs_path="/storage/path"
+export TF_VAR_nfs_path="/shared/data"
 
 #export TF_VAR_hostpath_vol_size="100Gi"
 #export TF_VAR_hostpath_vol_path="/mnt/data"
