@@ -42,7 +42,7 @@ Examples:
 TEXT_END
 }
 
-# dockoer --version | grep "Docker version" > /dev/null 2>&1
+# docker --version | grep "Docker version" > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "Docker is not installed - exiting" >&2
     exit 1
@@ -69,7 +69,7 @@ case "$1" in
 esac
 
 case "$2" in
-    aws|gcp|ostack)
+    aws|gcp|ostack|kvm)
         provider="$2"
         ;;
     "")
@@ -105,8 +105,6 @@ if [[ ! -f "$config_file" ]]; then
     exit 1
 fi
 
-
-
 source "$config_file"
 
 if [ -n "$TF_VAR_gce_credentials_file" ]; then
@@ -120,6 +118,9 @@ if [ -n "$OS_CREDENTIALS_FILE" ]; then
   fi
 fi
 
+# Make sure KubeNow config dir exists
+mkdir -p "$HOME/.kubenow"
+
 # set environment variables used by scripts in cloud-deploy/
 DEPLOYMENTS_DIR="deployments"
 DEPLOYMENT_REFERENCE="id-phnmnl-${config_file%.sh}"
@@ -128,25 +129,30 @@ DEPLOYMENT_DIR_HOST="$PWD/$DEPLOYMENTS_DIR/$DEPLOYMENT_REFERENCE"
 printf 'Using deployment directory "%s"\n' "$DEPLOYMENT_DIR_HOST"
 
 # make sure KubeNow subrepo is updated but ignore errors
-git submodule update || true
+git submodule update > /dev/null 2>&1 || true
 
-# Get GID of $PWD
-LOCAL_PWD_GROUP_ID=$(ls -nd "$PWD" | awk '{print $4;}')
+# Get all user GID
+LOCAL_GROUP_IDS="$(id -G)"
 
 # execute scripts via docker container with all dependencies
 # kubenow/provisioners:current \
 docker run --rm -it \
   -v "$PWD":/cloud-deploy \
+  -v "$HOME/.kubenow":/.kubenow \
+  -v "/var/run/libvirt/libvirt-sock":"/var/run/libvirt/libvirt-sock" \
+  --net=host \
+  --privileged=true \
   -e "LOCAL_USER_ID=$UID" \
-  -e "LOCAL_PWD_GROUP_ID=$LOCAL_PWD_GROUP_ID" \
+  -e "LOCAL_GROUP_IDS=$LOCAL_GROUP_IDS" \
   -e "PORTAL_APP_REPO_FOLDER=/cloud-deploy" \
   -e "PORTAL_DEPLOYMENTS_ROOT=/cloud-deploy/$DEPLOYMENTS_DIR" \
   -e "PORTAL_DEPLOYMENT_REFERENCE=$DEPLOYMENT_REFERENCE" \
   -e "GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS" \
   -e "LOCAL_DEPLOYMENT=TRUE" \
+  -e "SLACK_ERR_REPORT_TOKEN=$SLACK_ERR_REPORT_TOKEN" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_VAR_) \
-  andersla/provisioners:20170623-1006 \
+  andersla/provisioners:20170712-1106 \
   /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
 if [[ $cmd == "deploy" || $cmd == "state" ]]; then

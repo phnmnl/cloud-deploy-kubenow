@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
-set -e
+
+# Exit immediately if a command exits with a non-zero status
+# (but allow for the error trap)
+set -eE
+
+function report_err() {
+  # post deployment log to slack channel (only if portal deployment)
+  if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
+    curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
+	     -F channels="portal-deploy-error" \
+	     -F token="$SLACK_ERR_REPORT_TOKEN" \
+	     https://slack.com/api/files.upload
+  fi
+}
+
+# Trap errors
+trap report_err ERR
 
 # set pwd (to make sure all variable files end up in the deployment reference dir)
 mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
@@ -41,6 +57,17 @@ fi
 if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]
 then
    ansible-playbook "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-openstack-image.yml"
+   #"$PORTAL_APP_REPO_FOLDER/bin/import-openstack-image.yml"
+fi
+
+# kvm
+# make sure image is available in kvm
+if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/kvm" ]
+then
+   export KN_LOCAL_DIR="/.kubenow"
+   export KN_IMAGE_NAME="$TF_VAR_kubenow_image"
+   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-download-kvm.sh"
+   export TF_VAR_kubenow_image="$TF_VAR_kubenow_image.qcow2"
 fi
 
 # gce and aws
@@ -60,6 +87,7 @@ ansible_inventory_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/in
 # deploy KubeNow core stack
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
+                 --skip-tags "heketi-glusterfs" \
                  "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-core.yml"
 
 # wait for all pods in core stack to be ready
@@ -67,17 +95,52 @@ ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_all_pods_ready.yml"
 
-# deploy heketi
-ansible-playbook -i "$ansible_inventory_file" \
-                 --key-file "$PRIVATE_KEY" \
-                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster.yml"
+if [ -n "$TF_VAR_hostpath_vol_size" ]
+then
+
+  # deploy local host path (if single node kvm)
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "vol_size=$TF_VAR_hostpath_vol_size" \
+                   -e "host_path=$TF_VAR_hostpath_vol_path" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-hostpath.yml"
+
+  STORAGE_CLASS="storageClassName=manual"
+
+elif [ -n "$TF_VAR_nfs_vol_size" ]
+then
+
+  # deploy local host path (if single node kvm)
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "nfs_server=$TF_VAR_nfs_server" \
+                   -e "nfs_vol_size=$TF_VAR_nfs_vol_size" \
+                   -e "nfs_path=$TF_VAR_nfs_path" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-nfs.yml"
+
+  STORAGE_CLASS="nothing=nothing"
+
+else
+
+  # deploy heketi as default
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster.yml"
+
+  STORAGE_CLASS="nothing=nothing"
+
+fi
 
 # deploy phenomenal-pvc
+if [ -z $TF_VAR_phenomenal_pvc_size ]; then
+  TF_VAR_phenomenal_pvc_size="95Gi"
+fi
 ansible-playbook -i "$ansible_inventory_file" \
-                 --key-file "$PRIVATE_KEY" \
-                 -e "name=galaxy-pvc" \
-                 -e "storage=95Gi" \
-                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster-pvc.yml"
+                   --key-file "$PRIVATE_KEY" \
+                   -e "name=galaxy-pvc" \
+                   -e "storage=$TF_VAR_phenomenal_pvc_size" \
+                   -e "$STORAGE_CLASS" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/create-pvc.yml"
 
 # deploy jupyter
 ansible-playbook -i "$ansible_inventory_file" \
@@ -137,3 +200,4 @@ ansible-playbook -i "$ansible_inventory_file" \
 ansible-playbook -i "$ansible_inventory_file" \
                  -e "name=galaxy" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_http_ok.yml"
+
