@@ -172,8 +172,8 @@ ansible-playbook -i "$ansible_inventory_file" \
 galaxy_api_key=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/galaxy_api_key")
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
-                 -e "galaxy_chart_version=latest" \
-                 -e "galaxy_image_tag=:latest" \
+                 -e "galaxy_chart_version=0.3.0" \
+                 -e "galaxy_image_tag=:rc_v17.05-pheno_cv1.1.88" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \
