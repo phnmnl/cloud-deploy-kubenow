@@ -1,29 +1,44 @@
 #!/usr/bin/env bash
 
 # Cloud
-export TF_VAR_cluster_prefix="my-cluster-prefix"
+export TF_VAR_cluster_prefix="your-cluster-prefix"
 
-export TF_VAR_gce_credentials_file="/home/xxxx/projekt/My-credentials-file-My First Project-a9c82d126069.json"
-export TF_VAR_gce_project="my-project-name-158911"
-export TF_VAR_gce_zone="europe-west1-b"
+export TF_VAR_gce_credentials_file="path-to-your-credentials-json-file"
+export TF_VAR_gce_project="your_project_id" # Google project id
+export TF_VAR_gce_zone="europe-west1-b" # Some GCE zone
 
+# Master configuration
+# obs: too small flavors might cause diffuse errors on your installation
+# https://cloud.google.com/compute/docs/machine-types
+export TF_VAR_master_as_edge="true"
 export TF_VAR_master_flavor="n1-standard-2"
-export TF_VAR_node_flavor="n1-standard-4"
-export TF_VAR_edge_flavor="n1-standard-2"
 
-export TF_VAR_node_count="1"
-export TF_VAR_edge_count="1"
+# Node configuration
+export TF_VAR_node_count="2"
+export TF_VAR_node_flavor="n1-standard-2"
 
-# Cloudflare
-export TF_VAR_cf_mail="yoourname@bla.bla.com"
-export TF_VAR_cf_token="3654d3-your-token-qiugq2761e4"
-export TF_VAR_cf_zone="example.com"
-export TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
+# Gluster configuration
+export TF_VAR_glusternode_count="1" # 1 - 3 depending on preferred replication factor
+export TF_VAR_glusternode_flavor="n1-standard-2"
+export TF_VAR_glusternode_extra_disk_size="100" # Size in GB
+
+# Edge configuration (optional)
+# export TF_VAR_edge_count="2"
+# export TF_VAR_edge_flavor="your-edge-flavor"
+
+# Cloudflare configuration (optional)
+# export TF_VAR_use_cloudflare = "true"
+# export TF_VAR_cloudflare_email="your-cloudflare-email"
+# export TF_VAR_cloudflare_token="your-cloudflare-token"
+# export TF_VAR_cloudflare_domain="your-domain-name"
 
 # Galaxy
 export TF_VAR_galaxy_admin_email="yoourname@bla.bla.com"
-export TF_VAR_galaxy_admin_password="password" # need to be at least 6 characters long
+export TF_VAR_galaxy_admin_password="password"
 
 # Jupyter
-export TF_VAR_jupyter_password=""
+export TF_VAR_jupyter_password="password"
 
+# Kubernetes dashboard
+export TF_VAR_dashboard_username="admin"
+export TF_VAR_dashboard_password="password"

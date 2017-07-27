@@ -2,7 +2,7 @@
 
 # generate galaxy-api-key (a kubetoken is a good api-key)
 if [ ! -f galaxy_api_key ]; then
-    $PORTAL_APP_REPO_FOLDER/KubeNow/generate_kubetoken.sh > galaxy_api_key
+    $PORTAL_APP_REPO_FOLDER/KubeNow/bin/kubetoken > galaxy_api_key
 fi
 
 # because if file already exists then it will set exit code 1

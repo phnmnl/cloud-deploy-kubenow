@@ -1,8 +1,12 @@
-# requires glance
 - hosts: localhost
   gather_facts: False
     
   tasks:
+    - set_fact:
+        url: "http://{{name}}.{{domain}}"
+      when:
+        - url is undefined
+   
     - name: "wait for {{ name }} to be responding (usually takes minutes), url= {{ url }}"
       command: >
         curl -I {{ url }}

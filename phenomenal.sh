@@ -23,7 +23,8 @@ Commands:
 
     deploy      Setup the cloud research environment
     destroy     Destroy the cloud research environment
-    state       Status of the cre
+    state       Status of the cloud research environment
+    list        List network and flavor-names for the cloud provider
 
 Providers:
 
@@ -41,8 +42,14 @@ Examples:
 TEXT_END
 }
 
+# dockoer --version | grep "Docker version" > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "Docker is not installed - exiting" >&2
+    exit 1
+fi
+
 case "$1" in
-    deploy|destroy|state)
+    deploy|destroy|state|list)
         cmd="$1"
         ;;
     -h|--help)
@@ -98,30 +105,71 @@ if [[ ! -f "$config_file" ]]; then
     exit 1
 fi
 
+
+
 source "$config_file"
 
-# set environment variables used by scripts in cloud-deploy/
-export PORTAL_DEPLOYMENTS_ROOT="$PWD/deployments"
-export PORTAL_APP_REPO_FOLDER="$PWD"
-export PORTAL_DEPLOYMENT_REFERENCE="id-phnmnl-${config_file%.sh}"
-
-deployment_dir="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
-if [[ ! -d "$deployment_dir" ]]; then
-    mkdir -p "$deployment_dir"
+if [ -n "$TF_VAR_gce_credentials_file" ]; then
+  GOOGLE_CREDENTIALS=$(cat "$TF_VAR_gce_credentials_file")
 fi
-printf 'Using deployment directory "%s"\n' "$deployment_dir"
 
-command_and_path="./cloud_portal/$provider/$cmd.sh"
-printf 'Executing "%s"...\n' "$command_and_path"
-command "$command_and_path"
+if [ -n "$OS_CREDENTIALS_FILE" ]; then
+  # Import credentials file if variables not set aleady
+  if [[ -z "$OS_USERNAME" ]] || [[ -z "$OS_PASSWORD" ]] || [[ -z "$OS_AUTH_URL" ]]; then
+      source "$OS_CREDENTIALS_FILE"
+  fi
+fi
 
-## finally display url:s
-#domain="$TF_VAR_cf_subdomain.$TF_VAR_cf_zone"
-#jupyter_url="http://notebook.$domain"
-#luigi_url="http://luigi.$domain"
-#galaxy_url="http://galaxy.$domain"
-#
-#echo 'Services should be reachable at following url:'
-#printf 'Galaxy:  "%s"\n' "$galaxy_url"
-#printf 'Jupyter: "%s"\n' "$jupyter_url"
-#printf 'Luigi:   "%s"\n' "$luigi_url"
+# set environment variables used by scripts in cloud-deploy/
+DEPLOYMENTS_DIR="deployments"
+DEPLOYMENT_REFERENCE="id-phnmnl-${config_file%.sh}"
+DEPLOYMENT_DIR_HOST="$PWD/$DEPLOYMENTS_DIR/$DEPLOYMENT_REFERENCE"
+
+printf 'Using deployment directory "%s"\n' "$DEPLOYMENT_DIR_HOST"
+
+# make sure KubeNow subrepo is updated but ignore errors
+git submodule update || true
+
+# Get GID of $PWD
+LOCAL_PWD_GROUP_ID=$(ls -nd "$PWD" | awk '{print $4;}')
+
+# execute scripts via docker container with all dependencies
+# kubenow/provisioners:current \
+docker run --rm -it \
+  -v "$PWD":/cloud-deploy \
+  -e "LOCAL_USER_ID=$UID" \
+  -e "LOCAL_PWD_GROUP_ID=$LOCAL_PWD_GROUP_ID" \
+  -e "PORTAL_APP_REPO_FOLDER=/cloud-deploy" \
+  -e "PORTAL_DEPLOYMENTS_ROOT=/cloud-deploy/$DEPLOYMENTS_DIR" \
+  -e "PORTAL_DEPLOYMENT_REFERENCE=$DEPLOYMENT_REFERENCE" \
+  -e "GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS" \
+  -e "LOCAL_DEPLOYMENT=TRUE" \
+  --env-file <(env | grep OS_) \
+  --env-file <(env | grep TF_VAR_) \
+  andersla/provisioners:20170623-1006 \
+  /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
+
+if [[ $cmd == "deploy" || $cmd == "state" ]]; then
+
+  # display inventoty
+  echo "Inventory:"
+  cat "$DEPLOYMENT_DIR_HOST/inventory"
+  echo "---"
+  echo ""
+
+  # get domain from inventory
+  domain="$(awk -F'=' '/domain/ { print $2 }' $DEPLOYMENT_DIR_HOST/inventory)"
+
+  ## finally display url:s
+  jupyter_url="http://notebook.$domain"
+  luigi_url="http://luigi.$domain"
+  galaxy_url="http://galaxy.$domain"
+  dashboard_url="http://dashboard.$domain"
+
+  echo 'Services should be reachable at following url:'
+  printf 'Galaxy:         "%s"\n' "$galaxy_url"
+  printf 'Jupyter:        "%s"\n' "$jupyter_url"
+  printf 'Luigi:          "%s"\n' "$luigi_url"
+  printf 'Kube-dashboard: "%s"\n' "$dashboard_url"
+
+fi

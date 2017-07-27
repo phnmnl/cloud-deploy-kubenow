@@ -3,7 +3,7 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-jupyter_password=""
+jupyter_password="password"
 galaxy_admin_password="password" # need to be 6 characters long
 galaxy_admin_email="yourname@yourdomain.com"
 
@@ -14,7 +14,12 @@ http_port=$( grep 'http_port=' $ansible_inventory_file | cut -d "=" -f 2 )
 export ANSIBLE_HOST_KEY_CHECKING=False
 
 echo "Install KubeNow core components (networking, gluster etc.)"
-ansible-playbook -i $ansible_inventory_file --skip-tags "cloudflare" KubeNow/playbooks/install-core.yml
+ansible-playbook -i $ansible_inventory_file --skip-tags "cloudflare,glusterfs" KubeNow/playbooks/install-core.yml
+ansible-playbook -i $ansible_inventory_file \
+                 -e "nfs_vol_size=50Gi" \
+                 -e "nfs_path=/shared" \
+                 -e "nfs_server=192.168.10.100" \
+                 KubeNow/playbooks/install-nfs-volume.yml
 
 # wait for all pods in core stack to be ready
 ansible-playbook -i $ansible_inventory_file \
