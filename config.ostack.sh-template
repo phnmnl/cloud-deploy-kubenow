@@ -43,6 +43,9 @@ export TF_VAR_glusternode_extra_disk_size="100" # Size in GB
 # export TF_VAR_cloudflare_token="your-cloudflare-token"
 # export TF_VAR_cloudflare_domain="your-domain-name"
 
+# Storage configuration
+export TF_VAR_phenomenal_pvc_size="95Gi"
+
 # Galaxy
 export TF_VAR_galaxy_admin_email="yoourname@bla.bla.com"
 export TF_VAR_galaxy_admin_password="password"
