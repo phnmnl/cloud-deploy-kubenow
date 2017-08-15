@@ -76,6 +76,11 @@ export TF_VAR_node_disk_size="20"
 export TF_VAR_edge_disk_size="20"
 export TF_VAR_glusternode_disk_size="20"
 
+# read cloudflare credentials from the cloned submodule private repo
+if [ -z "$LOCAL_DEPLOYMENT" ]; then
+   source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
+fi
+
 # Deploy cluster with terraform
 terraform get "$KUBENOW_TERRAFORM_FOLDER"
 terraform apply --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
@@ -175,7 +180,7 @@ galaxy_api_key=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/gala
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "galaxy_chart_version=0.3.0" \
-                 -e "galaxy_image_tag=:rc_v17.05-pheno_cv1.1.88" \
+                 -e "galaxy_image_tag=:rc_v17.05-pheno_cv1.1.93" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \
