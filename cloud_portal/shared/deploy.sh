@@ -159,7 +159,9 @@ ansible-playbook -i "$ansible_inventory_file" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/luigi/main.yml"
 
 # deploy kubernetes-dashboard
-dashboard_auth=$(htpasswd -nb "$TF_VAR_dashboard_username" "$TF_VAR_dashboard_password")
+# dashboard_auth=$(htpasswd -nb "$TF_VAR_dashboard_username" "$TF_VAR_dashboard_password")
+hashed_password=$(openssl passwd -apr1 "$TF_VAR_dashboard_password")
+dashboard_auth=$(printf "$TF_VAR_dashboard_username":"$hashed_password")
 dashboard_auth_base64=$(echo $dashboard_auth | base64)
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
