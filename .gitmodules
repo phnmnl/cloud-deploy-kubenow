@@ -3,4 +3,4 @@
 	url = https://github.com/kubenow/KubeNow.git
 [submodule "phenomenal-cloudflare"]
 	path = phenomenal-cloudflare
-	url = git@github.com:EMBL-EBI-TSI/phenomenal-cloudflare.git
+	url = git@github.com:EMBL-EBI-TSI/phenomenal-cloflare.git
