@@ -107,8 +107,8 @@ $PORTAL_APP_REPO_FOLDER'/bin/generate-galaxy-api-key'
 galaxy_api_key=$(cat $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/galaxy_api_key')
 ansible-playbook -i $ansible_inventory_file \
                  -e "domain=$domain" \
-                 -e "galaxy_chart_version=0.1.6-phenomenal-alanine" \
-                 -e "galaxy_image_tag=:v16.07-pheno_cv0.1.59" \
+                 -e "galaxy_chart_version=0.3.0" \
+                 -e "galaxy_image_tag=:rc_v17.05-pheno_cv1.1.93" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \
