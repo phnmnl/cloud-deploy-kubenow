@@ -22,10 +22,8 @@ cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 
 ansible_inventory_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/inventory"
 
-# read cloudflare credentials from the cloned submodule private repo
 if [ -z "$LOCAL_DEPLOYMENT" ]; then
    source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
-   export TF_VAR_use_cloudflare="true"
 fi
 
 # TODO read this from deploy.sh file

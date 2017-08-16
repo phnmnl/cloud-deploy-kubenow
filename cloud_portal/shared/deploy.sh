@@ -76,10 +76,11 @@ export TF_VAR_node_disk_size="20"
 export TF_VAR_edge_disk_size="20"
 export TF_VAR_glusternode_disk_size="20"
 
-# read cloudflare credentials from the cloned submodule private repo
 if [ -z "$LOCAL_DEPLOYMENT" ]; then
    source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
    export TF_VAR_use_cloudflare="true"
+   export TF_VAR_cloudflare_proxied = "true"
+   export TF_VAR_cloudflare_record_texts = ["galaxy","notebook","luigi","dashboard"]
 fi
 
 # Add terraform to path (TODO) remove this portal workaround eventually
