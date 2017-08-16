@@ -9,6 +9,11 @@
       state: directory
       mode: 0755
 
+  - name: create dashboard password secret
+    command: >
+      kubectl --namespace=kube-system create secret generic dashboard-secret \
+        --from-literal=auth='{{basic_auth}}'
+
   - name: copy dashboard deployment file
     template:
       src: kubernetes-dashboard.yaml

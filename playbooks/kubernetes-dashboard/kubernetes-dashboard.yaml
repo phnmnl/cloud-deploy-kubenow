@@ -104,6 +104,8 @@ metadata:
   namespace: kube-system
   annotations:
     kubernetes.io/ingress.class: traefik
+    ingress.kubernetes.io/auth-type: "basic"
+    ingress.kubernetes.io/auth-secret: "dashboard-secret"
 spec:
   rules:
   - host: dashboard.{{domain}}
