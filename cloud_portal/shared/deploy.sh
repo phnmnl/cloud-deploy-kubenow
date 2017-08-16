@@ -21,6 +21,16 @@ trap report_err ERR
 mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 
+# read portal secrets from private repo
+if [ -z "$LOCAL_DEPLOYMENT" ]; then
+   source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
+   export TF_VAR_use_cloudflare="true"
+   export TF_VAR_cloudflare_proxied = "true"
+   export TF_VAR_cloudflare_record_texts = ["galaxy","notebook","luigi","dashboard"]
+   export SLACK_ERR_REPORT_TOKEN=${cat \"$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken\"}
+   echo "$SLACK_ERR_REPORT_TOKEN"
+fi
+
 # presetup (generate key kubeadm token etc.)
 "$PORTAL_APP_REPO_FOLDER/bin/pre-setup"
 export TF_VAR_kubeadm_token=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/kubetoken")
@@ -75,12 +85,6 @@ export TF_VAR_master_disk_size="20"
 export TF_VAR_node_disk_size="20"
 export TF_VAR_edge_disk_size="20"
 export TF_VAR_glusternode_disk_size="20"
-
-# read cloudflare credentials from the cloned submodule private repo
-if [ -z "$LOCAL_DEPLOYMENT" ]; then
-   source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
-   export TF_VAR_use_cloudflare="true"
-fi
 
 # Add terraform to path (TODO) remove this portal workaround eventually
 export PATH=/usr/lib/terraform_0.9.11:$PATH
