@@ -27,8 +27,7 @@ if [ -z "$LOCAL_DEPLOYMENT" ]; then
    export TF_VAR_use_cloudflare="true"
 #   export TF_VAR_cloudflare_proxied="true"
 #   export TF_VAR_cloudflare_record_texts=["galaxy","notebook","luigi","dashboard"]
-   export SLACK_ERR_REPORT_TOKEN=${cat \"$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken\"}
-   echo "$SLACK_ERR_REPORT_TOKEN"
+   export SLACK_ERR_REPORT_TOKEN=$(cat "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken")
 fi
 
 # presetup (generate key kubeadm token etc.)
