@@ -22,9 +22,10 @@ cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 
 ansible_inventory_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/inventory"
 
-# read cloudflare credentials from the cloned submodule private repo
+# read portal secrets from private repo
 if [ -z "$LOCAL_DEPLOYMENT" ]; then
    source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
+   export SLACK_ERR_REPORT_TOKEN=${cat \"$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken\"}
 fi
 
 # TODO read this from deploy.sh file

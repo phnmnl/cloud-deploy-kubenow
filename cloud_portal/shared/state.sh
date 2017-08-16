@@ -17,6 +17,12 @@ function report_err() {
 # Trap errors
 trap 'report_err' ERR
 
+# read portal secrets from private repo
+if [ -z "$LOCAL_DEPLOYMENT" ]; then
+   source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
+   export SLACK_ERR_REPORT_TOKEN=${cat \"$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken\"}
+fi
+
 # Add terraform to path (TODO) remove this portal workaround eventually
 export PATH=/usr/lib/terraform_0.9.11:$PATH
 
