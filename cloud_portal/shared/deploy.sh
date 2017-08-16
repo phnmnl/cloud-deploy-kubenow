@@ -82,6 +82,9 @@ if [ -z "$LOCAL_DEPLOYMENT" ]; then
    export TF_VAR_use_cloudflare="true"
 fi
 
+# Add terraform to path (TODO) remove this portal workaround eventually
+export PATH=/usr/lib/terraform_0.9.11:$PATH
+
 # Deploy cluster with terraform
 terraform get "$KUBENOW_TERRAFORM_FOLDER"
 terraform apply --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
@@ -168,10 +171,10 @@ ansible-playbook -i "$ansible_inventory_file" \
 # dashboard_auth=$(htpasswd -nb "$TF_VAR_dashboard_username" "$TF_VAR_dashboard_password")
 hashed_password=$(openssl passwd -apr1 "$TF_VAR_dashboard_password")
 dashboard_auth=$(printf "$TF_VAR_dashboard_username":"$hashed_password")
-dashboard_auth_base64=$(echo $dashboard_auth | base64)
+#dashboard_auth_base64=$(echo $dashboard_auth | base64)
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
-                 -e "auth_base64=$dashboard_auth_base64" \
+                 -e "basic_auth=$dashboard_auth" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/kubernetes-dashboard/main.yml"
 
 # deploy galaxy
