@@ -8,6 +8,7 @@ function report_err() {
   # post deployment log to slack channel (only if portal deployment)
   if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
     curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
+         -F filetype="shell" \
 	     -F channels="portal-deploy-error" \
 	     -F token="$SLACK_ERR_REPORT_TOKEN" \
 	     https://slack.com/api/files.upload
