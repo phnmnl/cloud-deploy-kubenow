@@ -1,6 +1,8 @@
 ---
 - hosts: master
   gather_facts: False
+  vars:
+    nologging: False
   tasks:
 
   - name: create dashboard yaml directory
@@ -13,6 +15,7 @@
     command: >
       kubectl --namespace=kube-system create secret generic dashboard-secret \
         --from-literal=auth='{{basic_auth}}'
+    no_log: "{{ nologging }}"
 
   - name: copy dashboard deployment file
     template:

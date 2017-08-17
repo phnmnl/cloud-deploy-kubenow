@@ -8,6 +8,7 @@ function report_err() {
   # post deployment log to slack channel (only if portal deployment)
   if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
     curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
+         -F filetype="shell" \
 	     -F channels="portal-deploy-error" \
 	     -F token="$SLACK_ERR_REPORT_TOKEN" \
 	     https://slack.com/api/files.upload
@@ -163,6 +164,7 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "jupyter_pvc=galaxy-pvc" \
                  -e "jupyter_resource_req_cpu=200m" \
                  -e "jupyter_resource_req_memory=1G" \
+                 -e "nologging=true" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/jupyter.yml"
 
 # deploy luigi
@@ -171,13 +173,12 @@ ansible-playbook -i "$ansible_inventory_file" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/luigi/main.yml"
 
 # deploy kubernetes-dashboard
-# dashboard_auth=$(htpasswd -nb "$TF_VAR_dashboard_username" "$TF_VAR_dashboard_password")
 hashed_password=$(openssl passwd -apr1 "$TF_VAR_dashboard_password")
 dashboard_auth=$(printf "$TF_VAR_dashboard_username":"$hashed_password")
-#dashboard_auth_base64=$(echo $dashboard_auth | base64)
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "basic_auth=$dashboard_auth" \
+                 -e "nologging=true" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/kubernetes-dashboard/main.yml"
 
 # deploy galaxy
@@ -193,6 +194,7 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "galaxy_api_key=$galaxy_api_key" \
                  -e "galaxy_pvc=galaxy-pvc" \
                  -e "postgres_pvc=false" \
+                 -e "nologging=true" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/galaxy.yml"
 
 # wait until jupyter is up and do git clone data into the container
