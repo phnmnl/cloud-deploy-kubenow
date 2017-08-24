@@ -1,144 +1,219 @@
 #!/usr/bin/env bash
-set -e
+
+# Exit immediately if a command exits with a non-zero status
+# (but allow for the error trap)
+set -eE
+
+function report_err() {
+  # post deployment log to slack channel (only if portal deployment)
+  if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
+    curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
+         -F filetype="shell" \
+	     -F channels="portal-deploy-error" \
+	     -F token="$SLACK_ERR_REPORT_TOKEN" \
+	     https://slack.com/api/files.upload
+  fi
+}
+
+# Trap errors
+trap report_err ERR
 
 # set pwd (to make sure all variable files end up in the deployment reference dir)
-mkdir -p $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
-cd $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE
+mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
+cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
+
+# read portal secrets from private repo
+if [ -z "$LOCAL_DEPLOYMENT" ]; then
+   source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
+   export TF_VAR_use_cloudflare="true"
+   export TF_VAR_cloudflare_proxied="true"
+   export TF_VAR_cloudflare_record_texts='["galaxy","notebook","luigi","dashboard"]'
+   export SLACK_ERR_REPORT_TOKEN=$(cat "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken")
+fi
 
 # presetup (generate key kubeadm token etc.)
-$PORTAL_APP_REPO_FOLDER'/bin/pre-setup'
-export TF_VAR_kubeadm_token=$(cat $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/kubeadm_token')
-export PRIVATE_KEY=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/vre.key'
-export TF_VAR_ssh_key=$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE'/vre.key.pub'
+"$PORTAL_APP_REPO_FOLDER/bin/pre-setup"
+export TF_VAR_kubeadm_token=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/kubetoken")
+export PRIVATE_KEY="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key"
+export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key.pub"
 
 #
-# hardcoded params
+# hardcoded params (TODO move to params file)
 #
 
 # gce and ostack
-export TF_VAR_KuberNow_image="kubenow-v020a1"
 
-# aws read image id from file depending on region selected
-export TF_VAR_kubenow_image_id=$( grep "$TF_VAR_aws_region" "$PORTAL_APP_REPO_FOLDER/aws-images-$TF_VAR_KuberNow_image"  | awk '{print $1}' )
-
+IMG_VERSION="v031"
+export TF_VAR_kubenow_image="kubenow-$IMG_VERSION"
 
 # gce
 # workaround: -the credentials are provided as an environment variable, but KubeNow terraform
 # scripts need a file. Creates an credentialsfile from the environment variable
 if [ -n "$GOOGLE_CREDENTIALS" ]; then
-  echo $GOOGLE_CREDENTIALS > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/gce_credentials_file.json"
+  printf '%s\n' "$GOOGLE_CREDENTIALS" > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/gce_credentials_file.json"
   export TF_VAR_gce_credentials_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/gce_credentials_file.json"
 fi
 
 # gce - make sure image is available in google project
-if [ $KUBENOW_TERRAFORM_FOLDER = $PORTAL_APP_REPO_FOLDER'/KubeNow/gce' ]
+if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/gce" ]
 then
-   ansible-playbook -e "credentials_file_path=\"$TF_VAR_gce_credentials_file\"" "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-gce-image.yml"
+   ansible-playbook -e "credentials_file_path=\"$TF_VAR_gce_credentials_file\"" \
+                    -e "img_version=$IMG_VERSION" \
+                    "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-gce-image.yml"
 fi
 
 # ostack
 # make sure image is available in openstack
-if [ $KUBENOW_TERRAFORM_FOLDER = "$PORTAL_APP_REPO_FOLDER/KubeNow/openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]
+if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]
 then
    ansible-playbook "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-openstack-image.yml"
+   #"$PORTAL_APP_REPO_FOLDER/bin/import-openstack-image.yml"
+fi
+
+# kvm
+# make sure image is available in kvm
+if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/kvm" ]
+then
+   export KN_LOCAL_DIR="/.kubenow"
+   export KN_IMAGE_NAME="$TF_VAR_kubenow_image"
+   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-download-kvm.sh"
+   export TF_VAR_kubenow_image="$TF_VAR_kubenow_image.qcow2"
 fi
 
 # gce and aws
-export TF_VAR_master_disk_size="50"
-export TF_VAR_node_disk_size="100"
-export TF_VAR_edge_disk_size="50"
+export TF_VAR_master_disk_size="20"
+export TF_VAR_node_disk_size="20"
+export TF_VAR_edge_disk_size="20"
+export TF_VAR_glusternode_disk_size="20"
 
-# read cloudflare credentials from the cloned submodule private repo
-if [ -z "$TF_VAR_cf_token" ]; then
-   source $PORTAL_APP_REPO_FOLDER'/'phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh
-fi
-export TF_VAR_cf_subdomain=$TF_VAR_cluster_prefix
-domain=$TF_VAR_cf_subdomain'.'$TF_VAR_cf_zone
+# Add terraform to path (TODO) remove this portal workaround eventually
+export PATH=/usr/lib/terraform_0.9.11:$PATH
 
 # Deploy cluster with terraform
-terraform get $KUBENOW_TERRAFORM_FOLDER
-terraform apply --state=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/terraform.tfstate' $KUBENOW_TERRAFORM_FOLDER
+terraform get "$KUBENOW_TERRAFORM_FOLDER"
+terraform apply --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
 
 # Provision nodes with ansible
 export ANSIBLE_HOST_KEY_CHECKING=False
-nodes_count=$(($TF_VAR_node_count+$TF_VAR_edge_count+1)) # +1 because master is also one node
-ansible_inventory_file=$PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/inventory'
+ansible_inventory_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/inventory"
 
 # deploy KubeNow core stack
-ansible-playbook -i $ansible_inventory_file \
-                 --key-file $PRIVATE_KEY \
-                 -e "nodes_count=$nodes_count" \
-                 -e "cf_mail=$TF_VAR_cf_mail" \
-                 -e "cf_token=$TF_VAR_cf_token" \
-                 -e "cf_zone=$TF_VAR_cf_zone" \
-                 -e "cf_subdomain=$TF_VAR_cf_subdomain" \
-                 $PORTAL_APP_REPO_FOLDER'/KubeNow/playbooks/install-core.yml'
+ansible-playbook -i "$ansible_inventory_file" \
+                 --key-file "$PRIVATE_KEY" \
+                 --skip-tags "heketi-glusterfs" \
+                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-core.yml"
 
 # wait for all pods in core stack to be ready
-ansible-playbook -i $ansible_inventory_file \
-                 --key-file $PRIVATE_KEY \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_all_pods_ready.yml'
+ansible-playbook -i "$ansible_inventory_file" \
+                 --key-file "$PRIVATE_KEY" \
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_all_pods_ready.yml"
+
+if [ -n "$TF_VAR_hostpath_vol_size" ]
+then
+
+  # deploy local host path (if single node kvm)
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "vol_size=$TF_VAR_hostpath_vol_size" \
+                   -e "host_path=$TF_VAR_hostpath_vol_path" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-hostpath.yml"
+
+  STORAGE_CLASS="storageClassName=manual"
+
+elif [ -n "$TF_VAR_nfs_vol_size" ]
+then
+
+  # deploy local host path (if single node kvm)
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "nfs_server=$TF_VAR_nfs_server" \
+                   -e "nfs_vol_size=$TF_VAR_nfs_vol_size" \
+                   -e "nfs_path=$TF_VAR_nfs_path" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-nfs.yml"
+
+  STORAGE_CLASS="nothing=nothing"
+
+else
+
+  # deploy heketi as default
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster.yml"
+
+  STORAGE_CLASS="nothing=nothing"
+
+fi
 
 # deploy phenomenal-pvc
-ansible-playbook -i $ansible_inventory_file \
-                 --key-file $PRIVATE_KEY \
-                 "$PORTAL_APP_REPO_FOLDER/playbooks/phenomenal_pvc/main.yml"
+if [ -z $TF_VAR_phenomenal_pvc_size ]; then
+  TF_VAR_phenomenal_pvc_size="95Gi"
+fi
+ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "name=galaxy-pvc" \
+                   -e "storage=$TF_VAR_phenomenal_pvc_size" \
+                   -e "$STORAGE_CLASS" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/create-pvc.yml"
 
 # deploy jupyter
-ansible-playbook -i $ansible_inventory_file \
-                 -e "domain=$domain" \
+ansible-playbook -i "$ansible_inventory_file" \
+                 --key-file "$PRIVATE_KEY" \
                  -e "jupyter_chart_version=0.1.1" \
-                 -e "jupyter_image_tag=:v387f29b6ca83_cv0.4.7" \
+                 -e "jupyter_image_tag=:latest" \
                  -e "jupyter_password=$TF_VAR_jupyter_password" \
                  -e "jupyter_pvc=galaxy-pvc" \
                  -e "jupyter_resource_req_cpu=200m" \
                  -e "jupyter_resource_req_memory=1G" \
-                 --key-file $PRIVATE_KEY \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/jupyter.yml'
-                 
+                 -e "nologging=true" \
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/jupyter.yml"
+
 # deploy luigi
-ansible-playbook -i $ansible_inventory_file \
-                 -e "domain=$domain" \
-                 --key-file $PRIVATE_KEY \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/luigi/main.yml'
+ansible-playbook -i "$ansible_inventory_file" \
+                 --key-file "$PRIVATE_KEY" \
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/luigi/main.yml"
+
+# deploy kubernetes-dashboard
+hashed_password=$(openssl passwd -apr1 "$TF_VAR_dashboard_password")
+dashboard_auth=$(printf "$TF_VAR_dashboard_username":"$hashed_password")
+ansible-playbook -i "$ansible_inventory_file" \
+                 --key-file "$PRIVATE_KEY" \
+                 -e "basic_auth=$dashboard_auth" \
+                 -e "nologging=true" \
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/kubernetes-dashboard/main.yml"
 
 # deploy galaxy
-$PORTAL_APP_REPO_FOLDER'/bin/generate-galaxy-api-key'
-galaxy_api_key=$(cat $PORTAL_DEPLOYMENTS_ROOT'/'$PORTAL_DEPLOYMENT_REFERENCE'/galaxy_api_key')
-ansible-playbook -i $ansible_inventory_file \
-                 -e "domain=$domain" \
-                 -e "galaxy_chart_version=0.1.6-phenomenal-alanine" \
-                 -e "galaxy_image_tag=:v16.07-pheno_cv0.1.59" \
+# first generate key
+"$PORTAL_APP_REPO_FOLDER/bin/generate-galaxy-api-key"
+galaxy_api_key=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/galaxy_api_key")
+ansible-playbook -i "$ansible_inventory_file" \
+                 --key-file "$PRIVATE_KEY" \
+                 -e "galaxy_chart_version=0.3.0" \
+                 -e "galaxy_image_tag=:rc_v17.05-pheno_cv1.1.93" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \
                  -e "galaxy_pvc=galaxy-pvc" \
                  -e "postgres_pvc=false" \
-                 --key-file $PRIVATE_KEY \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/galaxy.yml'
-                                                              
+                 -e "nologging=true" \
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/galaxy.yml"
+
 # wait until jupyter is up and do git clone data into the container
-ansible-playbook -i $ansible_inventory_file \
-                 --key-file $PRIVATE_KEY \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/git_clone_mtbls233.yml'
-                                                       
+ansible-playbook -i "$ansible_inventory_file" \
+                 --key-file "$PRIVATE_KEY" \
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/git_clone_mtbls233.yml"
+
 # wait for jupyter notebook http response != Bad Gateway
-jupyter_url="http://notebook.$domain"
-ansible-playbook -i $ansible_inventory_file \
-                 -e "name=jupyter-notebook" \
-                 -e "url=$jupyter_url" \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_http_not_down.yml'
-                 
+ansible-playbook -i "$ansible_inventory_file" \
+                 -e "name=notebook" \
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_http_not_down.yml"
+
 # wait for luigi http response != Bad Gateway
-luigi_url="http://luigi.$domain"
-ansible-playbook -i $ansible_inventory_file \
+ansible-playbook -i "$ansible_inventory_file" \
                  -e "name=luigi" \
-                 -e "url=$luigi_url" \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_http_not_down.yml'
-                 
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_http_not_down.yml"
+
 # wait for galaxy http response 200 OK
-galaxy_url="http://galaxy.$domain"
-ansible-playbook -i $ansible_inventory_file \
+ansible-playbook -i "$ansible_inventory_file" \
                  -e "name=galaxy" \
-                 -e "url=$galaxy_url" \
-                 $PORTAL_APP_REPO_FOLDER'/playbooks/wait_for_http_ok.yml'
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_http_ok.yml"
+

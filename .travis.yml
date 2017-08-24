@@ -1,0 +1,57 @@
+language: python # (Ansible)
+
+sudo: required
+
+services:
+  - docker
+
+branches:
+  except:
+    - /^experimental\/.*$/
+    - /^exp\/.*$/
+    - /^dev\/.*$/
+    - /^testing\/.*$/
+    - /^test\/.*$/
+    - /^doc\/.*$/
+    - /^docs\/.*$/
+    - /^documentation\/.*$/
+
+env:
+  matrix:
+    - HOST_CLOUD=ostack
+    - HOST_CLOUD=gcp
+    - HOST_CLOUD=aws
+
+before_install:
+
+before_script:
+
+  # copy config templare
+  - cp config.${HOST_CLOUD}.sh-template config.${HOST_CLOUD}.sh
+
+  # RENDER CONFIGURATION
+
+  # Common
+  - sed -i -e "s/your-cluster-prefix/cloud-deploy-kubenow-ci-${TRAVIS_BUILD_NUMBER}-${HOST_CLOUD}/g" config.${HOST_CLOUD}.sh
+  # AWS
+  - sed -i -e "s/your-acces-key-id/${AWS_ACCESS_KEY_ID}/g" config.${HOST_CLOUD}.sh
+  - sed -i -e "s#your-secret-access-key#${AWS_SECRET_ACCESS_KEY}#g" config.${HOST_CLOUD}.sh
+  # GCE
+  - printf '%s\n' "$GOOGLE_CREDENTIALS" > "./service-account.json"
+  - sed -i -e "s/path-to-your-credentials-json-file/service-account.json/g" config.${HOST_CLOUD}.sh
+  - sed -i -e "s/your_project_id/${GCE_PROJECT_ID}/g" config.${HOST_CLOUD}.sh
+  # OS
+  - sed -i -e "s/your-pool-name/${OS_POOL_NAME}/g" config.${HOST_CLOUD}.sh
+  - sed -i -e "s/external-net-uuid/${OS_EXTERNAL_NET_UUID}/g" config.${HOST_CLOUD}.sh
+  - sed -i -e "s/your-master-flavor/${OS_NODE_FLAVOR}/g" config.${HOST_CLOUD}.sh
+  - sed -i -e "s/your-node-flavor/${OS_NODE_FLAVOR}/g" config.${HOST_CLOUD}.sh
+  - sed -i -e "s/your-glusternode-flavor/${OS_NODE_FLAVOR}/g" config.${HOST_CLOUD}.sh
+
+
+script:
+  # Deploy
+  - travis_retry ./phenomenal.sh deploy "$HOST_CLOUD"
+  # Test
+
+after_script:
+  - travis_retry ./phenomenal.sh destroy "$HOST_CLOUD"
