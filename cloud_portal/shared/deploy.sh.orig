@@ -177,16 +177,21 @@ ansible-playbook -i "$ansible_inventory_file" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/luigi/main.yml"
 
 # deploy kubernetes-dashboard
+<<<<<<< Updated upstream
+=======
 # dashboard_auth=$(htpasswd -nb "$TF_VAR_dashboard_username" "$TF_VAR_dashboard_password")
 DASHBOARD_HOSTNAME="dashboard-$TF_VAR_cluster_prefix"
+>>>>>>> Stashed changes
 hashed_password=$(openssl passwd -apr1 "$TF_VAR_dashboard_password")
 dashboard_auth=$(printf "$TF_VAR_dashboard_username":"$hashed_password")
-#dashboard_auth_base64=$(echo $dashboard_auth | base64)
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "basic_auth=$dashboard_auth" \
-                 -e "hostname=$DASHBOARD_HOSTNAME" \
+<<<<<<< Updated upstream
                  -e "nologging=true" \
+=======
+                 -e "hostname=$DASHBOARD_HOSTNAME" \
+>>>>>>> Stashed changes
                  "$PORTAL_APP_REPO_FOLDER/playbooks/kubernetes-dashboard/main.yml"
 
 # deploy galaxy

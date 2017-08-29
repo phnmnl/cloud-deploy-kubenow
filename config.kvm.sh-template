@@ -10,13 +10,14 @@ export TF_VAR_kubenow_image="kubenow-v031-8-g1c0a93b-test.qcow2"
 export TF_VAR_master_as_edge="true"
 export TF_VAR_master_vcpu="3"
 export TF_VAR_master_memory="4096"
+export TF_VAR_master_extra_disk_size="4096"
 
 # Storage configuration
 export TF_VAR_phenomenal_pvc_size="95Gi"
 
-export TF_VAR_nfs_vol_size="100Gi"
-export TF_VAR_nfs_server="192.x.x.x"
-export TF_VAR_nfs_path="/shared/data"
+##export TF_VAR_nfs_vol_size="100Gi"
+##export TF_VAR_nfs_server="192.x.x.x"
+##export TF_VAR_nfs_path="/shared/data"
 
 #export TF_VAR_hostpath_vol_size="100Gi"
 #export TF_VAR_hostpath_vol_path="/mnt/data"
