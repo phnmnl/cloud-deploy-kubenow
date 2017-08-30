@@ -22,6 +22,10 @@ env:
     - HOST_CLOUD=gcp
     - HOST_CLOUD=aws
 
+addons:
+  ssh_known_hosts:
+    - github.com
+
 before_install:
 
 before_script:
