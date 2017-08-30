@@ -158,8 +158,15 @@ ansible-playbook -i "$ansible_inventory_file" \
                    -e "$STORAGE_CLASS" \
                    "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/create-pvc.yml"
 
+if [ "$TF_VAR_cloudflare_proxied" ]; then
+   SUBDOMAIN_DELIMITER="-"
+else
+   SUBDOMAIN_DELIMITER="."
+fi
+
+
 # deploy jupyter
-JUPYTER_HOSTNAME="notebook-$TF_VAR_cluster_prefix"
+JUPYTER_HOSTNAME="notebook$SUBDOMAIN_DELIMITER$TF_VAR_cluster_prefix"
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "jupyter_chart_version=0.1.2" \
@@ -173,7 +180,7 @@ ansible-playbook -i "$ansible_inventory_file" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/jupyter.yml"
 
 # deploy luigi
-LUIGI_HOSTNAME="luigi-$TF_VAR_cluster_prefix"
+LUIGI_HOSTNAME="luigi$SUBDOMAIN_DELIMITER$TF_VAR_cluster_prefix"
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "hostname=$LUIGI_HOSTNAME" \
@@ -181,7 +188,7 @@ ansible-playbook -i "$ansible_inventory_file" \
 
 # deploy kubernetes-dashboard
 # dashboard_auth=$(htpasswd -nb "$TF_VAR_dashboard_username" "$TF_VAR_dashboard_password")
-DASHBOARD_HOSTNAME="dashboard-$TF_VAR_cluster_prefix"
+DASHBOARD_HOSTNAME="dashboard$SUBDOMAIN_DELIMITER$TF_VAR_cluster_prefix"
 hashed_password=$(openssl passwd -apr1 "$TF_VAR_dashboard_password")
 dashboard_auth=$(printf "$TF_VAR_dashboard_username":"$hashed_password")
 #dashboard_auth_base64=$(echo $dashboard_auth | base64)
@@ -193,13 +200,13 @@ ansible-playbook -i "$ansible_inventory_file" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/kubernetes-dashboard/main.yml"
 
 # deploy galaxy
-GALAXY_HOSTNAME="galaxy-$TF_VAR_cluster_prefix"
+GALAXY_HOSTNAME="galaxy$SUBDOMAIN_DELIMITER$TF_VAR_cluster_prefix"
 # generate key
 "$PORTAL_APP_REPO_FOLDER/bin/generate-galaxy-api-key"
 galaxy_api_key=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/galaxy_api_key")
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
-                 -e "galaxy_chart_version=0.3.0" \
+                 -e "galaxy_chart_version=0.3.1" \
                  -e "hostname=$GALAXY_HOSTNAME" \
                  -e "galaxy_image_tag=:rc_v17.05-pheno_cv1.1.93" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
