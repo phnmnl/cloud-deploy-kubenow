@@ -108,7 +108,7 @@ metadata:
     ingress.kubernetes.io/auth-secret: "dashboard-secret"
 spec:
   rules:
-  - host: dashboard.{{domain}}
+  - host: {{hostname}}.{{domain}}
     http:
       paths:
       - backend:
