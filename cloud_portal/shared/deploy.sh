@@ -36,6 +36,7 @@ fi
 
 # presetup (generate key kubeadm token etc.)
 "$PORTAL_APP_REPO_FOLDER/bin/pre-setup"
+
 export TF_VAR_kubeadm_token=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/kubetoken")
 export PRIVATE_KEY="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key"
 export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key.pub"
@@ -93,8 +94,11 @@ export TF_VAR_glusternode_disk_size="20"
 export PATH=/usr/lib/terraform_0.9.11:$PATH
 
 # Deploy cluster with terraform
-terraform get "$KUBENOW_TERRAFORM_FOLDER"
-terraform apply --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
+if [ "$KUBENOW_TERRAFORM_FOLDER" != "$PORTAL_APP_REPO_FOLDER/KubeNow/byoc" ]
+then
+   terraform get "$KUBENOW_TERRAFORM_FOLDER"
+   terraform apply --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
+fi
 
 # Provision nodes with ansible
 export ANSIBLE_HOST_KEY_CHECKING=False

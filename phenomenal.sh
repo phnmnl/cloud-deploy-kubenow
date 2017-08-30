@@ -31,6 +31,8 @@ Providers:
     aws
     gcp
     ostack
+    kvm
+    byoc
 
 Examples:
 
@@ -69,7 +71,7 @@ case "$1" in
 esac
 
 case "$2" in
-    aws|gcp|ostack|kvm)
+    aws|gcp|ostack|kvm|byoc)
         provider="$2"
         ;;
     "")
