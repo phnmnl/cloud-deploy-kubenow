@@ -26,7 +26,7 @@ cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 if [ -z "$LOCAL_DEPLOYMENT" ]; then
    if [ ! -d "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare" ]; then
       git clone git@github.com:EMBL-EBI-TSI/phenomenal-cloudflare.git "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare"
-   fi   
+   fi
    source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
    export TF_VAR_use_cloudflare="true"
    export TF_VAR_cloudflare_proxied="true"
@@ -210,7 +210,7 @@ GALAXY_HOSTNAME="galaxy$SUBDOMAIN_DELIMITER$TF_VAR_cluster_prefix"
 galaxy_api_key=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/galaxy_api_key")
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
-                 -e "galaxy_chart_version=0.3.1" \
+                 -e "galaxy_chart_version=0.3.2" \
                  -e "hostname=$GALAXY_HOSTNAME" \
                  -e "galaxy_image_tag=:rc_v17.05-pheno_cv1.1.93" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
