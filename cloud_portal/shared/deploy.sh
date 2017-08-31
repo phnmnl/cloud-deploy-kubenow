@@ -184,7 +184,7 @@ ansible-playbook -i "$ansible_inventory_file" \
 if [ "$TF_VAR_cloudflare_proxied" ]; then
    LUIGI_HOSTNAME="luigi"
 else
-   LUIGI_HOSTNAME="luigi$-$TF_VAR_cluster_prefix"
+   LUIGI_HOSTNAME="luigi-$TF_VAR_cluster_prefix"
 fi
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
@@ -195,7 +195,7 @@ ansible-playbook -i "$ansible_inventory_file" \
 if [ "$TF_VAR_cloudflare_proxied" ]; then
    DASHBOARD_HOSTNAME="dashboard"
 else
-   DASHBOARD_HOSTNAME="dashboard$-$TF_VAR_cluster_prefix"
+   DASHBOARD_HOSTNAME="dashboard-$TF_VAR_cluster_prefix"
 fi
 hashed_password=$(openssl passwd -apr1 "$TF_VAR_dashboard_password")
 dashboard_auth=$(printf "$TF_VAR_dashboard_username":"$hashed_password")
