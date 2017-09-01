@@ -1,6 +1,5 @@
 # Cloud-deploy-kubenow
 
-
 This page will guide you to set up a PhenoNeNal CRE on Amazon, Google Cloud or in a public or private OpenStack environment through the command-line. Normally, you would use the convenient [PhenoMeNal portal](http://portal.phenomenal-h2020.eu) to launch a CRE on the supported cloud providers, which under the hood is using the procedure below. But in special cases (private OpenStack, or for developers) you want to use the infrastructure provisioning procedure without the web GUI.
 
 Prerequisites
