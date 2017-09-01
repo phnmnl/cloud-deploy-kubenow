@@ -103,6 +103,11 @@ fi
 # Provision nodes with ansible
 export ANSIBLE_HOST_KEY_CHECKING=False
 ansible_inventory_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/inventory"
+if [ -n "$LOCAL_DEPLOYMENT" ]; then
+   NO_SENSITIVE_LOGGING=false
+else
+   NO_SENSITIVE_LOGGING=true
+fi
 
 # deploy KubeNow core stack
 ansible-playbook -i "$ansible_inventory_file" \
@@ -177,7 +182,7 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "jupyter_pvc=galaxy-pvc" \
                  -e "jupyter_resource_req_cpu=200m" \
                  -e "jupyter_resource_req_memory=1G" \
-                 -e "nologging=true" \
+                 -e "nologging=$NO_SENSITIVE_LOGGING" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/jupyter.yml"
 
 # deploy luigi
@@ -203,7 +208,7 @@ ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "basic_auth=$dashboard_auth" \
                  -e "hostname=$DASHBOARD_HOSTNAME" \
-                 -e "nologging=true" \
+                 -e "nologging=$NO_SENSITIVE_LOGGING" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/kubernetes-dashboard/main.yml"
 
 # deploy galaxy
@@ -227,7 +232,7 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "galaxy_api_key=$galaxy_api_key" \
                  -e "galaxy_pvc=galaxy-pvc" \
                  -e "postgres_pvc=false" \
-                 -e "nologging=true" \
+                 -e "nologging=$NO_SENSITIVE_LOGGING" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/galaxy.yml"
 
 # wait until jupyter is up and do git clone data into the container
