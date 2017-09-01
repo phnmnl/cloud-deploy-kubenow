@@ -24,7 +24,6 @@ Phenomenal-KubeNow are distributed via [GitHub](http://github.com):
     git pull --recurse-submodules
     git submodule update --recursive --remote
 
-
 All of the commands in this documentation are meant to be run in the cloud-deploy-kubenow directory.
 
 Deploy on Amazon Web Services
