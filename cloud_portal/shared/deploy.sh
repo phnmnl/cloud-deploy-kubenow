@@ -187,9 +187,9 @@ ansible-playbook -i "$ansible_inventory_file" \
 
 # deploy luigi
 if [ "$TF_VAR_cloudflare_proxied" ]; then
-   LUIGI_HOSTNAME="luigi"
-else
    LUIGI_HOSTNAME="luigi-$TF_VAR_cluster_prefix"
+else
+   LUIGI_HOSTNAME="luigi"
 fi
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
@@ -198,9 +198,9 @@ ansible-playbook -i "$ansible_inventory_file" \
 
 # deploy kubernetes-dashboard
 if [ "$TF_VAR_cloudflare_proxied" ]; then
-   DASHBOARD_HOSTNAME="dashboard"
-else
    DASHBOARD_HOSTNAME="dashboard-$TF_VAR_cluster_prefix"
+else
+   DASHBOARD_HOSTNAME="dashboard"
 fi
 hashed_password=$(openssl passwd -apr1 "$TF_VAR_dashboard_password")
 dashboard_auth=$(printf "$TF_VAR_dashboard_username":"$hashed_password")
@@ -212,12 +212,10 @@ ansible-playbook -i "$ansible_inventory_file" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/kubernetes-dashboard/main.yml"
 
 # deploy galaxy
-if
-# deploy kubernetes-dashboard
 if [ "$TF_VAR_cloudflare_proxied" ]; then
-   GALAXY_HOSTNAME="galaxy"
-else
    GALAXY_HOSTNAME="galaxy-$TF_VAR_cloudflare_proxied"
+else
+   GALAXY_HOSTNAME="galaxy"
 fi
 # generate key
 "$PORTAL_APP_REPO_FOLDER/bin/generate-galaxy-api-key"
@@ -254,4 +252,3 @@ ansible-playbook -i "$ansible_inventory_file" \
 ansible-playbook -i "$ansible_inventory_file" \
                  -e "name=$GALAXY_HOSTNAME" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_http_ok.yml"
-

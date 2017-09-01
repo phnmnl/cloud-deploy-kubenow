@@ -11,9 +11,18 @@
       state: directory
       mode: 0755
 
+  # delete first is a workaround until kubernetes support apply -replace secret
+  - name: "delete dashboard secret (if it already exists)"
+    command: >
+      kubectl delete
+      --ignore-not-found
+      --namespace=kube-system
+      secret dashboard-secret
+    no_log: "{{ nologging }}"
+
   - name: create dashboard password secret
     command: >
-      kubectl --namespace=kube-system create secret generic dashboard-secret \
+      kubectl --namespace=kube-system create secret generic dashboard-secret
         --from-literal=auth='{{basic_auth}}'
     no_log: "{{ nologging }}"
 
