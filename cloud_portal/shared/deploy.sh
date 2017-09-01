@@ -8,6 +8,7 @@ function report_err() {
   # post deployment log to slack channel (only if portal deployment)
   if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
     curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
+         -F filename="output-$PORTAL_DEPLOYMENT_REFERENCE.log" \
          -F filetype="shell" \
 	     -F channels="portal-deploy-error" \
 	     -F token="$SLACK_ERR_REPORT_TOKEN" \
@@ -169,7 +170,7 @@ ansible-playbook -i "$ansible_inventory_file" \
 
 # deploy jupyter
 if [ "$TF_VAR_cloudflare_proxied" ]; then
-   JUPYTER_HOSTNAME="notebook$-$TF_VAR_cluster_prefix"
+   JUPYTER_HOSTNAME="notebook-$TF_VAR_cluster_prefix"
 else
    JUPYTER_HOSTNAME="notebook"
 fi
@@ -213,7 +214,7 @@ ansible-playbook -i "$ansible_inventory_file" \
 
 # deploy galaxy
 if [ "$TF_VAR_cloudflare_proxied" ]; then
-   GALAXY_HOSTNAME="galaxy-$TF_VAR_cloudflare_proxied"
+   GALAXY_HOSTNAME="galaxy-$TF_VAR_cluster_prefix"
 else
    GALAXY_HOSTNAME="galaxy"
 fi
