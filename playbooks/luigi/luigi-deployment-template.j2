@@ -46,7 +46,7 @@ metadata:
   name: luigi-ingress
 spec:
   rules:
-  - host: luigi.{{domain}}
+  - host: {{hostname}}.{{domain}}
     http:
       paths:
       - path: /
