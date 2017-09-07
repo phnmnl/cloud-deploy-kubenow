@@ -152,7 +152,7 @@ docker run --rm -it \
   -e "SLACK_ERR_REPORT_TOKEN=$SLACK_ERR_REPORT_TOKEN" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_VAR_) \
-  andersla/provisioners:20170712-1106 \
+  andersla/provisioners:20170907-1343 \
   /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
 if [[ $cmd == "deploy" || $cmd == "state" ]]; then
