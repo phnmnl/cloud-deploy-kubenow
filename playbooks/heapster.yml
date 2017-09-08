@@ -1,0 +1,10 @@
+---
+- hosts: master
+  gather_facts: False
+  tasks:
+
+    - name: install heapster
+      command: >
+       helm upgrade --install \
+       --namespace kube-system \
+       heapster-stable stable/heapster

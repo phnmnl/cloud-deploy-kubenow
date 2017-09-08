@@ -165,6 +165,11 @@ ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "auth_base64=$dashboard_auth_base64" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/kubernetes-dashboard/main.yml"
+                 
+# deploy heapster (adds stats to kubernetes-dashboard)
+ansible-playbook -i "$ansible_inventory_file" \
+                 --key-file "$PRIVATE_KEY" \
+                 "$PORTAL_APP_REPO_FOLDER/playbooks/heapster.yml"
 
 # deploy galaxy
 # first generate key
