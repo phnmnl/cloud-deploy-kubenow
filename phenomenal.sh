@@ -167,7 +167,7 @@ if [[ $cmd == "deploy" || $cmd == "state" ]]; then
 
   # get domain from inventory
   domain="$(awk -F'=' '/domain/ { print $2 }' $DEPLOYMENT_DIR_HOST/inventory)"
-
+  
   ## finally display url:s
   jupyter_url="http://notebook.$domain"
   luigi_url="http://luigi.$domain"
@@ -179,5 +179,13 @@ if [[ $cmd == "deploy" || $cmd == "state" ]]; then
   printf 'Jupyter:        "%s"\n' "$jupyter_url"
   printf 'Luigi:          "%s"\n' "$luigi_url"
   printf 'Kube-dashboard: "%s"\n' "$dashboard_url"
+  echo
+  echo 'And if you want to ssh into master:'
+  echo "ssh-add $DEPLOYMENT_DIR_HOST/vre.key"
+  echo "ssh ubuntu@master.$domain"
+  
+
+
+  
 
 fi
