@@ -31,6 +31,8 @@ Providers:
     aws
     gcp
     ostack
+    kvm
+    byoc
 
 Examples:
 
@@ -69,7 +71,7 @@ case "$1" in
 esac
 
 case "$2" in
-    aws|gcp|ostack|kvm)
+    aws|gcp|ostack|kvm|byoc)
         provider="$2"
         ;;
     "")
@@ -144,6 +146,7 @@ docker run --rm -it \
   --privileged=true \
   -e "LOCAL_USER_ID=$UID" \
   -e "LOCAL_GROUP_IDS=$LOCAL_GROUP_IDS" \
+  -e "LOCAL_DEPLOYMENT=True" \
   -e "PORTAL_APP_REPO_FOLDER=/cloud-deploy" \
   -e "PORTAL_DEPLOYMENTS_ROOT=/cloud-deploy/$DEPLOYMENTS_DIR" \
   -e "PORTAL_DEPLOYMENT_REFERENCE=$DEPLOYMENT_REFERENCE" \
