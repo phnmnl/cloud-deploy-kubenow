@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Cloud
+export TF_VAR_cluster_prefix="your-cluster-prefix"
+
+# You need to create dir: deployments/id-phnmnl-config.byoc
+# And populate with following two files:
+# Private key to nodes:   "deployments/id-phnmnl-config.byoc/vre.key"
+# Ansible inventory file: "deployments/id-phnmnl-config.byoc/inventory"
+
+# Cloudflare configuration (optional)
+# export TF_VAR_use_cloudflare="true"
+# export TF_VAR_cloudflare_email="your-cloudflare-email"
+# export TF_VAR_cloudflare_token="your-cloudflare-token"
+# export TF_VAR_cloudflare_domain="your-domain-name"
+
+# Galaxy
+export TF_VAR_galaxy_admin_email="yoourname@bla.bla.com"
+export TF_VAR_galaxy_admin_password="password"
+
+# Jupyter
+export TF_VAR_jupyter_password="password"
+
+# Kubernetes dashboard
+export TF_VAR_dashboard_username="admin"
+export TF_VAR_dashboard_password="password"
+
+

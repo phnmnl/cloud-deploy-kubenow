@@ -17,4 +17,3 @@
         "jupyter-{{ jupyter_chart_version }}" phenomenal-helm/jupyter
       no_log: "{{ nologging }}"
 
-    

@@ -37,6 +37,7 @@ fi
 
 # presetup (generate key kubeadm token etc.)
 "$PORTAL_APP_REPO_FOLDER/bin/pre-setup"
+
 export TF_VAR_kubeadm_token=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/kubetoken")
 export PRIVATE_KEY="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key"
 export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key.pub"
@@ -271,4 +272,3 @@ ansible-playbook -i "$ansible_inventory_file" \
 ansible-playbook -i "$ansible_inventory_file" \
                  -e "name=$GALAXY_HOSTNAME" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/wait_for_http_ok.yml"
-

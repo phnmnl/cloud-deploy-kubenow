@@ -17,10 +17,16 @@ branches:
     - /^documentation\/.*$/
 
 env:
+  global:
+    - LOCAL_DEPLOYMENT=True
   matrix:
     - HOST_CLOUD=ostack
     - HOST_CLOUD=gcp
     - HOST_CLOUD=aws
+
+addons:
+  ssh_known_hosts:
+    - github.com
 
 before_install:
 
