@@ -98,12 +98,26 @@ ansible-playbook -i "$ansible_inventory_file" \
 if [ -n "$TF_VAR_hostpath_vol_size" ]
 then
 
-  # deploy local host path (if single node kvm)
+  # deploy virtio version local host path (if single node kvm)
   ansible-playbook -i "$ansible_inventory_file" \
                    --key-file "$PRIVATE_KEY" \
                    -e "vol_size=$TF_VAR_hostpath_vol_size" \
                    -e "host_path=$TF_VAR_hostpath_vol_path" \
                    "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-hostpath.yml"
+
+  STORAGE_CLASS="storageClassName=manual"
+
+elif [ -n "$TF_VAR_master_extra_disk_size" ]
+then
+
+  # deploy local host path (if single node kvm)
+  ansible-playbook -i "$ansible_inventory_file" \
+                 --key-file "$PRIVATE_KEY" \
+                 -e "device=/dev/vdb" \
+                 -e "fstype=ext4" \
+                 -e "vol_size=$TF_VAR_master_extra_disk_size" \
+                 -e "mnt_path=/mnt/data" \
+                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-hostpath.yml"
 
   STORAGE_CLASS="storageClassName=manual"
 
@@ -165,7 +179,7 @@ ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "auth_base64=$dashboard_auth_base64" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/kubernetes-dashboard/main.yml"
-                 
+
 # deploy heapster (adds stats to kubernetes-dashboard)
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
