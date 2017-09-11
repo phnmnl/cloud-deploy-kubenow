@@ -2,11 +2,10 @@
 
 # Cloud
 export TF_VAR_cluster_prefix="your-cluster-prefix"
-export TF_VAR_kubenow_dir="/.kubenow"
+export TF_VAR_kubenow_dir="/home/your-user/.kubenow"
 export TF_VAR_kubenow_image="kubenow-v031-8-g1c0a93b-test.qcow2"
 
 # Master configuration
-# obs: too small flavors might cause diffuse errors on your installation
 export TF_VAR_master_as_edge="true"
 export TF_VAR_master_vcpu="3"
 export TF_VAR_master_memory="4096"
