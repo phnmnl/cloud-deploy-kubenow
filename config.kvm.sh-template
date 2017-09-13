@@ -15,19 +15,27 @@ export TF_VAR_master_memory="4096"
 # export TF_VAR_bridge_name="br0"
 
 # Storage configuration
-export TF_VAR_phenomenal_pvc_size="95Gi"
-#export TF_VAR_volume_pool="default"
 
-# If this option is set a extra volume is created and attached to vm
+# libvirt virtual disk storage pool name
+export TF_VAR_volume_pool="default"
+#storage size that can be used for PhenoMenal services
+export TF_VAR_phenomenal_pvc_size="95Gi"
+
+# If this option is set a extra virtual disk image is created and attached
+# to VM as storage for PhenoMenal services
 export TF_VAR_master_extra_disk_size="100" # GiB
 
-# If this option is set a directory of host is mounted via virtio
-# vmhost-to-vm write-through
+# if this option is set a directory of host is mounted via virtio as 
+# storage for PhenoMenal services (Only supported on Ubuntu host)
 #export TF_VAR_hostpath_vol_size="100Gi"
+# host directory to be mounted on guest
 #export TF_VAR_hostpath_vol_path="/mnt/data"
 
+# If this option an existing NFS server are used as storage for PhenoMenal services
 #export TF_VAR_nfs_vol_size="100Gi"
+# ip-number or hostname of server
 #export TF_VAR_nfs_server="192.x.x.x"
+# path on NFS server to be used as storage
 #export TF_VAR_nfs_path="/shared/data"
 
 # Cloudflare configuration (optional)
