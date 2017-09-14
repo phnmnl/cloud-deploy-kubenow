@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+  echo "No search string supplied as first argument"
+  echo "usage clean-virsh <prefix> [pool-name optional]"
+  exit 1
+fi
+
+prefix=$1
+pool=${2:-"default"}
+
+echo "prefix: $prefix"
+echo "pool:   $pool"
+
+virsh list --all --name | grep $prefix |
+while read name; do
+  virsh destroy $name
+  virsh undefine $name
+done
+
+virsh net-list --all --name | grep $prefix |
+while read name; do
+    virsh net-destroy $name
+    virsh net-undefine $name
+done
+
+virsh vol-list --pool $pool | grep $prefix |
+while read name path; do
+    virsh vol-delete $name --pool $pool
+done
