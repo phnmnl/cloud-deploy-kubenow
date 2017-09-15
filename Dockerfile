@@ -1,18 +1,8 @@
 FROM python:2.7-alpine3.6
 MAINTAINER "Anders Larsson <anders.larsson@icm.uu.se>"
 
-# Provisioners versions
-ENV TERRAFORM_VERSION=0.9.4
-ENV TERRAFORM_SHA256SUM=cc1cffee3b82820b7f049bb290b841762ee920aef3cf4d95382cc7ea01135707
-ENV ANSIBLE_VERSION=2.3.1.0
-ENV LIBCLOUD_VERSION=1.5.0
-ENV J2CLI_VERSION=0.3.1.post0
-ENV DNSPYTHON_VERSION=1.15.0
-ENV JMESPATH_VERSION=0.9.3
-ENV SHADE_VERSION=1.21.0
-ENV OPENSTACKCLIENT_VERSION=3.11.0
-
 # Install APK deps
+ENV LIBCLOUD_VERSION=1.5.0
 RUN apk add --update --no-cache \
   git \
   curl \
@@ -30,6 +20,12 @@ RUN apk add --update --no-cache \
   cdrkit
 
 # Install PIP deps
+ENV ANSIBLE_VERSION=2.3.1.0
+ENV J2CLI_VERSION=0.3.1.post0
+ENV DNSPYTHON_VERSION=1.15.0
+ENV JMESPATH_VERSION=0.9.3
+ENV SHADE_VERSION=1.21.0
+ENV OPENSTACKCLIENT_VERSION=3.11.0
 RUN pip install \
   ansible=="$ANSIBLE_VERSION" \
   j2cli=="$J2CLI_VERSION" \
@@ -39,6 +35,8 @@ RUN pip install \
   shade=="$SHADE_VERSION"
 
 # Install Terraform
+ENV TERRAFORM_VERSION=0.10.5
+ENV TERRAFORM_SHA256SUM=acec7133ffa00da385ca97ab015b281c6e90e99a41076ede7025a4c78425e09f
 RUN curl "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > \
     "terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && \
     echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > \

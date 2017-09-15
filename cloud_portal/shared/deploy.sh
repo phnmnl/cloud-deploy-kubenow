@@ -97,7 +97,7 @@ export PATH=/usr/lib/terraform_0.9.11:$PATH
 # Deploy cluster with terraform
 if [ "$KUBENOW_TERRAFORM_FOLDER" != "$PORTAL_APP_REPO_FOLDER/KubeNow/byoc" ]
 then
-   terraform get "$KUBENOW_TERRAFORM_FOLDER"
+   terraform init "$KUBENOW_TERRAFORM_FOLDER"
    terraform apply --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
 fi
 
