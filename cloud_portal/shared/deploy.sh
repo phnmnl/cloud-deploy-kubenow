@@ -94,11 +94,23 @@ export TF_VAR_glusternode_disk_size="20"
 # Add terraform to path (TODO) remove this portal workaround eventually
 export PATH=/usr/lib/terraform_0.9.11:$PATH
 
+# Dont use terraform if byoc
+if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/byoc" ]; then
+   TF_skip_deployment=true
+fi
+
 # Deploy cluster with terraform
-if [ "$KUBENOW_TERRAFORM_FOLDER" != "$PORTAL_APP_REPO_FOLDER/KubeNow/byoc" ]
-then
+if [ -n "$TF_skip_deployment" ]; then
+   echo "Skip deployment option specified"
+else
    terraform init "$KUBENOW_TERRAFORM_FOLDER"
    terraform apply --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
+fi
+
+# Skip provisioning if specified
+if [ -n "$TF_skip_provisioning" ]; then
+   echo "Skip provisioning option specified, exiting"
+   exit 0
 fi
 
 # Provision nodes with ansible

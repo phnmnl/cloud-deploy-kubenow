@@ -11,13 +11,15 @@ function usage
 Usage:
 
     $scriptname -h
-    $scriptname <command> <provider> [-c file]
+    $scriptname <command> <provider> [-c file] [options]
 
 Options:
 
-    -h/--help   Display help
-    -c/--config Use specified configuration file.  If no configuration
-                file is specified, use default "config.<provider>.sh"
+    -h/--help            Display help
+    -c/--config          Use specified configuration file.  If no configuration
+                         file is specified, use default "config.<provider>.sh"
+    --skip-deployment    Skips the deployment step (terraform)
+    --skip-provisioning  Skips the provisioning step (ansible/helm)
 
 Commands:
 
@@ -95,6 +97,13 @@ case "$3" in
     "")
         printf 'Using default configuration file "%s"\n' "$config_file"
         ;;
+    --skip-deployment)
+        export TF_skip_deployment=true;
+        ;;
+    --skip-provisioning)
+        export TF_skip_provisioning=true;
+        ;;
+
     *)
         printf '"%s" is not a valid argument\n' "$3" >&2
         printf 'See "%s --help"\n' "$scriptname" >&2
@@ -106,6 +115,23 @@ if [[ ! -f "$config_file" ]]; then
     printf 'Configuration file "%s" does not exist\n' "$config_file" >&2
     exit 1
 fi
+
+case "$5" in
+    "")
+        ;;
+    --skip-deployment)
+        export TF_skip_deployment=true;
+        ;;
+    --skip-provisioning)
+        export TF_skip_provisioning=true;
+        ;;
+
+    *)
+        printf '"%s" is not a valid argument\n' "$3" >&2
+        printf 'See "%s --help"\n' "$scriptname" >&2
+        exit 1
+        ;;
+esac
 
 source "$config_file"
 
@@ -167,7 +193,7 @@ if [[ $cmd == "deploy" || $cmd == "state" ]]; then
 
   # get domain from inventory
   domain="$(awk -F'=' '/domain/ { print $2 }' $DEPLOYMENT_DIR_HOST/inventory)"
-  
+
   ## finally display url:s
   jupyter_url="http://notebook.$domain"
   luigi_url="http://luigi.$domain"
@@ -183,9 +209,9 @@ if [[ $cmd == "deploy" || $cmd == "state" ]]; then
   echo 'And if you want to ssh into master:'
   echo "ssh-add $DEPLOYMENT_DIR_HOST/vre.key"
   echo "ssh ubuntu@master.$domain"
-  
 
 
-  
+
+
 
 fi
