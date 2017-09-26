@@ -162,14 +162,16 @@ git submodule update > /dev/null 2>&1 || true
 # Get all user GID
 LOCAL_GROUP_IDS="$(id -G)"
 
+# Specify extra kvm/libvirt args
+if [[ $provider == "kvm" ]]; then
+  LIBVIRT_EXTRA_OPTS="-v /var/run/libvirt/libvirt-sock:/var/run/libvirt/libvirt-sock --net=host --privileged=true"
+fi
+
 # execute scripts via docker container with all dependencies
-# kubenow/provisioners:current \
 docker run --rm -it \
   -v "$PWD":/cloud-deploy \
   -v "$HOME/.kubenow":/.kubenow \
-  -v "/var/run/libvirt/libvirt-sock":"/var/run/libvirt/libvirt-sock" \
-  --net=host \
-  --privileged=true \
+  $LIBVIRT_EXTRA_OPTS \
   -e "LOCAL_USER_ID=$UID" \
   -e "LOCAL_GROUP_IDS=$LOCAL_GROUP_IDS" \
   -e "LOCAL_DEPLOYMENT=True" \
