@@ -11,13 +11,15 @@ function usage
 Usage:
 
     $scriptname -h
-    $scriptname <command> <provider> [-c file]
+    $scriptname <command> <provider> [-c file] [options]
 
 Options:
 
-    -h/--help   Display help
-    -c/--config Use specified configuration file.  If no configuration
-                file is specified, use default "config.<provider>.sh"
+    -h/--help            Display help
+    -c/--config          Use specified configuration file.  If no configuration
+                         file is specified, use default "config.<provider>.sh"
+    --skip-deployment    Skips the deployment step (terraform)
+    --skip-provisioning  Skips the provisioning step (ansible/helm)
 
 Commands:
 
@@ -95,6 +97,13 @@ case "$3" in
     "")
         printf 'Using default configuration file "%s"\n' "$config_file"
         ;;
+    --skip-deployment)
+        export TF_skip_deployment=true;
+        ;;
+    --skip-provisioning)
+        export TF_skip_provisioning=true;
+        ;;
+
     *)
         printf '"%s" is not a valid argument\n' "$3" >&2
         printf 'See "%s --help"\n' "$scriptname" >&2
@@ -106,6 +115,23 @@ if [[ ! -f "$config_file" ]]; then
     printf 'Configuration file "%s" does not exist\n' "$config_file" >&2
     exit 1
 fi
+
+case "$5" in
+    "")
+        ;;
+    --skip-deployment)
+        export TF_skip_deployment=true;
+        ;;
+    --skip-provisioning)
+        export TF_skip_provisioning=true;
+        ;;
+
+    *)
+        printf '"%s" is not a valid argument\n' "$3" >&2
+        printf 'See "%s --help"\n' "$scriptname" >&2
+        exit 1
+        ;;
+esac
 
 source "$config_file"
 
@@ -136,14 +162,16 @@ git submodule update > /dev/null 2>&1 || true
 # Get all user GID
 LOCAL_GROUP_IDS="$(id -G)"
 
+# Specify extra kvm/libvirt args
+if [[ $provider == "kvm" ]]; then
+  LIBVIRT_EXTRA_OPTS="-v /var/run/libvirt/libvirt-sock:/var/run/libvirt/libvirt-sock --net=host --privileged=true"
+fi
+
 # execute scripts via docker container with all dependencies
-# kubenow/provisioners:current \
 docker run --rm -it \
   -v "$PWD":/cloud-deploy \
   -v "$HOME/.kubenow":/.kubenow \
-  -v "/var/run/libvirt/libvirt-sock":"/var/run/libvirt/libvirt-sock" \
-  --net=host \
-  --privileged=true \
+  $LIBVIRT_EXTRA_OPTS \
   -e "LOCAL_USER_ID=$UID" \
   -e "LOCAL_GROUP_IDS=$LOCAL_GROUP_IDS" \
   -e "LOCAL_DEPLOYMENT=True" \
@@ -154,7 +182,7 @@ docker run --rm -it \
   -e "SLACK_ERR_REPORT_TOKEN=$SLACK_ERR_REPORT_TOKEN" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_) \
-  andersla/provisioners:20170712-1106 \
+  andersla/provisioners:20170919-1845 \
   /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
 if [[ $cmd == "deploy" || $cmd == "state" ]]; then
@@ -167,7 +195,7 @@ if [[ $cmd == "deploy" || $cmd == "state" ]]; then
 
   # get domain from inventory
   domain="$(awk -F'=' '/domain/ { print $2 }' $DEPLOYMENT_DIR_HOST/inventory)"
-  
+
   ## finally display url:s
   jupyter_url="http://notebook.$domain"
   luigi_url="http://luigi.$domain"
@@ -183,9 +211,9 @@ if [[ $cmd == "deploy" || $cmd == "state" ]]; then
   echo 'And if you want to ssh into master:'
   echo "ssh-add $DEPLOYMENT_DIR_HOST/vre.key"
   echo "ssh ubuntu@master.$domain"
-  
 
 
-  
+
+
 
 fi
