@@ -48,7 +48,7 @@ export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre
 
 # gce and ostack
 
-IMG_VERSION="v031"
+IMG_VERSION="v031-26-g8b8c758-test"
 export TF_VAR_kubenow_image="kubenow-$IMG_VERSION"
 
 # gce

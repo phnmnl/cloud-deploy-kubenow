@@ -56,7 +56,7 @@ before_script:
 
 script:
   # Deploy
-  - travis_retry ./phenomenal.sh deploy "$HOST_CLOUD"
+  - ./phenomenal.sh deploy "$HOST_CLOUD"
   # Test
 
 after_script:
