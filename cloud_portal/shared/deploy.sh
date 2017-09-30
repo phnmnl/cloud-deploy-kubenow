@@ -71,8 +71,7 @@ fi
 # make sure image is available in openstack
 if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]
 then
-   #ansible-playbook "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-openstack-image.yml"
-   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-upload-openstack.sh"
+  "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-upload-openstack.sh"
 fi
 
 # kvm
