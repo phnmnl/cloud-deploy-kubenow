@@ -104,7 +104,7 @@ if [ -n "$TF_skip_deployment" ]; then
    echo "Skip deployment option specified"
 else
    terraform init "$KUBENOW_TERRAFORM_FOLDER"
-   terraform apply --parallelism=50 --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
+   terraform apply $TF_EXTRA_PARAMS --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
 fi
 
 # Skip provisioning if specified
