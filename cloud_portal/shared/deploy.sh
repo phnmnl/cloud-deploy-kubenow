@@ -46,10 +46,14 @@ export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre
 # hardcoded params (TODO move to params file)
 #
 
-# gce and ostack
+# gce, ostack and azure
 
-IMG_VERSION="v031-26-g8b8c758-test"
+export IMG_VERSION="v040b1"
 export TF_VAR_kubenow_image="kubenow-$IMG_VERSION"
+export ARM_CLIENT_ID="$TF_client_id"
+export ARM_CLIENT_SECRET="$TF_client_secret"
+export ARM_TENANT_ID="$TF_tenant_id"
+export ARM_LOCATION="$TF_location"
 
 # gce
 # workaround: -the credentials are provided as an environment variable, but KubeNow terraform
@@ -72,6 +76,13 @@ fi
 if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]
 then
   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-upload-openstack.sh"
+fi
+
+# azure
+# make sure image is available in azure account
+if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/azure" ] && [ -n "$LOCAL_DEPLOYMENT" ]
+then
+  "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-azure.sh"
 fi
 
 # kvm
@@ -97,6 +108,10 @@ export PATH=/usr/lib/terraform_0.9.11:$PATH
 if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/byoc" ]; then
    TF_skip_deployment=true
 fi
+
+
+# Add subdomain
+export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
 
 # Deploy cluster with terraform
 if [ -n "$TF_skip_deployment" ]; then
