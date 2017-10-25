@@ -45,6 +45,3 @@ done
 # run command as above created user via ssh-wrapper script that adds the
 # ssh-agent to this execution environment
 gosu user sh -c "ssh-agent-wrapper $@"
-
-
-exec su-exec user "$@"
