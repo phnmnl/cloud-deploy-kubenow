@@ -2,6 +2,7 @@
 
 # Cloud
 export TF_VAR_cluster_prefix="your-cluster-prefix"
+export TF_VAR_location="West Europe" # some azure location
 
 export TF_VAR_subscription_id="your-subscription_id"
 export TF_VAR_client_id="your-client_id" # a.k.a. appId

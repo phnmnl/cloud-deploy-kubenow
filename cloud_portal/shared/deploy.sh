@@ -47,13 +47,12 @@ export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre
 #
 
 # gce, ostack and azure
-
 export IMG_VERSION="v040b1"
 export TF_VAR_kubenow_image="kubenow-$IMG_VERSION"
-export ARM_CLIENT_ID="$TF_client_id"
-export ARM_CLIENT_SECRET="$TF_client_secret"
-export ARM_TENANT_ID="$TF_tenant_id"
-export ARM_LOCATION="$TF_location"
+export ARM_CLIENT_ID="$TF_VAR_client_id"
+export ARM_CLIENT_SECRET="$TF_VAR_client_secret"
+export ARM_TENANT_ID="$TF_VAR_tenant_id"
+export ARM_LOCATION="$TF_VAR_location"
 
 # gce
 # workaround: -the credentials are provided as an environment variable, but KubeNow terraform
