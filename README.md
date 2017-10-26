@@ -16,9 +16,9 @@ Phenomenal-KubeNow are distributed via [GitHub](http://github.com):
 
     # the repository contains submodules therefore `--recursive` parameter when cloning e.g.
     git clone --recursive https://github.com/phnmnl/cloud-deploy-kubenow.git
-    
+
     cd cloud-deploy-kubenow
-    
+
     # If you later want to pull latest version and also pull latest submodule updates:
 
     git pull --recurse-submodules
@@ -240,13 +240,82 @@ In this configuration file you will need to set:
   and to destroy use:
 
     ./phenomenal.sh destroy ostack
-    
+
+Deploy on Microsoft Azure
+-----------
+**Azure specific prerequisites**
+
+- You have created an application API key (Service Principal) in your Microsoft Azure subscription: (https://www.terraform.io/docs/providers/azurerm/authenticating_via_service_principal.html#creating-a-service-principal)
+
+**Configuration**
+
+Start by creating your configuration file: ``config.azure.sh`` There is a template that you can use for your convenience:
+
+    mv config.azure.sh-template config.azure.sh
+
+In this configuration file you will need to set:
+
+*Cluster*
+- **`TF_VAR_cluster_prefix`**: every resource in your tenancy will be named with this prefix
+- **`TF_VAR_location`**: some Azure location (e.g. ``West Europe``)
+
+- **`TF_VAR_subscription_id`**: your subscription id
+- **`TF_VAR_client_id`**: your client id (also called appId)
+- **`TF_VAR_client_secret`**: your client secret (also called password)
+- **`TF_VAR_tenant_id`**: your tenant id
+
+*Master configuration*
+- **`TF_VAR_master_vm_size`**: the vm size for the master (e.g. ``Standard_DS2_v2``) (e.g. ``Standard_DS2_v2``)
+- **`TF_VAR_master_as_edge`**:
+
+*Node configuration*
+- **`TF_VAR_node_count`**: number of Kubernetes nodes to be created (no floating IP is needed for these nodes)
+- **`TF_VAR_node_vm_size`**: the vm size for the Kubernetes nodes (e.g. ``Standard_DS2_v2``)
+
+*Gluster configuration*
+- **`TF_VAR_glusternode_count`**: number of egde nodes to be created (1 - 3 depending on preferred replication factor)
+- **`TF_VAR_glusternode_vm_size`**: the vm size for the glusternodes
+- **`TF_VAR_glusternode_extra_disk_size`**: disk size of the fileserver size in GB
+
+*Edge configuration (optional)*
+- **`TF_VAR_edge_count`**: number of egde nodes to be created
+- **`TF_VAR_edge_vm_size`**: the vm size for the the edge nodes
+
+*Cloudflare (optional)* - See: KubeNow [Cloudflare documentation.](http://kubenow.readthedocs.io/en/latest/getting_started/install-core.html#cloudflare-account-configuration)
+- **`TF_VAR_use_cloudflare`**: wether you want to use cloudflare as dns provider
+- **`TF_VAR_cloudflare_email`**: the mail that you used to register your Cloudflare account
+- **`TF_VAR_cloudflare_token`**: an authentication token that you can generate from the Cloudflare web interface
+- **`TF_VAR_cloudflare_domain`**: a zone that you created in your Cloudflare account. This typically matches your domain name (e.g. somedomain.com)
+
+*Galaxy*
+- **`TF_VAR_galaxy_admin_email`**: the local galaxy admin (you?)
+- **`TF_VAR_galaxy_admin_password`**: min 6 characters admin password
+
+*Jupyter*
+- **`TF_VAR_jupyter_password`**: password for your notebook
+
+
+**Once you are done with your settings you are ready to deploy the cluster:**
+
+    ./phenomenal.sh deploy azure
+
+  when deployment is finished then you should be able to reach the services at:
+
+    Galaxy         = http://galaxy.<your-prefix>.<yourdomain>
+    Jupyter        = http://notebook.<your-prefix>.<yourdomain>
+    Luigi          = http://luigi.<your-prefix>.<yourdomain>
+    Kube-dashboard = http://dashboard.<your-prefix>.<yourdomain>
+
+  and to destroy use:
+
+    ./phenomenal.sh destroy azure
+
 Deploy on Local Machine (Linux-KVM)
 -----------
 **Openstack specific prerequisites**
 
 - You are running Linux with KVM-enabled kernel
-- You have installed 
+- You have installed
 
 **Configuration**
 
@@ -290,7 +359,7 @@ In this configuration file you will need to set:
 
 **Once you are done with your settings you are ready to deploy the cluster:**
 
-    ./phenomenal.sh deploy ostack
+    ./phenomenal.sh deploy kvm
 
   when deployment is finished then you should be able to reach the services at:
 
@@ -301,9 +370,9 @@ In this configuration file you will need to set:
 
   and to destroy use:
 
-    ./phenomenal.sh destroy ostack
-    
-    
+    ./phenomenal.sh destroy kvm
+
+
 ### Directories and files
 
     ├── cloud_portal            # This is where the cloud portal deploy.sh, destroy.sh and state.sh scripts
@@ -312,6 +381,7 @@ In this configuration file you will need to set:
     │   ├── aws                 # Sub directories per cloud provider
     │   ├── gcp
     │   ├── ostack
+    │   ├── azure
     │   └── shared              # The bulk part of the deploy.sh, destroy.sh and state.sh are identical between
     │                           # provides and is residing in a shared version of the scripts called from the
     │                           # provider speciffic scripts
