@@ -181,10 +181,16 @@ docker run --rm -it \
   -e "PORTAL_DEPLOYMENT_REFERENCE=$DEPLOYMENT_REFERENCE" \
   -e "GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS" \
   -e "SLACK_ERR_REPORT_TOKEN=$SLACK_ERR_REPORT_TOKEN" \
+  -e "TERRAFORM_OPT=$TERRAFORM_OPT" \
+  -e "ANSIBLE_OPT=$ANSIBLE_OPT" \
   --env-file <(env | grep OS_) \
   --env-file <(env | grep TF_) \
+  --env-file <(env | grep GOOGLE_) \
+  --env-file <(env | grep AWS_) \
+  --env-file <(env | grep ARM_) \
+  --env-file <(env | grep KUBENOW_) \
   andersla/provisioners:20171025-1930 \
-  /bin/bash -c "cd /cloud-deploy;/cloud-deploy/cloud_portal/$provider/$cmd.sh"
+  "cd /cloud-deploy && ls && /cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
 if [[ $cmd == "deploy" || $cmd == "state" ]]; then
 
@@ -212,9 +218,5 @@ if [[ $cmd == "deploy" || $cmd == "state" ]]; then
   echo 'And if you want to ssh into master:'
   echo "ssh-add $DEPLOYMENT_DIR_HOST/vre.key"
   echo "ssh ubuntu@master.$domain"
-
-
-
-
 
 fi
