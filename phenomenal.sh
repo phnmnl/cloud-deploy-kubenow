@@ -189,7 +189,7 @@ docker run --rm -it \
   --env-file <(env | grep AWS_) \
   --env-file <(env | grep ARM_) \
   --env-file <(env | grep KUBENOW_) \
-  andersla/provisioners:20171025-1930 \
+  andersla/provisioners:20171026-0925 \
   "cd /cloud-deploy && ls && /cloud-deploy/cloud_portal/$provider/$cmd.sh"
 
 if [[ $cmd == "deploy" || $cmd == "state" ]]; then
