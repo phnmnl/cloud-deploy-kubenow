@@ -1,35 +1,47 @@
 #!/bin/bash
 
+#!/bin/bash
+#
+# To get correct file permissions on files mounted as docker volumes,
+# this script primarily creates a user inside the Docker-container that
+# has the same user id as the user executing docker on the host. Also
+# all groupIDs from the host users are added to this user.
+#
+
 # Add and run as local user if LOCAL_USER_ID is passed in at runtime
 if [ -z "$LOCAL_USER_ID" ]; then
-  echo "LOCAL_USER_ID must be specified when running this container, exiting."
+  echo "LOCAL_USER_ID must be set in the environment when running this container, exiting."
   exit 1
 fi
 
 # create user with $LOCAL_USER_ID if it doesn't exists
-if [[ ! $(id -u $LOCAL_USER_ID > /dev/null 2>&1) ]]; then
-  adduser -s /bin/bash -h /home/user -u $LOCAL_USER_ID -D user
+if [[ ! $(id -u "$LOCAL_USER_ID" > /dev/null 2>&1) ]]; then
+  adduser --quiet --shell /bin/bash \
+          --home /home/user \
+          --uid "$LOCAL_USER_ID" \
+          --disabled-password --gecos "" user
 fi
-
 
 # create groups with $LOCAL_GROUP_IDS and add them to user
 for group_id in $LOCAL_GROUP_IDS; do
 
   # create group with $group_id if it doesnt exist
-  test="$(getent group $group_id > /dev/null 2>&1)"
-  if [[ $? != 0 ]] ; then
-    addgroup -g "$group_id" "group$group_id"
+  test="$(getent group "$group_id")"
+  if [ -z "$test" ] ; then
+    addgroup --quiet --gid "$group_id" "group$group_id"
   fi
 
   # get username with $LOCAL_USER_ID
-  LOCAL_USERNAME=$(getent passwd $LOCAL_USER_ID | cut -d: -f1)
+  LOCAL_USERNAME=$(getent passwd "$LOCAL_USER_ID" | cut -d: -f1)
 
   # get groupname with $group_id
-  GROUPNAME=$(getent group $group_id | cut -d: -f1)
+  GROUPNAME=$(getent group "$group_id" | cut -d: -f1)
 
   # add group to user
-  addgroup "$LOCAL_USERNAME" "$GROUPNAME"
+  adduser --quiet "$LOCAL_USERNAME" "$GROUPNAME" > /dev/null 2>&1
 
 done
 
-exec su-exec user "$@"
+# run command as above created user via ssh-wrapper script that adds the
+# ssh-agent to this execution environment
+gosu user sh -c "$@"
