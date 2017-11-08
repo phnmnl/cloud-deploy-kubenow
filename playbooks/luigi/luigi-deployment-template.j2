@@ -23,8 +23,8 @@ spec:
           - containerPort: 8082
         resources:
           requests:
-            memory: 1G
-            cpu: 200m
+            memory: "{{ luigi_resource_req_memory }}"
+            cpu: "{{ luigi_resource_req_cpu }}"
 ---
 apiVersion: v1
 kind: Service
