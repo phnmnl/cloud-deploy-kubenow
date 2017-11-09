@@ -42,17 +42,17 @@ export TF_VAR_kubeadm_token=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_R
 export PRIVATE_KEY="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key"
 export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key.pub"
 
-#
 # hardcoded params (TODO move to params file)
-#
-
-# gce, ostack and azure
 export IMG_VERSION="v040b1"
 export TF_VAR_kubenow_image="kubenow-$IMG_VERSION"
 export ARM_CLIENT_ID="$TF_VAR_client_id"
 export ARM_CLIENT_SECRET="$TF_VAR_client_secret"
 export ARM_TENANT_ID="$TF_VAR_tenant_id"
 export ARM_LOCATION="$TF_VAR_location"
+export TF_VAR_master_disk_size="20"
+export TF_VAR_node_disk_size="20"
+export TF_VAR_edge_disk_size="20"
+export TF_VAR_glusternode_disk_size="20"
 
 # gce
 # workaround: -the credentials are provided as an environment variable, but KubeNow terraform
@@ -62,57 +62,39 @@ if [ -n "$GOOGLE_CREDENTIALS" ]; then
   export TF_VAR_gce_credentials_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/gce_credentials_file.json"
 fi
 
-# gce - make sure image is available in google project
-if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/gce" ]
-then
+# upload images
+if [ "$PROVIDER" = "gce" ]; then
    ansible-playbook -e "credentials_file_path=\"$TF_VAR_gce_credentials_file\"" \
                     -e "img_version=$IMG_VERSION" \
                     "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-gce-image.yml"
-fi
 
-# ostack
-# make sure image is available in openstack
-if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]
-then
+elif [ "$PROVIDER" = "openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]; then
   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-upload-openstack.sh"
-fi
 
-# azure
-# make sure image is available in azure account
-if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/azure" ] && [ -n "$LOCAL_DEPLOYMENT" ]
-then
+elif [ "$PROVIDER" = "azure" ]; then
   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-azure.sh"
-fi
 
-# kvm
-# make sure image is available in kvm
-if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/kvm" ]
-then
+elif [ "$PROVIDER" = "kvm" ]; then
    export KN_LOCAL_DIR="/.kubenow"
    export KN_IMAGE_NAME="$TF_VAR_kubenow_image"
    "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-download-kvm.sh"
    export TF_VAR_kubenow_image="$TF_VAR_kubenow_image.qcow2"
 fi
 
-# gce and aws
-export TF_VAR_master_disk_size="20"
-export TF_VAR_node_disk_size="20"
-export TF_VAR_edge_disk_size="20"
-export TF_VAR_glusternode_disk_size="20"
-
 # Add terraform to path (TODO) remove this portal workaround eventually
 export PATH=/usr/lib/terraform_0.9.11:$PATH
 
 # Dont use terraform if byoc
-if [ "$KUBENOW_TERRAFORM_FOLDER" = "$PORTAL_APP_REPO_FOLDER/KubeNow/byoc" ]; then
+if [ "$PROVIDER" = "byoc" ]; then
    TF_skip_deployment=true
 fi
-
 
 # Add subdomain
 export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
 
+
 # Deploy cluster with terraform
+export KUBENOW_TERRAFORM_FOLDER="$PORTAL_APP_REPO_FOLDER/KubeNow/$PROVIDER"
 if [ -n "$TF_skip_deployment" ]; then
    echo "Skip deployment option specified"
 else
