@@ -64,6 +64,8 @@ before_script:
   - mkdir -p deployments/id-phnmnl-config.${HOST_CLOUD}
   - echo -e "$TRAVIS_SSH_KEY_PRIV" > deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key
   - echo -e "$TRAVIS_SSH_KEY_PUB" > deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key.pub
+  - sudo chmod 600 deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key
+  - sudo chmod 600 deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key.pub
 
 script:
   # Deploy

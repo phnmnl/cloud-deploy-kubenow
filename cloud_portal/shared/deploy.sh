@@ -92,7 +92,6 @@ fi
 # Add subdomain
 export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
 
-
 # Deploy cluster with terraform
 export KUBENOW_TERRAFORM_FOLDER="$PORTAL_APP_REPO_FOLDER/KubeNow/$PROVIDER"
 if [ -n "$TF_skip_deployment" ]; then
