@@ -60,7 +60,7 @@ before_script:
   - sed -i -e "s/your-node-flavor/${OS_NODE_FLAVOR}/g" config.${HOST_CLOUD}.sh
   - sed -i -e "s/your-glusternode-flavor/${OS_NODE_FLAVOR}/g" config.${HOST_CLOUD}.sh
 
-  # Copy ssh-key for debug purposes (wont be overwritten by phenomenal.sh)
+  # Copy ssh-key for debug purposes (won't be overwritten by phenomenal.sh)
   - mkdir -p deployments/id-phnmnl-config.${HOST_CLOUD}
   - echo -e "$TRAVIS_SSH_KEY_PRIV" > deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key
   - echo -e "$TRAVIS_SSH_KEY_PUB" > deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key.pub
