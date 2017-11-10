@@ -250,7 +250,7 @@ ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "galaxy_chart_version=0.3.2" \
                  -e "hostname=$GALAXY_HOSTNAME" \
-                 -e "galaxy_image_tag=:v17.05-pheno-lr_cv1.4.111" \
+                 -e "galaxy_image_tag=:rc_v17.05-pheno_cv1.1.93" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \
