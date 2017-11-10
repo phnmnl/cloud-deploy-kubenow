@@ -48,6 +48,7 @@ fi
 # Add terraform to path (TODO) remove this portal workaround eventually
 export PATH=/usr/lib/terraform_0.9.11:$PATH
 
+KUBENOW_TERRAFORM_FOLDER="$PORTAL_APP_REPO_FOLDER/KubeNow/$PROVIDER"
 terraform destroy --parallelism=50 --force --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
 
 # remove the gce workaround file if it is there

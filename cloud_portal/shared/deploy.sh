@@ -93,10 +93,10 @@ fi
 export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
 
 # Deploy cluster with terraform
-export KUBENOW_TERRAFORM_FOLDER="$PORTAL_APP_REPO_FOLDER/KubeNow/$PROVIDER"
 if [ -n "$TF_skip_deployment" ]; then
    echo "Skip deployment option specified"
 else
+   KUBENOW_TERRAFORM_FOLDER="$PORTAL_APP_REPO_FOLDER/KubeNow/$PROVIDER"
    terraform init "$KUBENOW_TERRAFORM_FOLDER"
    terraform apply --parallelism=50 --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
 fi

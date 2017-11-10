@@ -61,11 +61,11 @@ before_script:
   - sed -i -e "s/your-glusternode-flavor/${OS_NODE_FLAVOR}/g" config.${HOST_CLOUD}.sh
 
   # Copy ssh-key for debug purposes (won't be overwritten by phenomenal.sh)
-#  - mkdir -p deployments/id-phnmnl-config.${HOST_CLOUD}
-#  - echo -e "$TRAVIS_SSH_KEY_PRIV" > deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key
-#  - echo -e "$TRAVIS_SSH_KEY_PUB" > deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key.pub
-# - sudo chmod 600 deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key
-# - sudo chmod 600 deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key.pub
+  - mkdir -p deployments/id-phnmnl-config.${HOST_CLOUD}
+  - echo -e "$TRAVIS_SSH_KEY_PRIV" > deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key
+  - echo -e "$TRAVIS_SSH_KEY_PUB" > deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key.pub
+  - chmod 600 deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key
+  - chmod 600 deployments/id-phnmnl-config.${HOST_CLOUD}/vre.key.pub
 
 script:
   # Deploy
