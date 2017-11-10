@@ -15,7 +15,7 @@ if [ -z "$LOCAL_USER_ID" ]; then
 fi
 
 # create user with $LOCAL_USER_ID if it doesn't exists
-if [[ ! $(id -u "$LOCAL_USER_ID" > /dev/null 2>&1) ]]; then
+if ! id -u "$LOCAL_USER_ID" > /dev/null 2>&1; then
   adduser --quiet --shell /bin/bash \
           --home /home/user \
           --uid "$LOCAL_USER_ID" \
@@ -44,4 +44,5 @@ done
 
 # run command as above created user via ssh-wrapper script that adds the
 # ssh-agent to this execution environment
+
 gosu user sh -c "$@"
