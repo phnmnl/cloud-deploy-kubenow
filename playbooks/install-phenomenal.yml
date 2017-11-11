@@ -35,6 +35,8 @@
 - include: luigi/main.yml
   vars:
     hostname: "{{luigi_hostname}}"
+    luigi_resource_req_memory: "{{luigi_resource_req_memory}}"
+    luigi_resource_req_cpu: "{{luigi_resource_req_cpu}}"
 
 - include: kubernetes-dashboard/main.yml
   vars:

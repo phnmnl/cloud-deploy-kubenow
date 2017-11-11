@@ -165,6 +165,8 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "jupyter_resource_req_memory=1G" \
                  -e "jupyter_nologging=$no_sensitive_logging" \
                  -e "luigi_hostname=$luigi_hostname" \
+                 -e "luigi_resource_req_cpu=200m" \
+                 -e "luigi_resource_req_memory=1G" \
                  -e "dashboard_basic_auth=$dashboard_auth" \
                  -e "dashboard_hostname=$dashboard_hostname" \
                  -e "dashboard_nologging=$no_sensitive_logging" \
