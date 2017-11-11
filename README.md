@@ -356,7 +356,6 @@ In this configuration file you will need to set:
 - **`TF_VAR_jupyter_password`**: password for your notebook
 
 
-
 **Once you are done with your settings you are ready to deploy the cluster:**
 
     ./phenomenal.sh deploy kvm
