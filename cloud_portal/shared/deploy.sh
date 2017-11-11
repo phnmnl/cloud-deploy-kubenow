@@ -172,8 +172,8 @@ fi
 # phenomenal-pvc
 ansible-playbook -i "$ansible_inventory_file" \
                    --key-file "$PRIVATE_KEY" \
-                   -e "pvc_name=galaxy-pvc" \
-                   -e "pvc_storage=$TF_VAR_phenomenal_pvc_size" \
+                   -e "name=galaxy-pvc" \
+                   -e "storage=$TF_VAR_phenomenal_pvc_size" \
                    "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/create-pvc.yml"
 
 # jupyter
