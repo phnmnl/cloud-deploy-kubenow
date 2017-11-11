@@ -1,0 +1,77 @@
+---
+- hosts: master
+  gather_facts: False
+
+- include: wait_for_all_pods_ready.yml
+
+- include: ../KubeNow/playbooks/install-shared-vol-nfs.yml
+  vars:
+    nfs_server: "{{nfs_server}}"
+    nfs_vol_size: "{{nfs_vol_size}}"
+    nfs_path: "{{nfs_path}}"
+  when:
+    (nfs_vol_size | int) > 0
+
+- include: ../KubeNow/playbooks/install-heketi-gluster.yml
+  when:
+    nfs_vol_size is undefined or (nfs_vol_size | int) == 0
+
+- include: ../KubeNow/playbooks/create-pvc.yml
+  vars:
+    name: "{{pvc_name}}"
+    storage: "{{pvc_storage}}"
+
+- include: jupyter.yml
+  vars:
+    jupyter_chart_version: "{{jupyter_chart_version}}"
+    hostname: "{{jupyter_hostname}}"
+    jupyter_image_tag: "{{jupyter_image_tag}}"
+    jupyter_password: "{{jupyter_password}}"
+    jupyter_pvc: "{{jupyter_pvc}}"
+    jupyter_resource_req_cpu: "{{jupyter_resource_req_cpu}}"
+    jupyter_resource_req_memory: "{{jupyter_resource_req_memory}}"
+    nologging: "{{jupyter_nologging}}"
+
+- include: luigi/main.yml
+  vars:
+    hostname: "{{luigi_hostname}}"
+    luigi_resource_req_memory: "{{luigi_resource_req_memory}}"
+    luigi_resource_req_cpu: "{{luigi_resource_req_cpu}}"
+
+- include: kubernetes-dashboard/main.yml
+  vars:
+    basic_auth: "{{dashboard_basic_auth}}"
+    hostname: "{{dashboard_hostname}}"
+    nologging: "{{dashboard_nologging}}"
+
+- include: heapster.yml
+
+- include: galaxy.yml
+  vars:
+    galaxy_chart_version: "{{galaxy_chart_version}}"
+    hostname: "{{galaxy_hostname}}"
+    galaxy_image_tag: "{{galaxy_image_tag}}"
+    galaxy_admin_password: "{{galaxy_admin_password}}"
+    galaxy_admin_email: "{{galaxy_admin_email}}"
+    galaxy_api_key: "{{galaxy_api_key}}"
+    galaxy_pvc: "{{galaxy_pvc}}"
+    postgres_pvc: "{{galaxy_postgres_pvc}}"
+    nologging: "{{galaxy_nologging}}"
+
+- include: git_clone_mtbls233.yml
+
+- include: wait_for_http_not_down.yml
+  vars:
+    name: "{{jupyter_hostname}}"
+    url: "http://{{jupyter_hostname}}.{{domain}}"
+
+- include: wait_for_http_not_down.yml
+  vars:
+    name: "{{luigi_hostname}}"
+    url: "http://{{luigi_hostname}}.{{domain}}"
+
+- include: wait_for_http_ok.yml
+  vars:
+    name: "{{galaxy_hostname}}"
+    url: "http://{{galaxy_hostname}}.{{domain}}"
+
