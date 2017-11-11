@@ -193,6 +193,8 @@ ansible-playbook -i "$ansible_inventory_file" \
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "hostname=$luigi_hostname" \
+                 -e "luigi_resource_req_cpu=200m" \
+                 -e "luigi_resource_req_memory=1G" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/luigi/main.yml"
 
 # kubernetes-dashboard
