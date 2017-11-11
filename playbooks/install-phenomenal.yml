@@ -18,8 +18,8 @@
 
 - include: ../KubeNow/playbooks/create-pvc.yml
   vars:
-    pvc_name: "{{pvc_name}}"
-    pvc_storage: "{{pvc_storage}}"
+    name: "{{pvc_name}}"
+    storage: "{{pvc_storage}}"
 
 - include: jupyter.yml
   vars:
