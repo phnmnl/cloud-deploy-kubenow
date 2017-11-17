@@ -372,6 +372,7 @@ In this configuration file you will need to set:
     ./phenomenal.sh destroy kvm
 
 
+
 ### Directories and files
 
     ├── cloud_portal            # This is where the cloud portal deploy.sh, destroy.sh and state.sh scripts
