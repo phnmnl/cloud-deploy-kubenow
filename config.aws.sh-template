@@ -39,13 +39,20 @@ export TF_VAR_phenomenal_pvc_size="95Gi"
 # Galaxy
 export TF_VAR_galaxy_admin_email="yoourname@bla.bla.com"
 export TF_VAR_galaxy_admin_password="password"
+# export TF_VAR_galaxy_chart_version="0.3.2"
+# export TF_VAR_galaxy_image_tag=":rc_v17.05-pheno_cv1.1.93"
 
 # Jupyter
 export TF_VAR_jupyter_password="password"
+# export TF_VAR_jupyter_resource_req_cpu=${TF_VAR_jupyter_resource_req_cpu:"200m"}
+# export TF_VAR_jupyter_resource_req_memory=${TF_VAR_jupyter_resource_req_memory:"1G"}
+
+# Luigi
+# export TF_VAR_luigi_resource_req_cpu="200m"
+# export TF_VAR_luigi_resource_req_memory="1G"
 
 # Kubernetes dashboard
 export TF_VAR_dashboard_username="admin"
 export TF_VAR_dashboard_password="password"
-
 
 
