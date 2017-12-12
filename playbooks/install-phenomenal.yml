@@ -31,20 +31,28 @@
     jupyter_resource_req_cpu: "{{jupyter_resource_req_cpu}}"
     jupyter_resource_req_memory: "{{jupyter_resource_req_memory}}"
     nologging: "{{jupyter_nologging}}"
+  when:
+    jupyter_include == true
 
 - include: luigi/main.yml
   vars:
     hostname: "{{luigi_hostname}}"
     luigi_resource_req_memory: "{{luigi_resource_req_memory}}"
     luigi_resource_req_cpu: "{{luigi_resource_req_cpu}}"
+  when:
+    luigi_include == true
 
 - include: kubernetes-dashboard/main.yml
   vars:
     basic_auth: "{{dashboard_basic_auth}}"
     hostname: "{{dashboard_hostname}}"
     nologging: "{{dashboard_nologging}}"
+  when:
+    dashboard_include == true
 
 - include: heapster.yml
+  when:
+    dashboard_include == true
 
 - include: galaxy.yml
   vars:
@@ -57,21 +65,31 @@
     galaxy_pvc: "{{galaxy_pvc}}"
     postgres_pvc: "{{galaxy_postgres_pvc}}"
     nologging: "{{galaxy_nologging}}"
+  when:
+    galaxy_include == true
 
 - include: git_clone_mtbls233.yml
+  when:
+    jupyter_include == true
 
 - include: wait_for_http_not_down.yml
   vars:
     name: "{{jupyter_hostname}}"
     url: "http://{{jupyter_hostname}}.{{domain}}"
+  when:
+    jupyter_include == true
 
 - include: wait_for_http_not_down.yml
   vars:
     name: "{{luigi_hostname}}"
     url: "http://{{luigi_hostname}}.{{domain}}"
+  when:
+    luigi_include == true
 
 - include: wait_for_http_ok.yml
   vars:
     name: "{{galaxy_hostname}}"
     url: "http://{{galaxy_hostname}}.{{domain}}"
+  when:
+    galaxy_include == true
 

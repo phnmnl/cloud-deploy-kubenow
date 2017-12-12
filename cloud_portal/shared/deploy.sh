@@ -148,7 +148,20 @@ ansible-playbook -i "$ansible_inventory_file" \
                  --skip-tags "heketi-glusterfs" \
                  "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-core.yml"
 
-# deploy phenomenal
+# deploy phenomenal, first set default vars
+TF_VAR_jupyter_include=${TF_VAR_jupyter_include:"true"}
+TF_VAR_jupyter_chart_version=${TF_VAR_jupyter_chart_version:"0.1.2"}
+TF_VAR_jupyter_image_tag=${TF_VAR_jupyter_image_tag:":latest"}
+TF_VAR_jupyter_resource_req_cpu=${TF_VAR_jupyter_resource_req_cpu:"200m"}
+TF_VAR_jupyter_resource_req_memory=${TF_VAR_jupyter_resource_req_memory:"1G"}
+TF_VAR_luigi_include=${TF_VAR_luigi_include:"true"}
+TF_VAR_luigi_resource_req_cpu=${TF_VAR_luigi_resource_req_cpu:"200m"}
+TF_VAR_luigi_resource_req_memory=${TF_VAR_luigi_resource_req_memory:"1G"}
+TF_VAR_galaxy_include=${TF_VAR_galaxy_include:"true"}
+TF_VAR_galaxy_chart_version=${TF_VAR_galaxy_chart_version:"0.3.2"}
+TF_VAR_galaxy_image_tag=${TF_VAR_galaxy_image_tag:":rc_v17.05-pheno_cv1.1.93"}
+TF_VAR_dashboard_include=${TF_VAR_dashboard_include:"true"}
+
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
                  -e "nfs_server=$TF_VAR_nfs_server" \
@@ -156,23 +169,27 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "nfs_path=$TF_VAR_nfs_path" \
                  -e "pvc_name=galaxy-pvc" \
                  -e "pvc_storage=$TF_VAR_phenomenal_pvc_size" \
-                 -e "jupyter_chart_version=0.1.2" \
+                 -e "jupyter_include=$TF_VAR_jupyter_include" \
+                 -e "jupyter_chart_version=$TF_VAR_jupyter_chart_version" \
                  -e "jupyter_hostname=$jupyter_hostname" \
-                 -e "jupyter_image_tag=:latest" \
+                 -e "jupyter_image_tag=$TF_VAR_jupyter_image_tag" \
                  -e "jupyter_password=$TF_VAR_jupyter_password" \
                  -e "jupyter_pvc=galaxy-pvc" \
-                 -e "jupyter_resource_req_cpu=200m" \
-                 -e "jupyter_resource_req_memory=1G" \
+                 -e "jupyter_resource_req_cpu=$TF_VAR_jupyter_resource_req_cpu" \
+                 -e "jupyter_resource_req_memory=$TF_VAR_jupyter_resource_req_memory" \
                  -e "jupyter_nologging=$no_sensitive_logging" \
+                 -e "luigi_include=$TF_VAR_luigi_include" \
                  -e "luigi_hostname=$luigi_hostname" \
-                 -e "luigi_resource_req_cpu=200m" \
-                 -e "luigi_resource_req_memory=1G" \
+                 -e "luigi_resource_req_cpu=$TF_VAR_luigi_resource_req_cpu" \
+                 -e "luigi_resource_req_memory=$TF_VAR_luigi_resource_req_memory" \
+                 -e "dashboard_include=$TF_VAR_dashboard_include" \
                  -e "dashboard_basic_auth=$dashboard_auth" \
                  -e "dashboard_hostname=$dashboard_hostname" \
                  -e "dashboard_nologging=$no_sensitive_logging" \
-                 -e "galaxy_chart_version=0.3.2" \
+                 -e "galaxy_include=$TF_VAR_galaxy_include" \
+                 -e "galaxy_chart_version=$TF_VAR_galaxy_chart_version" \
                  -e "galaxy_hostname=$galaxy_hostname" \
-                 -e "galaxy_image_tag=:rc_v17.05-pheno_cv1.1.93" \
+                 -e "galaxy_image_tag=$TF_VAR_galaxy_image_tag" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \
