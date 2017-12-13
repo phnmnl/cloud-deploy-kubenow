@@ -149,18 +149,18 @@ ansible-playbook -i "$ansible_inventory_file" \
                  "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-core.yml"
 
 # deploy phenomenal, first set default vars
-TF_VAR_jupyter_include=${TF_VAR_jupyter_include:"true"}
-TF_VAR_jupyter_chart_version=${TF_VAR_jupyter_chart_version:"0.1.2"}
-TF_VAR_jupyter_image_tag=${TF_VAR_jupyter_image_tag:":latest"}
-TF_VAR_jupyter_resource_req_cpu=${TF_VAR_jupyter_resource_req_cpu:"200m"}
-TF_VAR_jupyter_resource_req_memory=${TF_VAR_jupyter_resource_req_memory:"1G"}
-TF_VAR_luigi_include=${TF_VAR_luigi_include:"true"}
-TF_VAR_luigi_resource_req_cpu=${TF_VAR_luigi_resource_req_cpu:"200m"}
-TF_VAR_luigi_resource_req_memory=${TF_VAR_luigi_resource_req_memory:"1G"}
-TF_VAR_galaxy_include=${TF_VAR_galaxy_include:"true"}
-TF_VAR_galaxy_chart_version=${TF_VAR_galaxy_chart_version:"0.3.2"}
-TF_VAR_galaxy_image_tag=${TF_VAR_galaxy_image_tag:":rc_v17.05-pheno_cv1.1.93"}
-TF_VAR_dashboard_include=${TF_VAR_dashboard_include:"true"}
+TF_VAR_jupyter_include=${TF_VAR_jupyter_include:-"true"}
+TF_VAR_jupyter_chart_version=${TF_VAR_jupyter_chart_version:-"0.1.2"}
+TF_VAR_jupyter_image_tag=${TF_VAR_jupyter_image_tag:-":latest"}
+TF_VAR_jupyter_resource_req_cpu=${TF_VAR_jupyter_resource_req_cpu:-"200m"}
+TF_VAR_jupyter_resource_req_memory=${TF_VAR_jupyter_resource_req_memory:-"1G"}
+TF_VAR_luigi_include=${TF_VAR_luigi_include:-true}
+TF_VAR_luigi_resource_req_cpu=${TF_VAR_luigi_resource_req_cpu:-"200m"}
+TF_VAR_luigi_resource_req_memory=${TF_VAR_luigi_resource_req_memory:-"1G"}
+TF_VAR_galaxy_include=${TF_VAR_galaxy_include:-true}
+TF_VAR_galaxy_chart_version=${TF_VAR_galaxy_chart_version:-"0.3.2"}
+TF_VAR_galaxy_image_tag=${TF_VAR_galaxy_image_tag:-":rc_v17.05-pheno_cv1.1.93"}
+TF_VAR_dashboard_include=${TF_VAR_dashboard_include:-true}
 
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
