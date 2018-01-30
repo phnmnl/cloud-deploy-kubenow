@@ -78,7 +78,7 @@ elif [ "$PROVIDER" = "azure" ]; then
   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-azure.sh"
 
 elif [ "$PROVIDER" = "kvm" ]; then
-   export KN_LOCAL_DIR="/.kubenow"
+   export KN_LOCAL_DIR="kvm-image"
    export KN_IMAGE_NAME="$TF_VAR_kubenow_image"
    "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-download-kvm.sh"
    export TF_VAR_kubenow_image="$TF_VAR_kubenow_image.qcow2"
@@ -100,7 +100,7 @@ if [ -n "$TF_skip_deployment" ]; then
    echo "Skip deployment option specified"
 else
    KUBENOW_TERRAFORM_FOLDER="$PORTAL_APP_REPO_FOLDER/KubeNow/$PROVIDER"
-   terraform init "$KUBENOW_TERRAFORM_FOLDER"
+   terraform init --plugin-dir=/terraform_plugins "$KUBENOW_TERRAFORM_FOLDER"
    terraform apply --parallelism=50 --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
 fi
 
@@ -148,14 +148,69 @@ ansible-playbook -i "$ansible_inventory_file" \
                  --skip-tags "heketi-glusterfs" \
                  "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-core.yml"
 
+# deploy storage
+storage_class="nothing=nothing"
+if [ -n "$TF_VAR_hostpath_vol_size" ]
+then
+
+  # deploy virtio version local host path (if single node kvm)
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "vol_size=$TF_VAR_hostpath_vol_size" \
+                   -e "host_path=$TF_VAR_hostpath_vol_path" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-hostpath.yml"
+
+  storage_class="storageClassName=manual"
+
+elif [ -n "$TF_VAR_master_extra_disk_size" ]
+then
+
+  # deploy local host path (if single node kvm)
+  ansible-playbook -i "$ansible_inventory_file" \
+                 --key-file "$PRIVATE_KEY" \
+                 -e "device=/dev/vdb" \
+                 -e "fstype=ext4" \
+                 -e "vol_size=$TF_VAR_master_extra_disk_size" \
+                 -e "mnt_path=/mnt/data" \
+                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-hostpath.yml"
+
+  storage_class="storageClassName=manual"
+
+elif [ -n "$TF_VAR_nfs_vol_size" ]
+then
+
+  # deploy local host path (if single node kvm)
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "nfs_server=$TF_VAR_nfs_server" \
+                   -e "nfs_vol_size=$TF_VAR_nfs_vol_size" \
+                   -e "nfs_path=$TF_VAR_nfs_path" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-nfs.yml"
+
+  storage_class="nothing=nothing"
+
+else
+
+  # deploy heketi as default
+  ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster.yml"
+
+  storage_class="nothing=nothing"
+
+fi
+
+# deploy phenomenal pvc
+ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "name=galaxy-pvc" \
+                   -e "storage=$TF_VAR_phenomenal_pvc_size" \
+                   -e "$storage_class" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/create-pvc.yml"
+
 # deploy phenomenal
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
-                 -e "nfs_server=$TF_VAR_nfs_server" \
-                 -e "nfs_vol_size=$TF_VAR_nfs_vol_size" \
-                 -e "nfs_path=$TF_VAR_nfs_path" \
-                 -e "pvc_name=galaxy-pvc" \
-                 -e "pvc_storage=$TF_VAR_phenomenal_pvc_size" \
                  -e "jupyter_chart_version=0.1.2" \
                  -e "jupyter_hostname=$jupyter_hostname" \
                  -e "jupyter_image_tag=:latest" \

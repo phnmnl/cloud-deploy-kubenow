@@ -23,7 +23,8 @@ ENV PLUGIN_CLOUDFLARE=0.1.0
 ENV PLUGIN_TEMPLATE=1.0.0
 
 # Install with apt and pip
-RUN apt-get update -y && apt-get install -y \
+RUN apt-get update -y && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y \
   curl \
   apt-transport-https \
   git \
@@ -34,6 +35,8 @@ RUN apt-get update -y && apt-get install -y \
   libffi-dev \
   openssl \
   unzip \
+  libvirt-bin \
+  mkisofs \
   python-pip && \
   `# Add google cloud` \
   echo "deb http://packages.cloud.google.com/apt cloud-sdk-xenial main" | \
@@ -58,7 +61,8 @@ RUN apt-get update -y && apt-get install -y \
   rm -rf /usr/lib/gcc && \
   rm -rf /usr/share/man && \
   rm -rf /usr/lib/google-cloud-sdk/platform/gsutil && \
-  apt-get clean && rm -rf /var/lib/apt/lists/*
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
 
 # Install Terraform
 RUN curl "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > \
@@ -102,6 +106,12 @@ RUN curl "https://releases.hashicorp.com/terraform-provider-template/${PLUGIN_TE
     "terraform-provider-template_${PLUGIN_TEMPLATE}_linux_amd64.zip" && \
     unzip "terraform-provider-template_${PLUGIN_TEMPLATE}_linux_amd64.zip" -d /terraform_plugins/ && \
     rm -f "terraform-provider-template_${PLUGIN_TEMPLATE}_linux_amd64.zip"
+
+# libvirt-plugin
+RUN curl "https://raw.githubusercontent.com/andersla/terraform-provider-libvirt-binary/master/master-180127-linux_x86/terraform-provider-libvirt.zip" > \
+    "terraform-provider-libvirt.zip" && \
+    unzip "terraform-provider-libvirt.zip" -d /terraform_plugins/ && \
+    rm -f "terraform-provider-libvirt.zip"y
 
 # Copy script
 COPY bin/docker-entrypoint-v2 /
