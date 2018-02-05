@@ -1,4 +1,4 @@
 apache-libcloud
-python-glanceclient
+python-glanceclient==2.9.1
 ansible>=2.2.0.0
 jmespath
