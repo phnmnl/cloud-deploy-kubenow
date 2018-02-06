@@ -54,7 +54,7 @@ export TF_VAR_node_disk_size="20"
 export TF_VAR_edge_disk_size="20"
 export TF_VAR_glusternode_disk_size="20"
 if [ -z $TF_VAR_phenomenal_pvc_size ]; then
-  TF_VAR_phenomenal_pvc_size="95Gi"
+  TF_VAR_phenomenal_pvc_size="90Gi"
 fi
 
 # gce
