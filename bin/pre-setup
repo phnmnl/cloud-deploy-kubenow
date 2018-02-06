@@ -8,6 +8,6 @@ fi
 
 # generate kubeadm_token
 if [ ! -f kubetoken ]; then
-    kubetoken=$("$PORTAL_APP_REPO_FOLDER/KubeNow/bin/kubetoken")
+    kubetoken=$("$PORTAL_APP_REPO_FOLDER/KubeNow/bin/kn-kubetoken")
     printf '%s\n' "$kubetoken" > kubetoken
 fi

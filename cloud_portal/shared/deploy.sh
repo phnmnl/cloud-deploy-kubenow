@@ -43,8 +43,8 @@ export PRIVATE_KEY="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.ke
 export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key.pub"
 
 # hardcoded params (TODO move to params file)
-export IMG_VERSION="v040b1"
-export TF_VAR_kubenow_image="kubenow-$IMG_VERSION"
+export IMG_VERSION="v050b1"
+export TF_VAR_boot_image="kubenow-$IMG_VERSION"
 export ARM_CLIENT_ID="$TF_VAR_client_id"
 export ARM_CLIENT_SECRET="$TF_VAR_client_secret"
 export ARM_TENANT_ID="$TF_VAR_tenant_id"
@@ -67,19 +67,22 @@ fi
 
 # upload images
 if [ "$PROVIDER" = "gce" ]; then
+   export KN_IMAGE_NAME="$TF_VAR_boot_image"
    ansible-playbook -e "credentials_file_path=\"$TF_VAR_gce_credentials_file\"" \
                     -e "img_version=$IMG_VERSION" \
                     "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-gce-image.yml"
 
 elif [ "$PROVIDER" = "openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]; then
+  export KN_IMAGE_NAME="$TF_VAR_boot_image"
   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-upload-openstack.sh"
 
 elif [ "$PROVIDER" = "azure" ]; then
+  export KN_IMAGE_NAME="$TF_VAR_boot_image"
   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-azure.sh"
 
 elif [ "$PROVIDER" = "kvm" ]; then
    export KN_LOCAL_DIR="kvm-image"
-   export KN_IMAGE_NAME="$TF_VAR_kubenow_image"
+   export KN_IMAGE_NAME="$TF_VAR_boot_image"
    "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-download-kvm.sh"
    export TF_VAR_kubenow_image="$TF_VAR_kubenow_image.qcow2"
 fi
