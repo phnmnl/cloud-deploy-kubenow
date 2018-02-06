@@ -74,7 +74,7 @@ if [ "$PROVIDER" = "gce" ]; then
 
 elif [ "$PROVIDER" = "openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]; then
   export KN_IMAGE_NAME="$TF_VAR_boot_image"
-  "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-upload-openstack.sh"
+  "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-openstack.sh"
 
 elif [ "$PROVIDER" = "azure" ]; then
   export KN_IMAGE_NAME="$TF_VAR_boot_image"
