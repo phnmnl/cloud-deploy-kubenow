@@ -77,23 +77,18 @@ elif [ "$PROVIDER" = "openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]; then
   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-openstack.sh"
 
 elif [ "$PROVIDER" = "azure" ]; then
-  export KN_IMAGE_NAME="$TF_VAR_boot_image"
-  "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-azure.sh"
+  #export KN_IMAGE_NAME="$TF_VAR_boot_image"
+  #"$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-azure.sh"
+  echo "Azure is not supported by this version of cloud-deploy, exiting"
+  exit 1
 
 elif [ "$PROVIDER" = "kvm" ]; then
-   export KN_LOCAL_DIR="kvm-image"
-   export KN_IMAGE_NAME="$TF_VAR_boot_image"
-   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-download-kvm.sh"
-   export TF_VAR_kubenow_image="$TF_VAR_kubenow_image.qcow2"
+   echo "KVM is not supported by this version of cloud-deploy, exiting"
+  exit 1
 fi
 
 # Add terraform to path (TODO) remove this portal workaround eventually
 export PATH=/usr/lib/terraform_0.9.11:$PATH
-
-# Dont use terraform if byoc
-if [ "$PROVIDER" = "byoc" ]; then
-   TF_skip_deployment=true
-fi
 
 # Add subdomain
 export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
@@ -228,9 +223,9 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "dashboard_basic_auth=$dashboard_auth" \
                  -e "dashboard_hostname=$dashboard_hostname" \
                  -e "dashboard_nologging=$no_sensitive_logging" \
-                 -e "galaxy_chart_version=0.3.2" \
+                 -e "galaxy_chart_version=0.3.5" \
                  -e "galaxy_hostname=$galaxy_hostname" \
-                 -e "galaxy_image_tag=:rc_v17.05-pheno_cv1.1.93" \
+                 -e "galaxy_image_tag=:dev_v17.09-pheno-lr_cv1.5.131" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \
