@@ -146,57 +146,12 @@ ansible-playbook -i "$ansible_inventory_file" \
                  --skip-tags "heketi-glusterfs" \
                  "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-core.yml"
 
-# deploy storage
-storage_class="nothing=nothing"
-if [ -n "$TF_VAR_hostpath_vol_size" ]
-then
-
-  # deploy virtio version local host path (if single node kvm)
-  ansible-playbook -i "$ansible_inventory_file" \
-                   --key-file "$PRIVATE_KEY" \
-                   -e "vol_size=$TF_VAR_hostpath_vol_size" \
-                   -e "host_path=$TF_VAR_hostpath_vol_path" \
-                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-hostpath.yml"
-
-  storage_class="storageClassName=manual"
-
-elif [ -n "$TF_VAR_master_extra_disk_size" ]
-then
-
-  # deploy local host path (if single node kvm)
-  ansible-playbook -i "$ansible_inventory_file" \
+# deploy heketi as default
+ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
-                 -e "device=/dev/vdb" \
-                 -e "fstype=ext4" \
-                 -e "vol_size=$TF_VAR_master_extra_disk_size" \
-                 -e "mnt_path=/mnt/data" \
-                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-hostpath.yml"
+                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster.yml"
+storage_class="nothing=nothing"
 
-  storage_class="storageClassName=manual"
-
-elif [ -n "$TF_VAR_nfs_vol_size" ]
-then
-
-  # deploy local host path (if single node kvm)
-  ansible-playbook -i "$ansible_inventory_file" \
-                   --key-file "$PRIVATE_KEY" \
-                   -e "nfs_server=$TF_VAR_nfs_server" \
-                   -e "nfs_vol_size=$TF_VAR_nfs_vol_size" \
-                   -e "nfs_path=$TF_VAR_nfs_path" \
-                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-shared-vol-nfs.yml"
-
-  storage_class="nothing=nothing"
-
-else
-
-  # deploy heketi as default
-  ansible-playbook -i "$ansible_inventory_file" \
-                   --key-file "$PRIVATE_KEY" \
-                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster.yml"
-
-  storage_class="nothing=nothing"
-
-fi
 
 # deploy phenomenal pvc
 ansible-playbook -i "$ansible_inventory_file" \
