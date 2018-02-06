@@ -143,15 +143,9 @@ galaxy_api_key=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/gala
 # deploy KubeNow core stack
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
-                 --skip-tags "heketi-glusterfs" \
                  "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-core.yml"
 
 # deploy heketi as default
-ansible-playbook -i "$ansible_inventory_file" \
-                 --key-file "$PRIVATE_KEY" \
-                 "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-heketi-gluster.yml"
-storage_class="nothing=nothing"
-
 
 # deploy phenomenal pvc
 ansible-playbook -i "$ansible_inventory_file" \
