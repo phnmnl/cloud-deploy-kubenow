@@ -21,7 +21,6 @@ netaddr==0.7.19
 oslo.i18n==3.19.0
 oslo.utils==3.35.0
 pbr==3.1.1
-pkg-resources==0.0.0
 prettytable==0.7.2
 pycparser==2.18
 pyOpenSSL==17.5.0
