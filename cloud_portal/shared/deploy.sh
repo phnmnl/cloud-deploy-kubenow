@@ -167,6 +167,7 @@ ansible-playbook -i "$ansible_inventory_file" \
 # deploy phenomenal
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
+                 -e "jupyter_include=true" \
                  -e "jupyter_chart_version=0.1.2" \
                  -e "jupyter_hostname=$jupyter_hostname" \
                  -e "jupyter_image_tag=:latest" \
@@ -175,12 +176,15 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "jupyter_resource_req_cpu=200m" \
                  -e "jupyter_resource_req_memory=1G" \
                  -e "jupyter_nologging=$no_sensitive_logging" \
+                 -e "luigi_include=true" \
                  -e "luigi_hostname=$luigi_hostname" \
                  -e "luigi_resource_req_cpu=200m" \
                  -e "luigi_resource_req_memory=1G" \
+                 -e "dashboard_include=true" \
                  -e "dashboard_basic_auth=$dashboard_auth" \
                  -e "dashboard_hostname=$dashboard_hostname" \
                  -e "dashboard_nologging=$no_sensitive_logging" \
+                 -e "galaxy_include=true" \
                  -e "galaxy_chart_version=0.3.5" \
                  -e "galaxy_hostname=$galaxy_hostname" \
                  -e "galaxy_image_tag=:dev_v17.09-pheno-lr_cv1.5.131" \
