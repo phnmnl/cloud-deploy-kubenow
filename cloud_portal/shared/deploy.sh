@@ -33,15 +33,7 @@ if [ -z "$LOCAL_DEPLOYMENT" ]; then
    export TF_VAR_cloudflare_proxied="true"
    export TF_VAR_cloudflare_record_texts='["galaxy","notebook","luigi","dashboard"]'
    export SLACK_ERR_REPORT_TOKEN=$(cat "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken")
-fi
-
-# Optional: use virtualenv; Assumes execution from root folder of git checkout
-if [ -n "$USE_VIRTUAL_ENV" ]; then
-   virtualenv deploy
-   source deploy/bin/activate
-   pip install -U pip
-   pip install -r requirements_glance.txt --no-deps
-   pip install -r requirements_kn.txt
+   export USE_VIRTUAL_ENV="true"
 fi
 
 # presetup (generate key kubeadm token etc.)
@@ -81,9 +73,25 @@ if [ "$PROVIDER" = "gce" ]; then
                     -e "img_version=$IMG_VERSION" \
                     "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-gce-image.yml"
 
-elif [ "$PROVIDER" = "openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]; then
+elif [ "$PROVIDER" = "openstack" ]; then
   export KN_IMAGE_NAME="$TF_VAR_boot_image"
+
+  # Optional: use virtualenv; Assumes execution from root folder of git checkout
+  if [ -n "$USE_VIRTUAL_ENV" ]; then
+     virtualenv deploy
+     source deploy/bin/activate
+     pip install -U pip
+     pip install -r requirements_glance.txt --no-deps
+     pip install -r requirements_kn.txt
+  fi
+
+  # Upload image to openstack installation if not there
   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-openstack.sh"
+
+  # Enough with this virtualenv
+  if [ -n "$USE_VIRTUAL_ENV" ]; then
+     deactivate
+  fi
 
 elif [ "$PROVIDER" = "azure" ]; then
   #export KN_IMAGE_NAME="$TF_VAR_boot_image"
