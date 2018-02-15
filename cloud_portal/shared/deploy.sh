@@ -36,7 +36,7 @@ if [ -z "$LOCAL_DEPLOYMENT" ]; then
 fi
 
 # Optional: use virtualenv; Assumes execution from root folder of git checkout
-if [ -n $USE_VIRTUAL_ENV ]; then
+if [ -n "$USE_VIRTUAL_ENV" ]; then
    virtualenv deploy
    source deploy/bin/activate
    pip install -U pip
