@@ -43,8 +43,8 @@ export PRIVATE_KEY="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.ke
 export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key.pub"
 
 # hardcoded params (TODO move to params file)
-export IMG_VERSION="v040b1"
-export TF_VAR_kubenow_image="kubenow-$IMG_VERSION"
+export IMG_VERSION="v050b1"
+export TF_VAR_boot_image="kubenow-$IMG_VERSION"
 export ARM_CLIENT_ID="$TF_VAR_client_id"
 export ARM_CLIENT_SECRET="$TF_VAR_client_secret"
 export ARM_TENANT_ID="$TF_VAR_tenant_id"
@@ -54,7 +54,7 @@ export TF_VAR_node_disk_size="20"
 export TF_VAR_edge_disk_size="20"
 export TF_VAR_glusternode_disk_size="20"
 if [ -z $TF_VAR_phenomenal_pvc_size ]; then
-  TF_VAR_phenomenal_pvc_size="95Gi"
+  TF_VAR_phenomenal_pvc_size="90Gi"
 fi
 
 # gce
@@ -67,30 +67,28 @@ fi
 
 # upload images
 if [ "$PROVIDER" = "gce" ]; then
+   export KN_IMAGE_NAME="$TF_VAR_boot_image"
    ansible-playbook -e "credentials_file_path=\"$TF_VAR_gce_credentials_file\"" \
                     -e "img_version=$IMG_VERSION" \
                     "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/import-gce-image.yml"
 
 elif [ "$PROVIDER" = "openstack" ] && [ -n "$LOCAL_DEPLOYMENT" ]; then
-  "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-upload-openstack.sh"
+  export KN_IMAGE_NAME="$TF_VAR_boot_image"
+  "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-openstack.sh"
 
 elif [ "$PROVIDER" = "azure" ]; then
-  "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-azure.sh"
+  #export KN_IMAGE_NAME="$TF_VAR_boot_image"
+  #"$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-azure.sh"
+  echo "Azure is not supported by this version of cloud-deploy, exiting"
+  exit 1
 
 elif [ "$PROVIDER" = "kvm" ]; then
-   export KN_LOCAL_DIR="/.kubenow"
-   export KN_IMAGE_NAME="$TF_VAR_kubenow_image"
-   "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-download-kvm.sh"
-   export TF_VAR_kubenow_image="$TF_VAR_kubenow_image.qcow2"
+   echo "KVM is not supported by this version of cloud-deploy, exiting"
+  exit 1
 fi
 
 # Add terraform to path (TODO) remove this portal workaround eventually
 export PATH=/usr/lib/terraform_0.9.11:$PATH
-
-# Dont use terraform if byoc
-if [ "$PROVIDER" = "byoc" ]; then
-   TF_skip_deployment=true
-fi
 
 # Add subdomain
 export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
@@ -100,7 +98,7 @@ if [ -n "$TF_skip_deployment" ]; then
    echo "Skip deployment option specified"
 else
    KUBENOW_TERRAFORM_FOLDER="$PORTAL_APP_REPO_FOLDER/KubeNow/$PROVIDER"
-   terraform init "$KUBENOW_TERRAFORM_FOLDER"
+   terraform init --plugin-dir=/terraform_plugins "$KUBENOW_TERRAFORM_FOLDER"
    terraform apply --parallelism=50 --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
 fi
 
@@ -145,51 +143,38 @@ galaxy_api_key=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/gala
 # deploy KubeNow core stack
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
-                 --skip-tags "heketi-glusterfs" \
                  "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/install-core.yml"
 
-# deploy phenomenal, first set default vars
-TF_VAR_jupyter_include=${TF_VAR_jupyter_include:-"true"}
-TF_VAR_jupyter_chart_version=${TF_VAR_jupyter_chart_version:-"0.1.2"}
-TF_VAR_jupyter_image_tag=${TF_VAR_jupyter_image_tag:-":latest"}
-TF_VAR_jupyter_resource_req_cpu=${TF_VAR_jupyter_resource_req_cpu:-"200m"}
-TF_VAR_jupyter_resource_req_memory=${TF_VAR_jupyter_resource_req_memory:-"1G"}
-TF_VAR_luigi_include=${TF_VAR_luigi_include:-true}
-TF_VAR_luigi_resource_req_cpu=${TF_VAR_luigi_resource_req_cpu:-"200m"}
-TF_VAR_luigi_resource_req_memory=${TF_VAR_luigi_resource_req_memory:-"1G"}
-TF_VAR_galaxy_include=${TF_VAR_galaxy_include:-true}
-TF_VAR_galaxy_chart_version=${TF_VAR_galaxy_chart_version:-"0.3.2"}
-TF_VAR_galaxy_image_tag=${TF_VAR_galaxy_image_tag:-":rc_v17.05-pheno_cv1.1.93"}
-TF_VAR_dashboard_include=${TF_VAR_dashboard_include:-true}
+# deploy heketi as default
 
+# deploy phenomenal pvc
+ansible-playbook -i "$ansible_inventory_file" \
+                   --key-file "$PRIVATE_KEY" \
+                   -e "name=galaxy-pvc" \
+                   -e "storage=$TF_VAR_phenomenal_pvc_size" \
+                   -e "$storage_class" \
+                   "$PORTAL_APP_REPO_FOLDER/KubeNow/playbooks/create-pvc.yml"
+
+# deploy phenomenal
 ansible-playbook -i "$ansible_inventory_file" \
                  --key-file "$PRIVATE_KEY" \
-                 -e "nfs_server=$TF_VAR_nfs_server" \
-                 -e "nfs_vol_size=$TF_VAR_nfs_vol_size" \
-                 -e "nfs_path=$TF_VAR_nfs_path" \
-                 -e "pvc_name=galaxy-pvc" \
-                 -e "pvc_storage=$TF_VAR_phenomenal_pvc_size" \
-                 -e "jupyter_include=$TF_VAR_jupyter_include" \
-                 -e "jupyter_chart_version=$TF_VAR_jupyter_chart_version" \
+                 -e "jupyter_chart_version=0.1.2" \
                  -e "jupyter_hostname=$jupyter_hostname" \
-                 -e "jupyter_image_tag=$TF_VAR_jupyter_image_tag" \
+                 -e "jupyter_image_tag=:latest" \
                  -e "jupyter_password=$TF_VAR_jupyter_password" \
                  -e "jupyter_pvc=galaxy-pvc" \
-                 -e "jupyter_resource_req_cpu=$TF_VAR_jupyter_resource_req_cpu" \
-                 -e "jupyter_resource_req_memory=$TF_VAR_jupyter_resource_req_memory" \
+                 -e "jupyter_resource_req_cpu=200m" \
+                 -e "jupyter_resource_req_memory=1G" \
                  -e "jupyter_nologging=$no_sensitive_logging" \
-                 -e "luigi_include=$TF_VAR_luigi_include" \
                  -e "luigi_hostname=$luigi_hostname" \
-                 -e "luigi_resource_req_cpu=$TF_VAR_luigi_resource_req_cpu" \
-                 -e "luigi_resource_req_memory=$TF_VAR_luigi_resource_req_memory" \
-                 -e "dashboard_include=$TF_VAR_dashboard_include" \
+                 -e "luigi_resource_req_cpu=200m" \
+                 -e "luigi_resource_req_memory=1G" \
                  -e "dashboard_basic_auth=$dashboard_auth" \
                  -e "dashboard_hostname=$dashboard_hostname" \
                  -e "dashboard_nologging=$no_sensitive_logging" \
-                 -e "galaxy_include=$TF_VAR_galaxy_include" \
-                 -e "galaxy_chart_version=$TF_VAR_galaxy_chart_version" \
+                 -e "galaxy_chart_version=0.3.5" \
                  -e "galaxy_hostname=$galaxy_hostname" \
-                 -e "galaxy_image_tag=$TF_VAR_galaxy_image_tag" \
+                 -e "galaxy_image_tag=:dev_v17.09-pheno-lr_cv1.5.131" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_api_key=$galaxy_api_key" \

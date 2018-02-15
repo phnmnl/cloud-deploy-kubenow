@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # Cloud
-export TF_VAR_cluster_prefix="your-cluster-prefix"
-export TF_VAR_kubenow_dir="/home/your-user/.kubenow"
-export TF_VAR_kubenow_image="v040b1.qcow2"
+export TF_VAR_cluster_prefix="your-cluster-prefix"export TF_VAR_kubenow_dir="kvm-image"
+export TF_VAR_kubenow_dir="kvm-image"
+export TF_VAR_provider="kvm"
 
 # Master configuration
 export TF_VAR_master_as_edge="true"
@@ -25,7 +25,7 @@ export TF_VAR_phenomenal_pvc_size="95Gi"
 # to VM as storage for PhenoMenal services
 export TF_VAR_master_extra_disk_size="100" # GiB
 
-# if this option is set a directory of host is mounted via virtio as
+# If this option is set a directory of host is mounted via virtio as
 # storage for PhenoMenal services (Only supported on Ubuntu host)
 #export TF_VAR_hostpath_vol_size="100Gi"
 # host directory to be mounted on guest

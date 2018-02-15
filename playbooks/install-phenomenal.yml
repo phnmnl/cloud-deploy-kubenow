@@ -4,23 +4,6 @@
 
 - include: wait_for_all_pods_ready.yml
 
-- include: ../KubeNow/playbooks/install-shared-vol-nfs.yml
-  vars:
-    nfs_server: "{{nfs_server}}"
-    nfs_vol_size: "{{nfs_vol_size}}"
-    nfs_path: "{{nfs_path}}"
-  when:
-    (nfs_vol_size | int) > 0
-
-- include: ../KubeNow/playbooks/install-heketi-gluster.yml
-  when:
-    nfs_vol_size is undefined or (nfs_vol_size | int) == 0
-
-- include: ../KubeNow/playbooks/create-pvc.yml
-  vars:
-    name: "{{pvc_name}}"
-    storage: "{{pvc_storage}}"
-
 - include: jupyter.yml
   vars:
     jupyter_chart_version: "{{jupyter_chart_version}}"
