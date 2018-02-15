@@ -35,6 +35,15 @@ if [ -z "$LOCAL_DEPLOYMENT" ]; then
    export SLACK_ERR_REPORT_TOKEN=$(cat "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken")
 fi
 
+# Optional: use virtualenv; Assumes execution from root folder of git checkout
+if [ -n $USE_VIRTUAL_ENV ]; then
+   virtualenv deploy
+   source deploy/bin/activate
+   pip install -U pip
+   pip install -r requirements_glance.txt --no-deps
+   pip install -r requirements_kn.txt
+fi
+
 # presetup (generate key kubeadm token etc.)
 "$PORTAL_APP_REPO_FOLDER/bin/pre-setup"
 
