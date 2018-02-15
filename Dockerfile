@@ -56,6 +56,7 @@ RUN apt-get update -y && \
   python-openstackclient=="$OPENSTACKCLIENT_VERSION" \
   python-glanceclient=="$GLANCECLIENT_VERSION" \
   awscli=="$AWSCLI_VERSION" \
+  virtualenv \
   azure-cli=="$AZURE_CLI_VERSION" && \
   `# Remove unwanted` \
   rm -rf /usr/lib/gcc && \
