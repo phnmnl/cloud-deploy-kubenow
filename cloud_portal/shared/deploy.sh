@@ -35,6 +35,17 @@ if [ -z "$LOCAL_DEPLOYMENT" ]; then
    export SLACK_ERR_REPORT_TOKEN=$(cat "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken")
 fi
 
+# Optional: use virtualenv; Assumes execution from root folder of git checkout
+if [[ ! -z ${USE_VIRTUAL_ENV+x} ]]; then
+   wget "https://drive.google.com/uc?export=download&id=1G68tJCsIYMIp1s41GhCqtgtbSS2SlBNM" -O netifaces_wheelhouse.zip
+   unzip netifaces_wheelhouse.zip
+   virtualenv deploy
+   source deploy/bin/activate
+   pip install --use-wheel --no-index --find-links=netifaces_wheelhouse netifaces
+   pip install -U pip
+   pip install -r requirements.txt
+fi
+
 # presetup (generate key kubeadm token etc.)
 "$PORTAL_APP_REPO_FOLDER/bin/pre-setup"
 
