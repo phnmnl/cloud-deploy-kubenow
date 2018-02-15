@@ -75,14 +75,18 @@ if [ "$PROVIDER" = "gce" ]; then
 
 elif [ "$PROVIDER" = "openstack" ]; then
   export KN_IMAGE_NAME="$TF_VAR_boot_image"
+  # always use virtualenv for now
+  export USE_VIRTUAL_ENV="true"
 
-  # Optional: use virtualenv; Assumes execution from root folder of git checkout
+  # Use virtualenv to install glance without compiling - after download with glance - disable it again
   if [ -n "$USE_VIRTUAL_ENV" ]; then
+     curl -L "https://drive.google.com/uc?export=download&id=1G68tJCsIYMIp1s41GhCqtgtbSS2SlBNM" > netifaces_wheelhouse.zip
+     unzip -o netifaces_wheelhouse.zip
      virtualenv deploy
      source deploy/bin/activate
      pip install -U pip
-     pip install -r requirements_glance.txt --no-deps
-     pip install -r requirements_kn.txt
+     pip install --use-wheel --no-index --find-links=netifaces_wheelhouse netifaces
+     pip install -r "$PORTAL_APP_REPO_FOLDER/requirements_glance.txt" --no-deps
   fi
 
   # Upload image to openstack installation if not there

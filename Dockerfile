@@ -13,6 +13,7 @@ ENV GLANCECLIENT_VERSION=2.8.0
 ENV AWSCLI_VERSION=1.11.177
 ENV AZURE_CLI_VERSION=2.0.25
 ENV GOOGLE_CLOUD_SDK_VERSION=179.0.0-0
+ENV VIRTUALENV_VERSION=15.0.1
 # Terraform plugin versions
 ENV PLUGIN_OPENSTACK=0.2.2
 ENV PLUGIN_GOOGLE=0.1.3
@@ -53,8 +54,7 @@ RUN apt-get update -y && \
   jmespath=="$JMESPATH_VERSION" \
   apache-libcloud=="$LIBCLOUD_VERSION" \
   shade=="$SHADE_VERSION" \
-  python-openstackclient=="$OPENSTACKCLIENT_VERSION" \
-  python-glanceclient=="$GLANCECLIENT_VERSION" \
+  virtualenv=="$VIRTUALENV_VERSION" \
   awscli=="$AWSCLI_VERSION" \
   azure-cli=="$AZURE_CLI_VERSION" && \
   `# Remove unwanted` \
