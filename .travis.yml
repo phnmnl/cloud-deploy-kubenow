@@ -30,6 +30,8 @@ addons:
     - github.com
 
 before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get -y --no-install-recommends virtualenv python-pip python-dev
 
 before_script:
 
