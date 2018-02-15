@@ -2,11 +2,12 @@
 
 This repo contains the server code being executed by the PhenoMeNal web portal
 
-The command line client for setting up a PhenoMeNal Virtual Research Environment has changed and are now located here: https://github.com/phnmnl/KubeNow-plugin 
+The command line client for setting up a PhenoMeNal Virtual Research Environment has changed and are now located here: https://github.com/phnmnl/KubeNow-plugin
 
 ## Developer documentation
 
 If you want to debug or test deploying cloud-deploy-kubenow locally, please see [developer-info.md](developer-info.md)
+
 
 ### Directories and files
 
@@ -42,7 +43,7 @@ If you want to debug or test deploying cloud-deploy-kubenow locally, please see 
     │
     ├ config.aws.sh-template        # Amazon version of deployment vars
     │
-    │   
+    │
     ├ config.aws.sh-template        # Microsoft Azure version of deployment vars
     │
     │
