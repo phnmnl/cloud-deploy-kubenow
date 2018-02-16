@@ -8,7 +8,6 @@ The command line client for setting up a PhenoMeNal Virtual Research Environment
 
 If you want to debug or test deploying cloud-deploy-kubenow locally, please see [developer-info.md](developer-info.md)
 
-
 ### Directories and files
 
     ├── cloud_portal            # This is where the cloud portal deploy.sh, destroy.sh and state.sh scripts
