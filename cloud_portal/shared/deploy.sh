@@ -109,7 +109,7 @@ elif [ "$PROVIDER" = "kvm" ]; then
 fi
 
 # Add terraform to path (TODO) remove this portal workaround eventually
-export PATH=/usr/lib/terraform_0.9.11:$PATH
+export PATH=/usr/lib/terraform_0.10.7:$PATH
 
 # Add subdomain
 export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
