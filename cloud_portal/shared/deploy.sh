@@ -8,6 +8,15 @@ function report_err() {
   
   # post deployment log to slack channel (only if portal deployment)
   if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
+  
+    # add some debug info
+    echo "TF_VAR_client_id=$TF_VAR_client_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+    echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+    echo "OS_PROJECT_ID=$OS_PROJECT_ID" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+    echo "OS_PROJECT_NAME=$OS_PROJECT_NAME" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+    echo "TF_VAR_gce_project=$TF_VAR_gce_project" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+    echo "git log -n 1 = $(git log -n 1)" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+ 
     curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
          -F filename="output-$PORTAL_DEPLOYMENT_REFERENCE.log" \
          -F filetype="shell" \
@@ -26,7 +35,7 @@ echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id" >> "$PORTAL_DEPLOYMENT
 echo "OS_PROJECT_ID=$OS_PROJECT_ID" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
 echo "OS_PROJECT_NAME=$OS_PROJECT_NAME" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
 echo "TF_VAR_gce_project=$TF_VAR_gce_project" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-echo "git log -n 1 = $(git log -n 1)"
+echo "git log -n 1 = $(git log -n 1)" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
 
 # set pwd (to make sure all variable files end up in the deployment reference dir)
 mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
