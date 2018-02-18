@@ -119,7 +119,7 @@ if [ -n "$TF_skip_deployment" ]; then
    echo "Skip deployment option specified"
 else
    KUBENOW_TERRAFORM_FOLDER="$PORTAL_APP_REPO_FOLDER/KubeNow/$PROVIDER"
-   terraform init --plugin-dir=/terraform_plugins "$KUBENOW_TERRAFORM_FOLDER"
+   terraform init "$KUBENOW_TERRAFORM_FOLDER"
    terraform apply --parallelism=50 --state="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate" "$KUBENOW_TERRAFORM_FOLDER"
 fi
 
