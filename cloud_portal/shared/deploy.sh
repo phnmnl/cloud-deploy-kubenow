@@ -5,6 +5,7 @@
 set -eE
 
 function report_err() {
+  
   # post deployment log to slack channel (only if portal deployment)
   if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
     curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
@@ -18,6 +19,14 @@ function report_err() {
 
 # Trap errors
 trap report_err ERR
+
+# add some debug info
+echo "TF_VAR_client_id=$TF_VAR_client_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+echo "OS_PROJECT_ID=$OS_PROJECT_ID" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+echo "OS_PROJECT_NAME=$OS_PROJECT_NAME" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+echo "TF_VAR_gce_project=$TF_VAR_gce_project" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+echo "git log -n 1 = $(git log -n 1)"
 
 # set pwd (to make sure all variable files end up in the deployment reference dir)
 mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
@@ -133,9 +142,10 @@ fi
 # Provision with ansible
 export ANSIBLE_HOST_KEY_CHECKING=False
 ansible_inventory_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/inventory"
+export LOG_ALL="true"
 
 # Setup vars
-if [ -n "$LOCAL_DEPLOYMENT" ]; then
+if [ -n "$LOCAL_DEPLOYMENT" ] || [ -n "$LOG_ALL"  ]; then
    no_sensitive_logging=false
 else
    no_sensitive_logging=true
