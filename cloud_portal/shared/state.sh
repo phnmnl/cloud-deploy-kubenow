@@ -25,7 +25,7 @@ trap 'report_err' ERR
 #fi
 
 # Add terraform to path (TODO) remove this portal workaround eventually
-export PATH=/usr/lib/terraform_0.9.11:$PATH
+export PATH=/usr/lib/terraform_0.10.7:$PATH
 
 # Query Terraform state file
 terraform show "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/terraform.tfstate"
