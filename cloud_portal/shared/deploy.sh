@@ -10,12 +10,11 @@ function report_err() {
   if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
   
     # add some debug info
-    echo "TF_VAR_client_id=$TF_VAR_client_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-    echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-    echo "OS_PROJECT_ID=$OS_PROJECT_ID" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-    echo "OS_PROJECT_NAME=$OS_PROJECT_NAME" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-    echo "TF_VAR_gce_project=$TF_VAR_gce_project" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-    echo "git log -n 1 = $(git log -n 1)" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+    echo "TF_VAR_client_id=$TF_VAR_client_id"
+    echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id"
+    echo "OS_PROJECT_ID=$OS_PROJECT_ID"
+    echo "OS_PROJECT_NAME=$OS_PROJECT_NAME"
+    echo "TF_VAR_gce_project=$TF_VAR_gce_project"
  
     curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
          -F filename="output-$PORTAL_DEPLOYMENT_REFERENCE.log" \
@@ -118,14 +117,13 @@ elif [ "$PROVIDER" = "kvm" ]; then
   exit 1
 fi
 
-
 # add some debug info
-echo "TF_VAR_client_id=$TF_VAR_client_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-echo "OS_PROJECT_ID=$OS_PROJECT_ID" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-echo "OS_PROJECT_NAME=$OS_PROJECT_NAME" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-echo "TF_VAR_gce_project=$TF_VAR_gce_project" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-echo "git log -n 1 = $(git log -n 1)" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+echo "TF_VAR_client_id=$TF_VAR_client_id"
+echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id"
+echo "OS_PROJECT_ID=$OS_PROJECT_ID"
+echo "OS_PROJECT_NAME=$OS_PROJECT_NAME"
+echo "TF_VAR_gce_project=$TF_VAR_gce_project"
+# echo "git log -n 1 = $(git log -n 1)" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
 
 
 # Add terraform to path (TODO) remove this portal workaround eventually
@@ -134,12 +132,15 @@ export PATH=/usr/lib/terraform_0.10.7:$PATH
 
 # Different config depending on wether it is proxied or not
 if [ -n "$TF_VAR_cloudflare_proxied" ]; then
+   echo "inside" 
+   echo "TF_VAR_cloudflare_proxied=$TF_VAR_cloudflare_proxied"
    jupyter_hostname="notebook-$TF_VAR_cluster_prefix"
    luigi_hostname="luigi-$TF_VAR_cluster_prefix"
    dashboard_hostname="dashboard-$TF_VAR_cluster_prefix"
    galaxy_hostname="galaxy-$TF_VAR_cluster_prefix"
 else
    export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
+   echo "not inside" 
    jupyter_hostname="notebook"
    luigi_hostname="luigi"
    dashboard_hostname="dashboard"
