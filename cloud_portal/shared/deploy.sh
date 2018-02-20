@@ -129,8 +129,19 @@ fi
 # Add terraform to path (TODO) remove this portal workaround eventually
 export PATH=/usr/lib/terraform_0.10.7:$PATH
 
-# Add subdomain
-export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
+# Different config depending on wether it is proxied or not
+if [ "$TF_VAR_cloudflare_proxied" ]; then
+   jupyter_hostname="notebook-$TF_VAR_cluster_prefix"
+   luigi_hostname="luigi-$TF_VAR_cluster_prefix"
+   dashboard_hostname="dashboard-$TF_VAR_cluster_prefix"
+   galaxy_hostname="galaxy-$TF_VAR_cluster_prefix"
+else
+   export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
+   jupyter_hostname="notebook"
+   luigi_hostname="luigi"
+   dashboard_hostname="dashboard"
+   galaxy_hostname="galaxy"
+fi
 
 # Deploy cluster with terraform
 if [ -n "$TF_skip_deployment" ]; then
@@ -158,18 +169,6 @@ if [ -n "$LOCAL_DEPLOYMENT" ] || [ -n "$LOG_ALL"  ]; then
    no_sensitive_logging=false
 else
    no_sensitive_logging=true
-fi
-
-if [ "$TF_VAR_cloudflare_proxied" ]; then
-   jupyter_hostname="notebook-$TF_VAR_cluster_prefix"
-   luigi_hostname="luigi-$TF_VAR_cluster_prefix"
-   dashboard_hostname="dashboard-$TF_VAR_cluster_prefix"
-   galaxy_hostname="galaxy-$TF_VAR_cluster_prefix"
-else
-   jupyter_hostname="notebook"
-   luigi_hostname="luigi"
-   dashboard_hostname="dashboard"
-   galaxy_hostname="galaxy"
 fi
 
 # dashboard auth
