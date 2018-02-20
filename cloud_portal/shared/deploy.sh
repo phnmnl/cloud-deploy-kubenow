@@ -33,14 +33,6 @@ trap report_err ERR
 mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 
-# add some debug info
-echo "TF_VAR_client_id=$TF_VAR_client_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-echo "OS_PROJECT_ID=$OS_PROJECT_ID" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-echo "OS_PROJECT_NAME=$OS_PROJECT_NAME" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-echo "TF_VAR_gce_project=$TF_VAR_gce_project" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-echo "git log -n 1 = $(git log -n 1)" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
-
 # read portal secrets from private repo
 if [ -z "$LOCAL_DEPLOYMENT" ]; then
    if [ ! -d "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare" ]; then
@@ -126,8 +118,19 @@ elif [ "$PROVIDER" = "kvm" ]; then
   exit 1
 fi
 
+
+# add some debug info
+echo "TF_VAR_client_id=$TF_VAR_client_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+echo "OS_PROJECT_ID=$OS_PROJECT_ID" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+echo "OS_PROJECT_NAME=$OS_PROJECT_NAME" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+echo "TF_VAR_gce_project=$TF_VAR_gce_project" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+echo "git log -n 1 = $(git log -n 1)" >> "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log"
+
+
 # Add terraform to path (TODO) remove this portal workaround eventually
 export PATH=/usr/lib/terraform_0.10.7:$PATH
+
 
 # Different config depending on wether it is proxied or not
 if [ -n "$TF_VAR_cloudflare_proxied" ]; then
