@@ -130,7 +130,7 @@ fi
 export PATH=/usr/lib/terraform_0.10.7:$PATH
 
 # Different config depending on wether it is proxied or not
-if [ "$TF_VAR_cloudflare_proxied" ]; then
+if [ -n "$TF_VAR_cloudflare_proxied" ]; then
    jupyter_hostname="notebook-$TF_VAR_cluster_prefix"
    luigi_hostname="luigi-$TF_VAR_cluster_prefix"
    dashboard_hostname="dashboard-$TF_VAR_cluster_prefix"
