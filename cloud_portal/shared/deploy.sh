@@ -39,14 +39,18 @@ if [ -z "$LOCAL_DEPLOYMENT" ]; then
    fi
    source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
    export TF_VAR_use_cloudflare="true"
-   # export TF_VAR_cloudflare_proxied="true"
-   export TF_VAR_cloudflare_record_texts='["galaxy","notebook","luigi","dashboard"]'
    export SLACK_ERR_REPORT_TOKEN=$(cat "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken")
    export USE_VIRTUAL_ENV="true"
 fi
 
 # presetup (generate key kubeadm token etc.)
 "$PORTAL_APP_REPO_FOLDER/bin/pre-setup"
+
+# overwrite ssh-key with debug key from private repo if specified
+if [ "$use_debug_key" = "true" ]; then
+  cp "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/portal-debug-key" "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key"
+  cp "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/portal-debug-key.pub" "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key.pub"
+fi
 
 export TF_VAR_kubeadm_token=$(cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/kubetoken")
 export PRIVATE_KEY="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key"
@@ -135,11 +139,12 @@ if [ "$TF_VAR_cloudflare_proxied" = "true" ]; then
    galaxy_hostname="galaxy-$TF_VAR_cluster_prefix"
    export TF_VAR_cloudflare_record_texts="[\"$jupyter_hostname\",\"$luigi_hostname\",\"$dashboard_hostname\",\"$galaxy_hostname\"]"
 else
-   export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
    jupyter_hostname="notebook"
    luigi_hostname="luigi"
    dashboard_hostname="dashboard"
    galaxy_hostname="galaxy"
+   export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
+   export TF_VAR_cloudflare_record_texts='["galaxy","notebook","luigi","dashboard"]'
 fi
 
 # Deploy cluster with terraform
