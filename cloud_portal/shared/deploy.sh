@@ -133,6 +133,7 @@ if [ "$TF_VAR_cloudflare_proxied" = "true" ]; then
    luigi_hostname="luigi-$TF_VAR_cluster_prefix"
    dashboard_hostname="dashboard-$TF_VAR_cluster_prefix"
    galaxy_hostname="galaxy-$TF_VAR_cluster_prefix"
+   export TF_VAR_cloudflare_record_texts="[$jupyter_hostnamed,$luigi_hostname,$dashboard_hostname,$galaxy_hostname]"
 else
    export TF_VAR_cloudflare_subdomain="$TF_VAR_cluster_prefix"
    jupyter_hostname="notebook"
