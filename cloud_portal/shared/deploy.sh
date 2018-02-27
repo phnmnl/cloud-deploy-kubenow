@@ -217,7 +217,7 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "galaxy_include=true" \
                  -e "galaxy_chart_version=0.3.5" \
                  -e "galaxy_hostname=$galaxy_hostname" \
-                 -e "galaxy_image_tag=:dev_v17.09-pheno-lr_cv1.5.131" \
+                 -e "galaxy_image_tag=:rc_v17.09-pheno-lr_cv1.6.162" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_pvc=galaxy-pvc" \
