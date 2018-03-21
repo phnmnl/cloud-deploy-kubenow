@@ -102,8 +102,6 @@ elif [ "$PROVIDER" = "openstack" ]; then
   if [ -n "$OS_RC_FILE" ]; then
     echo "$OS_RC_FILE" | base64 --decode > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
     source "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
-    echo "here is file-content:"
-    cat "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
   fi
 
   # Use virtualenv to install glance without compiling - after download with glance - disable it again
