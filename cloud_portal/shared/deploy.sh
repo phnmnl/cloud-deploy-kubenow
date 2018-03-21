@@ -97,6 +97,12 @@ elif [ "$PROVIDER" = "openstack" ]; then
   export KN_IMAGE_NAME="$TF_VAR_boot_image"
   # always use virtualenv for now
   export USE_VIRTUAL_ENV="true"
+  
+  # print env-var into file
+  if [ -n "$OS_RC_FILE" ]; then
+    echo "$OS_RC_FILE" | base64 --decode > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+    source "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+  fi
 
   # Use virtualenv to install glance without compiling - after download with glance - disable it again
   if [ -n "$USE_VIRTUAL_ENV" ]; then
