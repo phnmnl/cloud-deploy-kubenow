@@ -7,6 +7,14 @@ set -eE
 function report_err() {
   # post deployment log to slack channel (only if portal deployment)
   if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
+
+    # add some debug info
+    echo "TF_VAR_client_id=$TF_VAR_client_id"
+    echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id"
+    echo "OS_PROJECT_ID=$OS_PROJECT_ID"
+    echo "OS_PROJECT_NAME=$OS_PROJECT_NAME"
+    echo "TF_VAR_gce_project=$TF_VAR_gce_project"
+
     curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
          -F filename="output-$PORTAL_DEPLOYMENT_REFERENCE.log" \
          -F filetype="shell" \
@@ -43,6 +51,12 @@ export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre
 if [ -n "$GOOGLE_CREDENTIALS" ]; then
   echo $GOOGLE_CREDENTIALS > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/gce_credentials_file.json"
   export TF_VAR_gce_credentials_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/gce_credentials_file.json"
+fi
+
+# print env-var into file
+if [ -n "$OS_RC_FILE" ]; then
+  echo "$OS_RC_FILE" | base64 --decode > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+  source "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
 fi
 
 # Add terraform to path (TODO) remove this portal workaround eventually
