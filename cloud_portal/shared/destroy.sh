@@ -5,6 +5,7 @@
 set -eE
 
 function report_err() {
+
   # post deployment log to slack channel (only if portal deployment)
   if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
 
@@ -25,7 +26,8 @@ function report_err() {
 }
 
 # Trap errors
-trap 'report_err' ERR
+trap report_err ERR
+
 
 # Destroy everything
 cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
