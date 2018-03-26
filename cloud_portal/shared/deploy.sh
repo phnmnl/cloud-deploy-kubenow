@@ -65,7 +65,7 @@ export PRIVATE_KEY="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.ke
 export TF_VAR_ssh_key="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/vre.key.pub"
 
 # hardcoded params (TODO move to params file)
-export IMG_VERSION="v050b1"
+export IMG_VERSION="v050"
 export TF_VAR_boot_image="kubenow-$IMG_VERSION"
 export ARM_CLIENT_ID="$TF_VAR_client_id"
 export ARM_CLIENT_SECRET="$TF_VAR_client_secret"
