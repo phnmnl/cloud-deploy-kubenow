@@ -3,19 +3,19 @@
 # Exit immediately if a command exits with a non-zero status
 # (but allow for the error trap)
 set -eE
-
+    
 function report_err() {
 
   # post deployment log to slack channel (only if portal deployment)
   if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
-
+    
     # Add some debug info
     echo "TF_VAR_client_id=$TF_VAR_client_id"
     echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id"
     echo "OS_PROJECT_ID=$OS_PROJECT_ID"
     echo "OS_PROJECT_NAME=$OS_PROJECT_NAME"
     echo "TF_VAR_gce_project=$TF_VAR_gce_project"
-
+    
     # Debug OS-vars (skip secrets)
     env | grep OS_ | grep -v -e PASSWORD -e TOKEN -e OS_RC_FILE
 
@@ -31,38 +31,9 @@ function report_err() {
   fi
 }
 
-function parse_and_export_vars() {
-  input_file="$1"
-  while IFS= read -r line; do
-    [[ "$line" =~ ^export ]] || continue # skip non-export lines
-
-    line=${line#export }        # remove "export " from start of line
-    line=${line%%#*}            # strip comment (if any)
-
-    case $line in
-      *=*)
-        var=${line%%=*}
-        case $var in
-            *[!A-Z_a-z]*)
-                echo "Warning: invalid variable name $var ignored" >&2
-                continue ;;
-        esac
-
-        line=${line#*=}
-        echo eval export $var='"$line"'
-        eval export $var='"$line"'
-    esac
-  done <"$input_file"
-}
-
 # Trap errors
 trap report_err ERR
 
-LOG_ALL=true
-# Debug OS-vars (skip secrets)
-env | grep OS_ | grep -v -e PASSWORD -e TOKEN -e OS_RC_FILE
-# Debug TF-vars (skip secrets)
-env | grep TF_VAR_ | grep -v -e PASSWORD -e TOKEN -e client_secret -e GOOGLE_CREDENTIALS -e aws_secret_access_key
 
 
 # set pwd (to make sure all variable files end up in the deployment reference dir)
@@ -131,7 +102,7 @@ elif [ "$PROVIDER" = "openstack" ]; then
   # print env-var into file
   if [ -n "$OS_RC_FILE" ]; then
     echo "$OS_RC_FILE" | base64 --decode > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
-    parse_and_export_vars "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+    source "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
   fi
 
   # Use virtualenv to install glance without compiling - after download with glance - disable it again
