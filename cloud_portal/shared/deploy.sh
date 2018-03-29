@@ -31,6 +31,30 @@ function report_err() {
   fi
 }
 
+function parse_and_export_vars() {
+  input_file="$1"
+  while IFS= read -r line; do
+    [[ "$line" =~ ^export ]] || continue # skip non-export lines
+
+    line=${line#export }        # remove "export " from start of line
+    line=${line%%#*}            # strip comment (if any)
+
+    case $line in
+      *=*)
+        var=${line%%=*}
+        case $var in
+            *[!A-Z_a-z]*)
+                echo "Warning: invalid variable name $var ignored" >&2
+                continue ;;
+        esac
+
+        line=${line#*=}
+        echo eval export $var='"$line"'
+        eval export $var='"$line"'
+    esac
+  done <"$input_file"
+}
+
 # Trap errors
 trap report_err ERR
 
@@ -107,7 +131,7 @@ elif [ "$PROVIDER" = "openstack" ]; then
   # print env-var into file
   if [ -n "$OS_RC_FILE" ]; then
     echo "$OS_RC_FILE" | base64 --decode > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
-    source "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+    parse_and_export_vars "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
   fi
 
   # Use virtualenv to install glance without compiling - after download with glance - disable it again
