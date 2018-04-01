@@ -9,12 +9,18 @@ function report_err() {
   # post deployment log to slack channel (only if portal deployment)
   if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
 
-    # add some debug info
+    # Add some debug info
     echo "TF_VAR_client_id=$TF_VAR_client_id"
     echo "TF_VAR_aws_access_key_id=$TF_VAR_aws_access_key_id"
     echo "OS_PROJECT_ID=$OS_PROJECT_ID"
     echo "OS_PROJECT_NAME=$OS_PROJECT_NAME"
     echo "TF_VAR_gce_project=$TF_VAR_gce_project"
+
+    # Debug OS-vars (skip secrets)
+    env | grep OS_ | grep -v -e PASSWORD -e TOKEN -e OS_RC_FILE
+
+    # Debug TF-vars (skip secrets)
+    env | grep TF_VAR_ | grep -v -e PASSWORD -e TOKEN -e client_secret -e GOOGLE_CREDENTIALS -e aws_secret_access_key
 
     curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
          -F filename="output-$PORTAL_DEPLOYMENT_REFERENCE.log" \
@@ -23,6 +29,30 @@ function report_err() {
 	     -F token="$SLACK_ERR_REPORT_TOKEN" \
 	     https://slack.com/api/files.upload
   fi
+}
+
+function parse_and_export_vars() {
+  input_file="$1"
+  while IFS= read -r line; do
+    [[ "$line" =~ ^export ]] || continue # skip non-export lines
+
+    line=${line#export }        # remove "export " from start of line
+    line=${line%%#*}            # strip comment (if any)
+
+    case $line in
+      *=*)
+        var=${line%%=*}
+        case $var in
+            *[!A-Z_a-z]*)
+                echo "Warning: invalid variable name $var ignored" >&2
+                continue ;;
+        esac
+
+        line=${line#*=}
+        echo eval export $var='"$line"'
+        eval export $var='"$line"'
+    esac
+  done <"$input_file"
 }
 
 # Trap errors
@@ -41,7 +71,7 @@ if [ -z "$LOCAL_DEPLOYMENT" ]; then
 fi
 
 # TODO read this from deploy.sh file
-export TF_VAR_boot_image="kubenow-v050b1"
+export TF_VAR_boot_image="kubenow-v050"
 export TF_VAR_kubeadm_token="fake.token"
 export TF_VAR_master_disk_size="20"
 export TF_VAR_node_disk_size="20"
