@@ -151,6 +151,7 @@ elif [ "$PROVIDER" = "openstack" ]; then
   if [[ "$OS_TENANT_NAME"=="glenna" ]]; then
     echo "Skip upload for now"
     echo "$OS_PASSWORD" | sha256sum
+    echo "jkh4938yhh43kruyi978ui43hy""$OS_PASSWORD""kjlwe671526r2lkfökfpokljmwe"
   else
     "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-openstack.sh"
   fi
