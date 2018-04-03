@@ -89,7 +89,11 @@ fi
 # print env-var into file
 if [ -n "$OS_RC_FILE" ]; then
   echo "$OS_RC_FILE" | base64 --decode > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
-  source "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+  
+  # unset some vars
+  unset OS_PROJECT_ID
+  unset OS_PROJECT_NAME
+  parse_and_export_vars "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
 fi
 
 # Add terraform to path (TODO) remove this portal workaround eventually

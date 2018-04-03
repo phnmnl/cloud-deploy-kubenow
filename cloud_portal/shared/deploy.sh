@@ -33,6 +33,7 @@ function report_err() {
 
 function parse_and_export_vars() {
   input_file="$1"
+  
   while IFS= read -r line; do
     [[ "$line" =~ ^export ]] || continue # skip non-export lines
 
@@ -126,6 +127,10 @@ elif [ "$PROVIDER" = "openstack" ]; then
   # print env-var into file
   if [ -n "$OS_RC_FILE" ]; then
     echo "$OS_RC_FILE" | base64 --decode > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+    
+    # unset some vars
+    unset OS_PROJECT_ID
+    unset OS_PROJECT_NAME
     parse_and_export_vars "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
   fi
 
