@@ -128,10 +128,15 @@ elif [ "$PROVIDER" = "openstack" ]; then
   if [ -n "$OS_RC_FILE" ]; then
     echo "$OS_RC_FILE" | base64 --decode > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
     
+    source "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+    
     # unset some vars
-    unset OS_PROJECT_ID
-    unset OS_PROJECT_NAME
-    parse_and_export_vars "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+    #unset OS_PROJECT_ID
+    #unset OS_PROJECT_NAME
+    # parse_and_export_vars "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+    
+   
+    
   fi
 
   # Use virtualenv to install glance without compiling - after download with glance - disable it again
@@ -151,7 +156,6 @@ elif [ "$PROVIDER" = "openstack" ]; then
   if [[ "$OS_TENANT_NAME"=="glenna" ]]; then
     echo "Skip upload for now"
     echo "$OS_PASSWORD" | sha256sum
-    echo "jkh4938yhh43kruyi978ui43hy""$OS_PASSWORD""kjlwe671526r2lkfökfpokljmwe"
   else
     "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-openstack.sh"
   fi
