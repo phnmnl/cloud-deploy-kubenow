@@ -51,7 +51,7 @@ function parse_and_export_vars() {
 
         line=${line#*=}
         echo eval export $var='"$line"'
-        export $var='"$line"'
+        eval export $var='"$line"'
     esac
   done <"$input_file"
 }
