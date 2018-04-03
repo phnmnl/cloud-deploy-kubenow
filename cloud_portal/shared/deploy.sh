@@ -51,7 +51,7 @@ function parse_and_export_vars() {
 
         line=${line#*=}
         echo eval export $var='"$line"'
-        eval export $var='"$line"'
+        export $var='"$line"'
     esac
   done <"$input_file"
 }
@@ -150,6 +150,7 @@ elif [ "$PROVIDER" = "openstack" ]; then
   # Upload image to openstack installation if not there
   if [[ "$OS_TENANT_NAME"=="glenna" ]]; then
     echo "Skip upload for now"
+    echo "$OS_PASSWORD" | sha256sum
   else
     "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-openstack.sh"
   fi
