@@ -17,10 +17,10 @@ function report_err() {
     echo "TF_VAR_gce_project=$TF_VAR_gce_project"
 
     # Debug OS-vars (skip secrets)
-    env | grep OS_ | grep -v -e PASSWORD -e TOKEN -e OS_RC_FILE
+    env | grep OS_ | grep -v -e PASSWORD -e TOKEN -e OS_RC_FILE -e pass -e Pass -e PASS
 
     # Debug TF-vars (skip secrets)
-    env | grep TF_VAR_ | grep -v -e PASSWORD -e TOKEN -e client_secret -e GOOGLE_CREDENTIALS -e aws_secret_access_key
+    env | grep TF_VAR_ | grep -v -e PASSWORD -e TOKEN -e secret -e GOOGLE_CREDENTIALS -e aws_secret_access_key -e pass -e Pass -e PASS
 
     curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
          -F filename="output-$PORTAL_DEPLOYMENT_REFERENCE.log" \
@@ -58,6 +58,7 @@ function parse_and_export_vars() {
 # Trap errors
 trap report_err ERR
 
+echo "Version: git-commit should be here" 
 
 # Destroy everything
 cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
