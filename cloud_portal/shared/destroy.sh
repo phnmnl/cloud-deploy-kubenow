@@ -93,7 +93,7 @@ if [ -n "$OS_RC_FILE" ]; then
   # unset some vars
   unset OS_PROJECT_ID
   unset OS_PROJECT_NAME
-  source"$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+  source "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
 fi
 
 # Add terraform to path (TODO) remove this portal workaround eventually
