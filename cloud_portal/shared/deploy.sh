@@ -143,11 +143,17 @@ elif [ "$PROVIDER" = "openstack" ]; then
      pip install -U pip
      pip install --use-wheel --no-index --find-links=netifaces_wheelhouse netifaces
      pip install -r "$PORTAL_APP_REPO_FOLDER/requirements_glance.txt" --no-deps
+     # print version
+     glance --version
   fi
 
   # Upload image to openstack installation if not there
-  "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-openstack.sh"
-
+  if [[ "$OS_TENANT_NAME"=="glenna" ]]; then
+    echo "Skip upload for now"
+  else
+    "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-openstack.sh"
+  fi
+   
   # Enough with this virtualenv
   if [ -n "$USE_VIRTUAL_ENV" ]; then
      deactivate
