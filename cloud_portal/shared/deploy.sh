@@ -63,7 +63,7 @@ function parse_and_export_vars() {
 # Trap errors
 trap report_err ERR
 
-md5sum "$PORTAL_APP_REPO_FOLDER/cloud_portal/shared/deploy.sh"
+git hash-object "$PORTAL_APP_REPO_FOLDER/cloud_portal/shared/deploy.sh"
 
 # set pwd (to make sure all variable files end up in the deployment reference dir)
 mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
