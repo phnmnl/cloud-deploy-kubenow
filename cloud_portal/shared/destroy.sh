@@ -33,6 +33,7 @@ function report_err() {
 
 function parse_and_export_vars() {
   input_file="$1"
+
   while IFS= read -r line; do
     [[ "$line" =~ ^export ]] || continue # skip non-export lines
 
@@ -49,6 +50,10 @@ function parse_and_export_vars() {
         esac
 
         line=${line#*=}
+        line="${line%\"}"       # remove trailing "
+        line="${line#\"}"       # remove starting "
+        line="${line%\'}"       # remove trailing '
+        line="${line#\'}"       # remove starting '
         echo eval export $var='"$line"'
         eval export $var='"$line"'
     esac
@@ -58,7 +63,7 @@ function parse_and_export_vars() {
 # Trap errors
 trap report_err ERR
 
-echo "Version: git-commit should be here" 
+echo "Version: git-commit should be here"
 
 # Destroy everything
 cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
@@ -89,11 +94,7 @@ fi
 # print env-var into file
 if [ -n "$OS_RC_FILE" ]; then
   echo "$OS_RC_FILE" | base64 --decode > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
-  
-  # unset some vars
-  unset OS_PROJECT_ID
-  unset OS_PROJECT_NAME
-  source "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
+  parse_and_export_vars "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
 fi
 
 # Add terraform to path (TODO) remove this portal workaround eventually

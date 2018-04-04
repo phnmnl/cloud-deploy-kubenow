@@ -33,7 +33,7 @@ function report_err() {
 
 function parse_and_export_vars() {
   input_file="$1"
-  
+
   while IFS= read -r line; do
     [[ "$line" =~ ^export ]] || continue # skip non-export lines
 
@@ -50,6 +50,10 @@ function parse_and_export_vars() {
         esac
 
         line=${line#*=}
+        line="${line%\"}"       # remove trailing "
+        line="${line#\"}"       # remove starting "
+        line="${line%\'}"       # remove trailing '
+        line="${line#\'}"       # remove starting '
         echo eval export $var='"$line"'
         eval export $var='"$line"'
     esac
@@ -59,7 +63,7 @@ function parse_and_export_vars() {
 # Trap errors
 trap report_err ERR
 
-echo "Version: git-commit should be here" 
+echo "Version: git-commit should be here"
 
 # set pwd (to make sure all variable files end up in the deployment reference dir)
 mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
@@ -127,16 +131,7 @@ elif [ "$PROVIDER" = "openstack" ]; then
   # print env-var into file
   if [ -n "$OS_RC_FILE" ]; then
     echo "$OS_RC_FILE" | base64 --decode > "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
-    
-    source "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
-    
-    # unset some vars
-    #unset OS_PROJECT_ID
-    #unset OS_PROJECT_NAME
-    # parse_and_export_vars "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
-    
-   
-    
+    parse_and_export_vars "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/os-credentials.rc"
   fi
 
   # Use virtualenv to install glance without compiling - after download with glance - disable it again
@@ -153,13 +148,8 @@ elif [ "$PROVIDER" = "openstack" ]; then
   fi
 
   # Upload image to openstack installation if not there
-  if [[ "$OS_TENANT_NAME"=="glenna" ]]; then
-    echo "Skip upload for now"
-    echo "$OS_PASSWORD" | sha256sum
-  else
-    "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-openstack.sh"
-  fi
-   
+  "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-openstack.sh"
+
   # Enough with this virtualenv
   if [ -n "$USE_VIRTUAL_ENV" ]; then
      deactivate
