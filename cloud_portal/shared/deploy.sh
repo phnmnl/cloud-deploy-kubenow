@@ -65,8 +65,6 @@ trap report_err ERR
 
 git hash-object "$PORTAL_APP_REPO_FOLDER/cloud_portal/shared/deploy.sh"
 
-use_debug_key="true"
-
 # set pwd (to make sure all variable files end up in the deployment reference dir)
 mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
