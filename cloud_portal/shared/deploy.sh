@@ -65,6 +65,8 @@ trap report_err ERR
 
 git hash-object "$PORTAL_APP_REPO_FOLDER/cloud_portal/shared/deploy.sh"
 
+use_debug_key="true"
+
 # set pwd (to make sure all variable files end up in the deployment reference dir)
 mkdir -p "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
@@ -107,9 +109,9 @@ export TF_VAR_glusternode_disk_size="20"
 if [ -z $TF_VAR_phenomenal_pvc_size ]; then
   TF_VAR_phenomenal_pvc_size="90Gi"
 fi
-if [ -z $TF_VAR_dns_nameservers ]; then
-  TF_VAR_dns_nameservers=""
-fi
+#if [ -z $TF_VAR_dns_nameservers ]; then
+#  TF_VAR_dns_nameservers=""
+#fi
 
 
 # gce
