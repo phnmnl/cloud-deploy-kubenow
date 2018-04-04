@@ -107,6 +107,10 @@ export TF_VAR_glusternode_disk_size="20"
 if [ -z $TF_VAR_phenomenal_pvc_size ]; then
   TF_VAR_phenomenal_pvc_size="90Gi"
 fi
+if [ -z $TF_VAR_dns_nameservers ]; then
+  TF_VAR_dns_nameservers=""
+fi
+
 
 # gce
 # workaround: -the credentials are provided as an environment variable, but KubeNow terraform
