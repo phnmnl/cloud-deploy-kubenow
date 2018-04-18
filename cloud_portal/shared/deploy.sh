@@ -145,7 +145,7 @@ elif [ "$PROVIDER" = "openstack" ]; then
      virtualenv deploy
      source deploy/bin/activate
      pip install -U pip
-     pip install --use-wheel --no-index --find-links=netifaces_wheelhouse netifaces
+     pip install --no-index --find-links=netifaces_wheelhouse netifaces
      pip install -r "$PORTAL_APP_REPO_FOLDER/requirements_glance.txt" --no-deps
      # print version
      glance --version
