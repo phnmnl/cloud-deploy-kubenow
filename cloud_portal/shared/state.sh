@@ -5,14 +5,15 @@
 set -eE
 
 function report_err() {
-  # post deployment log to slack channel (only if portal deployment)
-  if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
-    curl -F file="@$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/output.log" \
-         -F filename="output-$PORTAL_DEPLOYMENT_REFERENCE.log" \
-	     -F channels="portal-deploy-error" \
-	     -F token="$SLACK_ERR_REPORT_TOKEN" \
-	     https://slack.com/api/files.upload
-  fi
+
+    # Add some debug info
+
+    # Debug OS-vars (skip secrets)
+    env | grep OS_ | grep -v -e PASSWORD -e TOKEN -e OS_RC_FILE -e pass -e Pass -e PASS
+
+    # Debug TF-vars (skip secrets)
+    env | grep TF_VAR_ | grep -v -e PASSWORD -e TOKEN -e secret -e GOOGLE_CREDENTIALS -e aws_secret_access_key -e pass -e Pass -e PASS
+
 }
 
 # Trap errors
