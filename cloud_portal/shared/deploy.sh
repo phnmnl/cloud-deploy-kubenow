@@ -15,7 +15,7 @@ function report_err() {
     # Debug TF-vars (skip secrets)
     env | grep TF_VAR_ | grep -v -e PASSWORD -e TOKEN -e secret -e GOOGLE_CREDENTIALS -e aws_secret_access_key -e pass -e Pass -e PASS
 
-    curl -F text="Portal deployment failed, reference=$PORTAL_DEPLOYMENT_REFERENCE" \
+    curl -F text="Portal deployment failed" \
 	     -F channels="portal-deploy-error" \
 	     -F token="$SLACK_ERR_REPORT_TOKEN" \
 	     https://slack.com/api/chat.postMessage

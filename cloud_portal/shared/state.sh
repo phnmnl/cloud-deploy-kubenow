@@ -7,7 +7,7 @@ set -eE
 function report_err() {
   # post deployment log to slack channel (only if portal deployment)
   if [[ ! -n "$LOCAL_DEPLOYMENT" ]]; then
-    curl -F text="Portal deployment failed, reference=$PORTAL_DEPLOYMENT_REFERENCE" \
+    curl -F text="Portal deployment failed" \
 	     -F channels="portal-deploy-error" \
 	     -F token="$SLACK_ERR_REPORT_TOKEN" \
 	     https://slack.com/api/chat.postMessage
