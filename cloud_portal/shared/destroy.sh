@@ -65,6 +65,11 @@ ansible_inventory_file="$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE/in
 if [ -z "$LOCAL_DEPLOYMENT" ]; then
    source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
    export SLACK_ERR_REPORT_TOKEN=$(cat "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken")
+   
+   # Read preset rc-file from secrets repo if specified
+   if [ -n "$OS_PRESET" ]; then
+     OS_RC_FILE=$(cat "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/$OS_PRESET" | base64)
+   fi
 fi
 
 # TODO read this from deploy.sh file
