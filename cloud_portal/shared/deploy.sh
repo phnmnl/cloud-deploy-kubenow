@@ -64,18 +64,19 @@ cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 # read portal secrets from private repo
 if [ -z "$LOCAL_DEPLOYMENT" ]; then
    if [ ! -d "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare" ]; then
-      git clone git@github.com:EMBL-EBI-TSI/phenomenal-cloudflare.git "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare"
+      rm -r "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare"
    fi
+   git clone git@github.com:EMBL-EBI-TSI/phenomenal-cloudflare.git "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare"
    source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
    export TF_VAR_use_cloudflare="true"
    export SLACK_ERR_REPORT_TOKEN=$(cat "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/slacktoken")
    export USE_VIRTUAL_ENV="true"
-   
+
    # Read preset rc-file from secrets repo if specified
    if [ -n "$OS_PRESET" ]; then
      OS_RC_FILE=$(cat "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/$OS_PRESET" | base64)
    fi
-   
+
 fi
 
 # presetup (generate key kubeadm token etc.)
