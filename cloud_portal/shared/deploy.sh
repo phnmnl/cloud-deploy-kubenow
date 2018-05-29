@@ -64,7 +64,7 @@ cd "$PORTAL_DEPLOYMENTS_ROOT/$PORTAL_DEPLOYMENT_REFERENCE"
 # read portal secrets from private repo
 if [ -z "$LOCAL_DEPLOYMENT" ]; then
    if [ -d "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare" ]; then
-      rm -r "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare"
+      rm -r -f "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare"
    fi
    git clone git@github.com:EMBL-EBI-TSI/phenomenal-cloudflare.git "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare"
    source "$PORTAL_APP_REPO_FOLDER/phenomenal-cloudflare/cloudflare_token_phenomenal.cloud.sh"
