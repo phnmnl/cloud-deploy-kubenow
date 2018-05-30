@@ -1,0 +1,34 @@
+---
+- hosts: master
+  gather_facts: False
+  vars:
+    nologging: False
+  tasks:
+    - template:
+      src: phenomenal-cerebellin-17.09-ingress.yaml.j2
+      dest: /etc/phenomenal-cerebellin-17.09-ingress.yaml
+
+    - name: add galaxy repo
+      command: >
+        helm repo add galaxy-helm-repo
+        https://pcm32.github.io/galaxy-helm-charts
+
+    # remove version until stable:--version "{{ galaxy_chart_version }}"
+    # repo versions: galaxy-helm-repo/galaxy-postgres-chart or galaxy-helm-repo/galaxy
+    # helm upgrade --install
+    # --set galaxy_image_tag="{{ galaxy_image_tag }}",use_ingress="yes",rbac_needed="true",galaxy_backend_postgres=true,hostname="{{ hostname }}",domain="{{ domain }}",external_ingress_controller="yes",galaxy_admin_email="{{ galaxy_admin_email }}",galaxy_admin_password="{{ galaxy_admin_password }}",galaxy_api_key="{{ galaxy_api_key }}",postgres.db_password="{{ galaxy_admin_password }}",galaxy_pvc="{{ galaxy_pvc }}",postgres.postgres_pvc="{{ postgres_pvc }}",galaxy_create_pvc="false"
+    # --version "{{ galaxy_chart_version }}" "galaxy-{{ galaxy_chart_version }}" galaxy-helm-repo/galaxy
+    - name: install galaxy
+      command: >
+          helm upgrade --install -f /etc/phenomenal-cerebellin-17.09-ingress.yaml
+          --version "{{ galaxy_chart_version }}" "galaxy-{{ galaxy_chart_version }}" galaxy-helm-repo/galaxy-stable
+      no_log: "{{ nologging }}"
+
+    - name: short wait for proftpd pod
+      pause:
+        seconds: 5
+
+    - name: expose proftpd on port 44
+      command: >
+          kubectl port-forward $(kubectl get pods | grep proftpd | awk '{ print $1 }') 44:30722
+      no_log: "{{ nologging }}"
