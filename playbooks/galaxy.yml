@@ -1,19 +1,39 @@
 ---
-- hosts: master
-  gather_facts: False
+- name: Installs phenomenal services
+  hosts: master
+  gather_facts: "no"
   vars:
-    nologging: False
-  tasks:
-    - name: add galaxy repo
-      command: >
-        helm repo add galaxy-helm-repo
-        https://pcm32.github.io/galaxy-helm-charts
+    # Services
+    galaxy_include: "true"
+    galaxy_hostname: "galaxy"
+    galaxy_generated_key: "{{lookup('password', 'galaxy-api-key length=25 chars=ascii_letters')}}"
+    # Storage
+    pvc_name: "galaxy-pvc"
+    # Domain
+    cloudflare_proxied: "false"
+    proxied_suffix: ""
+    # Logging
+    no_sensitive_logging: "false"
 
-    # remove version until stable:--version "{{ galaxy_chart_version }}"
-    # repo versions: galaxy-helm-repo/galaxy-postgres-chart or galaxy-helm-repo/galaxy
-    - name: install galaxy
-      command: >
-        helm upgrade --install
-        --set galaxy_image_tag="{{ galaxy_image_tag }}",use_ingress="yes",rbac_needed="true",galaxy_backend_postgres=true,hostname="{{ hostname }}",domain="{{ domain }}",external_ingress_controller="yes",galaxy_admin_email="{{ galaxy_admin_email }}",galaxy_admin_password="{{ galaxy_admin_password }}",galaxy_api_key="{{ galaxy_api_key }}",postgres.db_password="{{ galaxy_admin_password }}",galaxy_pvc="{{ galaxy_pvc }}",postgres.postgres_pvc="{{ postgres_pvc }}",galaxy_create_pvc="false"
-        --version "{{ galaxy_chart_version }}" "galaxy-{{ galaxy_chart_version }}" galaxy-helm-repo/galaxy
-      no_log: "{{ nologging }}"
+  tasks:
+    # Wait for all default kubernetes pods to be ready
+    - name: Wait for all default kubernetes pods to be ready
+      include_role:
+        name: roles/wait-for-all-pods-ready
+
+    # Galaxy
+    - name: Galaxy
+      include_role:
+        name: roles/galaxy
+      vars:
+        galaxy_chart_version: "1.5.5"
+        hostname: "{{galaxy_hostname}}{{proxied_suffix}}"
+        galaxy_image_tag: ":dev_v17.09-pheno-lr_cv1.6.190"
+        galaxy_admin_password: "generate-random-passw"
+        galaxy_admin_email: "your @ email.com"
+        galaxy_api_key: "{{galaxy_generated_key}}"
+        galaxy_pvc: "{{pvc_name}}"
+        postgres_pvc: "{{pvc_name}}"
+        nologging: "{{no_sensitive_logging}}"
+      when:
+        galaxy_include | bool  == true
