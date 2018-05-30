@@ -35,7 +35,7 @@ galaxy:
 #    email_from:
 #    ssl:
   ftp:
-    url: "{{ inventory_hostname }}:{{ proftpd_port }"
+    url: "{{ ansible_ssh_host }}:{{ proftpd_port }}"
   instance_resource_url: "{{ hostname }}.{{ domain }}"
   internal_port: 80
   node_port_exposed: 30700
