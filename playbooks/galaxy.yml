@@ -16,11 +16,6 @@
     no_sensitive_logging: "false"
 
   tasks:
-    # Wait for all default kubernetes pods to be ready
-    #- name: Wait for all default kubernetes pods to be ready
-    #  include_role:
-    #    name: roles/wait-for-all-pods-ready
-
     # Galaxy
     - name: Galaxy
       include_role:

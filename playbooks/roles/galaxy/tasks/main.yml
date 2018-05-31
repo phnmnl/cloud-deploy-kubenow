@@ -8,12 +8,6 @@
     helm repo add galaxy-helm-repo
     https://pcm32.github.io/galaxy-helm-charts
 
-#- name: Delete if existing Galaxy objects
-#  command: >
-#      kubectl delete secrets/galaxy-admin-secret && kubectl delete configmaps/galaxy-admin-user &&
-#      kubectl delete configmaps/db-connection &&
-#      kubectl delete secrets/galaxy-postgres-secret
-
 - name: install galaxy
   command: >
       helm upgrade --install -f ~/phenomenal-cerebellin-17.09-ingress.yaml
