@@ -256,9 +256,7 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "dashboard_hostname=$dashboard_hostname" \
                  -e "dashboard_nologging=$no_sensitive_logging" \
                  -e "galaxy_include=true" \
-                 -e "galaxy_chart_version=1.5.5" \
                  -e "galaxy_hostname=$galaxy_hostname" \
-                 -e "galaxy_image_tag=dev_v17.09-pheno-lr_cv1.6.190" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
                  -e "galaxy_pvc=galaxy-pvc" \
