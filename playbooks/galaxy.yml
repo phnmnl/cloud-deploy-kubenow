@@ -1,19 +1,6 @@
 ---
-- name: Installs phenomenal services
   hosts: master
   gather_facts: "yes"
-  vars:
-    # Services
-    galaxy_include: "true"
-    galaxy_hostname: "galaxy"
-    galaxy_generated_key: "{{lookup('password', 'galaxy-api-key length=25 chars=ascii_letters')}}"
-    # Storage
-    pvc_name: "galaxy-pvc"
-    # Domain
-    cloudflare_proxied: "false"
-    proxied_suffix: ""
-    # Logging
-    no_sensitive_logging: "false"
 
   tasks:
     # Galaxy
@@ -21,12 +8,12 @@
       include_role:
         name: roles/galaxy
       vars:
-        hostname: "{{galaxy_hostname}}{{proxied_suffix}}"
-        galaxy_admin_password: "generate-random-passw"
-        galaxy_admin_email: "your @ email.com"
-        galaxy_api_key: "{{galaxy_generated_key}}"
-        galaxy_pvc: "{{pvc_name}}"
-        postgres_pvc: "{{pvc_name}}"
-        nologging: "{{no_sensitive_logging}}"
-      when:
-        galaxy_include | bool  == true
+        hostname: "{{galaxy_hostname}}"
+        galaxy_image_tag: "dev_v17.09-pheno-lr_cv1.6.190"
+        galaxy_admin_password: "{{galaxy_admin_password}}"
+        galaxy_admin_email: "{{galaxy_admin_email}}"
+        galaxy_api_key: "{{galaxy_api_key}}"
+        galaxy_pvc: "{{galaxy_pvc}}"
+        galaxy_postgres_pvc="false"
+        postgres_pvc: "{{galaxy_pvc}}"
+        nologging: "{{galaxy_nologging}}"

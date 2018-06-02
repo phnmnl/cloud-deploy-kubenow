@@ -259,7 +259,6 @@ ansible-playbook -i "$ansible_inventory_file" \
                  -e "galaxy_hostname=$galaxy_hostname" \
                  -e "galaxy_admin_password=$TF_VAR_galaxy_admin_password" \
                  -e "galaxy_admin_email=$TF_VAR_galaxy_admin_email" \
-                 -e "galaxy_pvc=galaxy-pvc" \
-                 -e "galaxy_postgres_pvc=false" \
+                 -e "galaxy_pvc_name=galaxy-pvc" \
                  -e "galaxy_nologging=$no_sensitive_logging" \
                  "$PORTAL_APP_REPO_FOLDER/playbooks/install-phenomenal.yml"
