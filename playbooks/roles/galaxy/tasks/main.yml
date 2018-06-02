@@ -16,7 +16,7 @@
 
 - name: expose proftpd on desired port
   command: >
-    iptables -t nat -A PREROUTING -p tcp -i "{{ hostvars[inventory_hostname].ansible_host }}" --dport "{{ proftpd_port }}"
+    iptables -t nat -A PREROUTING -p tcp -i "{{ hostvars[inventory_hostname].ansible_ssh_host }}" --dport "{{ proftpd_port }}"
           -j REDIRECT --to-ports 30722
   become: yes
   no_log: "{{ nologging }}"
