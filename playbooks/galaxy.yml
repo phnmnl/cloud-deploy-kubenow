@@ -14,6 +14,5 @@
         galaxy_admin_email: "{{galaxy_admin_email}}"
         galaxy_api_key: "{{galaxy_api_key}}"
         galaxy_pvc: "{{galaxy_pvc}}"
-        galaxy_postgres_pvc="false"
         postgres_pvc: "{{galaxy_pvc}}"
         nologging: "{{galaxy_nologging}}"
