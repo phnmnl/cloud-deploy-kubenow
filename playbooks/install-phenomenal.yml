@@ -39,7 +39,7 @@
 
 - include: galaxy.yml
   vars:
-    pvc_name: "{{galaxy_pvc}}"
+    pvc_name: "{{galaxy_pvc_name}}"
   when:
     (galaxy_include | bool) == true
 
