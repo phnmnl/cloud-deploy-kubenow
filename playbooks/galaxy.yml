@@ -11,9 +11,7 @@
       vars:
         hostname: "{{galaxy_hostname}}"
         galaxy_image_tag: "dev_v17.09-pheno-lr_cv1.6.190"
-        galaxy_admin_password: "{{galaxy_admin_password}}"
-        galaxy_admin_email: "{{galaxy_admin_email}}"
         galaxy_api_key: "{{ lookup('password', 'galaxy-api-key-generated length=25 chars=ascii_letters') }}"
-        galaxy_pvc: "{{galaxy_pvc}}"
-        postgres_pvc: "{{galaxy_pvc}}"
+        galaxy_pvc: "{{pvc_name}}"
+        postgres_pvc: "{{pvc_name}}"
         nologging: "{{galaxy_nologging}}"
