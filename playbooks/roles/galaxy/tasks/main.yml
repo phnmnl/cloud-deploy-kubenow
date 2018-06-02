@@ -1,7 +1,7 @@
 - name: "Copy helm yaml template for Galaxy."
   template:
     src: galaxy-helm-values.yaml.j2
-    dest: ~/galaxy-helm-values.yaml.j2
+    dest: ~/galaxy-helm-values.yaml
 
 - name: add galaxy repo
   command: >
