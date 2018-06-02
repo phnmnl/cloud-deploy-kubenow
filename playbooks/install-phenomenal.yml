@@ -42,7 +42,6 @@
     galaxy_hostname: "{{galaxy_hostname}}"
     galaxy_admin_password: "{{galaxy_admin_password}}"
     galaxy_admin_email: "{{galaxy_admin_email}}"
-    galaxy_api_key: "{{ lookup('password', 'galaxy-api-key-generated length=25 chars=ascii_letters') }}"
     galaxy_pvc: "{{galaxy_pvc}}"
     postgres_pvc: "{{galaxy_pvc}}"
     nologging: "{{galaxy_nologging}}"
