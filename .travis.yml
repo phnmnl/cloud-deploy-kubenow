@@ -23,7 +23,6 @@ env:
     - HOST_CLOUD=ostack
     - HOST_CLOUD=gcp
     - HOST_CLOUD=aws
-    - HOST_CLOUD=azure
 
 addons:
   ssh_known_hosts:
@@ -44,11 +43,11 @@ before_script:
   - sed -i -e "s/your-acces-key-id/${AWS_ACCESS_KEY_ID}/g" config.${HOST_CLOUD}.sh
   - sed -i -e "s#your-secret-access-key#${AWS_SECRET_ACCESS_KEY}#g" config.${HOST_CLOUD}.sh
   - sed -i -e "s/eu-west-1/${AWS_DEFAULT_REGION}/g" config.${HOST_CLOUD}.sh
-  # AZURE
-  - sed -i -e "s/your-subscription_id/${AZURE_SUBSCRIPTION_ID}/g" config.${HOST_CLOUD}.sh
-  - sed -i -e "s/your-client_id/${AZURE_CLIENT_ID}/g" config.${HOST_CLOUD}.sh
-  - sed -i -e "s/your-client_secret/${AZURE_CLIENT_SECRET}/g" config.${HOST_CLOUD}.sh
-  - sed -i -e "s/your-tenant_id/${AZURE_TENANT_ID}/g" config.${HOST_CLOUD}.sh
+#  # AZURE
+#  - sed -i -e "s/your-subscription_id/${AZURE_SUBSCRIPTION_ID}/g" config.${HOST_CLOUD}.sh
+#  - sed -i -e "s/your-client_id/${AZURE_CLIENT_ID}/g" config.${HOST_CLOUD}.sh
+#  - sed -i -e "s/your-client_secret/${AZURE_CLIENT_SECRET}/g" config.${HOST_CLOUD}.sh
+#  - sed -i -e "s/your-tenant_id/${AZURE_TENANT_ID}/g" config.${HOST_CLOUD}.sh
   # GCE
   - printf '%s\n' "$GOOGLE_CREDENTIALS" > "./service-account.json"
   - sed -i -e "s/path-to-your-credentials-json-file/service-account.json/g" config.${HOST_CLOUD}.sh
