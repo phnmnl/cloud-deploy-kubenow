@@ -159,10 +159,25 @@ elif [ "$PROVIDER" = "openstack" ]; then
   fi
 
 elif [ "$PROVIDER" = "azure" ]; then
-  #export KN_IMAGE_NAME="$TF_VAR_boot_image"
-  #"$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-azure.sh"
-  echo "Azure is not supported by this version of cloud-deploy, exiting"
-  exit 1
+  export KN_IMAGE_NAME="$TF_VAR_boot_image"
+  # always use virtualenv for now
+  export USE_VIRTUAL_ENV="true"
+
+  # Use virtualenv to install glance without compiling - after download with glance - disable it again
+  if [ -n "$USE_VIRTUAL_ENV" ]; then
+     virtualenv deploy
+     source deploy/bin/activate
+     pip install -U pip
+     pip install azure-cli
+  fi
+
+  # Upload image to openstack installation if not there
+  "$PORTAL_APP_REPO_FOLDER/KubeNow/bin/image-create-azure.sh"
+
+  # Enough with this virtualenv
+  if [ -n "$USE_VIRTUAL_ENV" ]; then
+     deactivate
+  fi
 
 elif [ "$PROVIDER" = "kvm" ]; then
    echo "KVM is not supported by this version of cloud-deploy, exiting"
