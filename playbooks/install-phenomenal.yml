@@ -39,15 +39,7 @@
 
 - include: galaxy.yml
   vars:
-    galaxy_chart_version: "{{galaxy_chart_version}}"
-    hostname: "{{galaxy_hostname}}"
-    galaxy_image_tag: "{{galaxy_image_tag}}"
-    galaxy_admin_password: "{{galaxy_admin_password}}"
-    galaxy_admin_email: "{{galaxy_admin_email}}"
-    galaxy_api_key: "{{ lookup('password', 'galaxy-api-key length=25 chars=ascii_letters') }}"
-    galaxy_pvc: "{{galaxy_pvc}}"
-    postgres_pvc: "{{galaxy_postgres_pvc}}"
-    nologging: "{{galaxy_nologging}}"
+    pvc_name: "{{galaxy_pvc_name}}"
   when:
     (galaxy_include | bool) == true
 
