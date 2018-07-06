@@ -10,7 +10,6 @@
         name: roles/galaxy
       vars:
         hostname: "{{galaxy_hostname}}"
-        galaxy_image_tag: "dev_v17.09-pheno-lr_cv1.6.190"
         galaxy_api_key: "{{ lookup('password', 'galaxy-api-key-generated length=25 chars=ascii_letters') }}"
         galaxy_pvc: "{{pvc_name}}"
         postgres_pvc: "{{pvc_name}}"
