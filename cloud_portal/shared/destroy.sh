@@ -76,7 +76,7 @@ if [ -z "$LOCAL_DEPLOYMENT" ]; then
 fi
 
 # TODO read this from deploy.sh file
-export TF_VAR_boot_image="kubenow-v050"
+export TF_VAR_boot_image="kubenow-v052"
 export TF_VAR_kubeadm_token="fake.token"
 export TF_VAR_master_disk_size="20"
 export TF_VAR_node_disk_size="20"
