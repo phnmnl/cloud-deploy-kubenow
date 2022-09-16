@@ -19,7 +19,7 @@ monotonic==1.4
 netaddr==0.7.19
 netifaces
 oslo.i18n==3.19.0
-oslo.utils==3.35.0
+oslo.utils==4.10.1
 pbr==3.1.1
 prettytable==0.7.2
 pycparser==2.18
